@@ -21,6 +21,7 @@ npm run prepare
 ### Recommended Development Flow
 
 # Before starting development create .env file with following variables:
+```
 YEXT_PUBLIC_UNIVERSE="staging or production"
 YEXT_PUBLIC_PAGE_LIMIT=
 YEXT_PUBLIC_TIME_ZONE=
@@ -35,7 +36,7 @@ YEXT_PUBLIC_ANSWER_SEARCH_API_KEY=
 YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_KEY=
 YEXT_PUBLIC_ANSWER_SEARCH_VERTICAL_KEY=
 YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_VERSION="STAGING or PRODUCTION"
-
+```
 
 While _developing locally_, run the following command:
 ```
