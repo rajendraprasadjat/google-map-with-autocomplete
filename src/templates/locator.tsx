@@ -2,7 +2,6 @@
  * This is an example of how to create a static template that uses getStaticProps to retrieve data.
  */
 import * as React from "react";
-import { fetch } from "@yext/pages/util";
 import "../index.css";
 import {
   Template,
@@ -15,10 +14,8 @@ import {
   TemplateRenderProps,
 } from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
-import Card from "../components/Card";
 import { ExternalImage } from "../types/ExternalImage";
 import Favicon from "../assets/images/yext-favicon.ico";
-import Banner from "../components/Banner";
 import {
   SearchHeadlessProvider,
   provideHeadless,
@@ -110,7 +107,7 @@ export const getHeadConfig: GetHeadConfig<
  * This is the main template. It can have any name as long as it's the default export.
  * The props passed in here are the direct result from `transformProps`.
  */
-const Locator: Template<ExternalImageRenderData> = ({ externalImage }) => {
+const Locator: Template<ExternalImageRenderData> = () => {
   const searcher = provideHeadless({
     experienceKey: YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_KEY,
     apiKey: YEXT_PUBLIC_ANSWER_SEARCH_API_KEY,
@@ -119,8 +116,8 @@ const Locator: Template<ExternalImageRenderData> = ({ externalImage }) => {
     environment: YEXT_PUBLIC_UNIVERSE,
     experienceVersion: YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_VERSION,
     endpoints: {
-      verticalSearch:YEXT_PUBLIC_VERTICAL_SEARCH_END_POINT
-    }
+      verticalSearch: YEXT_PUBLIC_VERTICAL_SEARCH_END_POINT,
+    },
   });
   return (
     <SearchHeadlessProvider searcher={searcher}>
@@ -133,10 +130,14 @@ const Locator: Template<ExternalImageRenderData> = ({ externalImage }) => {
         limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
       >
         <PageLayout>
-          <section id="main">
-            <AutoSuggestions />
-            <LocationList />
-            <GoogleMap />
+          <section id="main" style={{ display: "flex", height: "100vh" }}>
+            <div className="listing-block" style={{ width: "30%" }}>
+              <AutoSuggestions />
+              <LocationList />
+            </div>
+            <div className="map-block" style={{ width: "70%" }}>
+              <GoogleMap />
+            </div>
           </section>
         </PageLayout>
       </SearchProvider>

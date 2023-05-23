@@ -1,5 +1,4 @@
 import * as React from "react";
-import Cta from "../common/Cta";
 import { Link } from "@yext/pages/components";
 
 const navigation = [
@@ -7,7 +6,7 @@ const navigation = [
   { name: "About", href: "#" },
 ];
 
-const Header = (props: any) => {
+const Header = () => {
   return (
     <div className="space-y-1 pt-2 pb-3">
       {navigation.map((link) => (

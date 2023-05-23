@@ -2,7 +2,6 @@ import * as React from "react";
 import { createContext } from "react";
 import {
   DisplayableFacet,
-  Matcher,
   Result,
   SelectableFilter,
   useSearchActions,
@@ -48,6 +47,12 @@ interface ContextType {
   updateViewportLocations: (map: google.maps.Map) => void;
   zoomLavel: number;
   setZoomLavel: (value: number) => void;
+  userLocation: Coordinate;
+  setUserLocation: (value: Coordinate) => void;
+  infoWindowContent: any;
+  setInfoWindowContent: (value: any) => void;
+  mapCenter: google.maps.LatLngLiteral | null;
+  setMapCenter: (value: google.maps.LatLngLiteral | null) => void;
 }
 
 export const SearchContext = createContext<ContextType>({
@@ -80,7 +85,19 @@ export const SearchContext = createContext<ContextType>({
     throw new Error("Function not implemented.");
   },
   zoomLavel: 0,
-  setZoomLavel: function (value: number): void {
+  setZoomLavel: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  userLocation: { latitude: 0, longitude: 0 },
+  setUserLocation: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  infoWindowContent: { latitude: 0, longitude: 0 },
+  setInfoWindowContent: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  mapCenter: null,
+  setMapCenter: function (): void {
     throw new Error("Function not implemented.");
   },
 });
@@ -104,7 +121,11 @@ const SearchProvider = ({
 }: SearchProviderProps) => {
   const searchActions = useSearchActions();
   const [zoomLavel, setZoomLavel] = React.useState(4);
-  const [centerCoordinates, setCenterCoordinates] = React.useState(defaultCoordinates);
+  const [mapCenter, setMapCenter] =
+    React.useState<google.maps.LatLngLiteral | null>(null);
+  const [centerCoordinates, setCenterCoordinates] =
+    React.useState(defaultCoordinates);
+  const [userLocation, setUserLocation] = React.useState(defaultCoordinates);
   const [locations, setLocations] = React.useState<
     Result<Record<string, unknown>>[]
   >([]);
@@ -126,6 +147,8 @@ const SearchProvider = ({
   const [viewportLocations, setViewportLocations] = React.useState<
     Result<Record<string, unknown>>[]
   >([]);
+
+  const [infoWindowContent, setInfoWindowContent] = React.useState<any>(null);
   console.log("locations", locations.length);
   const setPagingData = (
     totalRecord: number,
@@ -158,6 +181,7 @@ const SearchProvider = ({
     address: string | null,
     apiOffset = 0,
     staticFilter: SelectableFilter[]
+    // allowEmptySearch = false
   ) => {
     setIsLoading(true);
     if (location !== null) {
@@ -171,6 +195,9 @@ const SearchProvider = ({
     if (staticFilter) {
       searchActions.setStaticFilters(staticFilter);
     }
+    /* if(allowEmptySearch){
+      
+    } */
     if (apiOffset === 0) {
       setLocations([]);
       setOffset(0);
@@ -214,18 +241,30 @@ const SearchProvider = ({
         }
       } else if (response?.allResultsForVertical?.verticalResults) {
         const result = response?.allResultsForVertical?.verticalResults.results;
-        setLocations(result.filter((_e: any, index: number) => index === 0));
+        // setLocations(result.filter((_e: any, index: number) => index === 0));
+        setLocations(result);
         setIsLoading(false);
       }
     });
   };
 
-  const getCoordinates = (address: string, coordinate: {lat: number, lng: number} | undefined) => {
-    console.log('address', address)
-    if(coordinate){
-      setCenterCoordinates({ latitude: coordinate.lat, longitude: coordinate.lng })
-      getSearchData({ latitude: coordinate.lat, longitude: coordinate.lng }, address, 0, []);
-    }else{
+  const getCoordinates = (
+    address: string,
+    coordinate: { lat: number; lng: number } | undefined
+  ) => {
+    console.log("address", address);
+    if (coordinate) {
+      setCenterCoordinates({
+        latitude: coordinate.lat,
+        longitude: coordinate.lng,
+      });
+      getSearchData(
+        { latitude: coordinate.lat, longitude: coordinate.lng },
+        address,
+        0,
+        []
+      );
+    } else {
       fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${googleApiKey}`
       )
@@ -234,7 +273,9 @@ const SearchProvider = ({
           if (data.status === "OK") {
             console.log("data", data);
             data.results.map(
-              (res: { geometry: { location: { lat: number; lng: number } } }) => {
+              (res: {
+                geometry: { location: { lat: number; lng: number } };
+              }) => {
                 const latitude = res.geometry.location.lat;
                 const longitude = res.geometry.location.lng;
                 /* const filterItem = [];
@@ -249,12 +290,12 @@ const SearchProvider = ({
                   matcher: Matcher.Near,
                 };
                 filterItem.push(locationFilter); */
-                setCenterCoordinates({ latitude, longitude })
+                setCenterCoordinates({ latitude, longitude });
                 getSearchData({ latitude, longitude }, address, 0, []);
               }
             );
           } else {
-            setCenterCoordinates(defaultCoordinates)
+            setCenterCoordinates(defaultCoordinates);
             getSearchData(defaultCoordinates, address, 0, []);
           }
         });
@@ -284,6 +325,10 @@ const SearchProvider = ({
     }
   };
 
+  React.useEffect(() => {
+    getSearchData(centerCoordinates, "", 0, []);
+  }, []);
+
   const data = {
     getCoordinates,
     centerCoordinates,
@@ -298,6 +343,12 @@ const SearchProvider = ({
     updateViewportLocations,
     zoomLavel,
     setZoomLavel,
+    userLocation,
+    setUserLocation,
+    infoWindowContent,
+    setInfoWindowContent,
+    mapCenter,
+    setMapCenter,
   };
 
   console.log("pagination", pagination);

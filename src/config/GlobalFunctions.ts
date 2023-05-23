@@ -80,12 +80,13 @@ export const getClusterIcon = () => {
 };
 
 export const getUserIcon = () => {
-    return userMarker;
-  };
+  return userMarker;
+};
 
 export const getMarkerPin = (result: any) => {
   const m_icon = {
     url: defaultMarker,
+    id: result.id,
   };
   return m_icon;
 };

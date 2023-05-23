@@ -1,8 +1,8 @@
 {
-  "name": "pages-starter-react-locations",
-  "version": "0.0.0",
-  "description": "An example repository to help users get started with React development on Yext Pages",
-  "author": "sumo@yext.com",
+  "name": "google-map-with-autocomplete",
+  "version": "1.0.0",
+  "description": "An example repository to help users get started with React development on Yext Pages using Google Map and Google Autocomplete",
+  "author": "rajendraprasad.jat@dotsquares.com",
   "license": "BSD-3-Clause",
   "type": "module",
   "scripts": {
@@ -15,7 +15,8 @@
     "fmt": "prettier -w .",
     "lint": "eslint .",
     "clean": "rm -rf .artifact-output .yext/ dist/ localData sites-rendered-output",
-    "generate-notices": "generate-license-file --input package.json --output ./THIRD-PARTY-NOTICES --overwrite"
+    "generate-notices": "generate-license-file --input package.json --output ./THIRD-PARTY-NOTICES --overwrite",
+    "prepare": "husky install"
   },
   "engines": {
     "node": ">=17"
