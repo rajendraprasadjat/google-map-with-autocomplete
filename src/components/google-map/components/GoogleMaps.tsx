@@ -100,7 +100,7 @@ const GoogleMap = () => {
             }
           }}
         >
-          <div>{infoWindowContent.id}</div>
+          <div>{infoWindowContent.name}</div>
         </InfoWindow>
       )}
       <MarkerClusterer

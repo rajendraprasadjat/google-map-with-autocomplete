@@ -2,6 +2,7 @@ import * as React from "react";
 import { createContext } from "react";
 import {
   DisplayableFacet,
+  Matcher,
   Result,
   SelectableFilter,
   useSearchActions,
@@ -109,6 +110,9 @@ interface SearchProviderProps {
   limit: number;
   language: string;
   libraries: Libraries;
+  isUseAlternateResult?: boolean;
+  isShowSingleAlternateResult?: boolean;
+  radius?: number;
 }
 
 const SearchProvider = ({
@@ -118,6 +122,9 @@ const SearchProvider = ({
   limit,
   language,
   libraries,
+  isUseAlternateResult = false,
+  isShowSingleAlternateResult = false,
+  radius = 0,
 }: SearchProviderProps) => {
   const searchActions = useSearchActions();
   const [zoomLavel, setZoomLavel] = React.useState(4);
@@ -149,7 +156,7 @@ const SearchProvider = ({
   >([]);
 
   const [infoWindowContent, setInfoWindowContent] = React.useState<any>(null);
-  console.log("locations", locations.length);
+
   const setPagingData = (
     totalRecord: number,
     resultsLength: number,
@@ -192,12 +199,25 @@ const SearchProvider = ({
     if (address !== null) {
       searchActions.setQuery(address);
     }
+
+    if (radius && location) {
+      const locationFilter: SelectableFilter = {
+        selected: true,
+        fieldId: "builtin.location",
+        value: {
+          lat: location.latitude,
+          lng: location.longitude,
+          radius: 5000,
+        },
+        matcher: Matcher.Near,
+      };
+      staticFilter.push(locationFilter);
+    }
+
     if (staticFilter) {
       searchActions.setStaticFilters(staticFilter);
     }
-    /* if(allowEmptySearch){
-      
-    } */
+
     if (apiOffset === 0) {
       setLocations([]);
       setOffset(0);
@@ -212,15 +232,12 @@ const SearchProvider = ({
       });
     }
 
-    console.log("called----------");
-
     searchActions.executeVerticalQuery().then((response) => {
       setFacets(response?.facets || []);
       if (
         response?.verticalResults.results &&
         response?.verticalResults.results.length > 0
       ) {
-        console.log("response", response);
         const result = response?.verticalResults.results;
         const allData = apiOffset ? [...locations, ...result] : result;
         const uniqueArray = allData.filter((obj, index, self) => {
@@ -232,19 +249,18 @@ const SearchProvider = ({
           apiOffset
         );
         setLocations(uniqueArray);
-        setIsLoading(false);
-        if (
-          !apiOffset &&
-          uniqueArray.length < response?.verticalResults.resultsCount
-        ) {
-          //   getSearchData(location, address, apiOffset, staticFilter);
-        }
-      } else if (response?.allResultsForVertical?.verticalResults) {
+      } else if (
+        response?.allResultsForVertical?.verticalResults &&
+        (isUseAlternateResult || isShowSingleAlternateResult)
+      ) {
         const result = response?.allResultsForVertical?.verticalResults.results;
-        // setLocations(result.filter((_e: any, index: number) => index === 0));
-        setLocations(result);
-        setIsLoading(false);
+        if (isShowSingleAlternateResult) {
+          setLocations(result.filter((_e: any, index: number) => index === 0));
+        } else if (isUseAlternateResult) {
+          setLocations(result);
+        }
       }
+      setIsLoading(false);
     });
   };
 
