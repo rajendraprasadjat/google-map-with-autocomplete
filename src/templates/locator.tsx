@@ -140,15 +140,20 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
           template="country"
           locale={meta.locale}
         >
-          <section id="main" style={{ display: "flex", height: "100vh" }}>
-            <div className="listing-block" style={{ width: "30%" }}>
-              <AutoSuggestions />
-              <LocationList />
-            </div>
-            <div className="map-block" style={{ width: "70%" }}>
-              <GoogleMap />
-            </div>
-          </section>
+          <main className="main-content">
+            <section className="listing-map" id="main">
+              <div className="mobile-view-map lg:hidden">
+                <button type="button" className="map-link">Show Map</button>
+              </div>
+              <div className="map-block">
+                <GoogleMap />
+              </div>
+              <div className="listing-block">
+                <AutoSuggestions />
+                <LocationList />
+              </div>
+            </section>
+          </main>
         </PageLayout>
       </SearchProvider>
     </SearchHeadlessProvider>

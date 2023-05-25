@@ -21,7 +21,7 @@ const PageLayout = ({
   locale,
 }: PageLayoutProps) => {
   return (
-    <div className="min-h-screen">
+    <div className="page-wrapper">
       <Header
         _site={_site}
         meta={meta}

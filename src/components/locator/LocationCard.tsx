@@ -10,17 +10,13 @@ type LocationCardProps = {
 const LocationCard = ({ location }: LocationCardProps) => {
   const { setInfoWindowContent } = React.useContext(SearchContext);
   return (
-    <div
+    <div className="location-card"
       onClick={() => {
         setInfoWindowContent(location);
       }}
-      style={{
-        margin: "10px 0px",
-        border: "1px solid",
-      }}
     >
-      {location.rawData.name}
-      <Address address={location.rawData.address} />
+      <div className="location-name">{location.rawData.name}</div>
+      <Address className="location-address" address={location.rawData.address} />
     </div>
   );
 };
