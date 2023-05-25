@@ -13,6 +13,7 @@ import {
   getPosition,
   getUserIcon,
 } from "../../../config/GlobalFunctions";
+import { Address } from "@yext/pages/components";
 
 const GoogleMap = () => {
   const {
@@ -81,7 +82,7 @@ const GoogleMap = () => {
       onIdle={() => {
         map && showMarkersInViewport(map);
       }}
-      mapContainerClassName="map-box-wrapper w-full h-[calc(100vh_-_28.30rem)] md:h-[calc(100vh_-_12.313rem)] lg:h-[calc(100vh_-_13.125rem)] top-0 order-1 lg:order-none z-[1]"
+      mapContainerClassName="map-box-wrapper"
     >
       {infoWindowContent && (
         <InfoWindow
@@ -100,7 +101,10 @@ const GoogleMap = () => {
             }
           }}
         >
-          <div>{infoWindowContent.id}</div>
+          <div className="infowindow-content">
+            <div className="location-name">{infoWindowContent.name}</div>
+            <Address className="location-address" address={infoWindowContent.rawData.address} />
+          </div>
         </InfoWindow>
       )}
       <MarkerClusterer

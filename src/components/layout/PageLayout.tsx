@@ -9,7 +9,7 @@ export interface PageLayoutProps {
 
 const PageLayout = ({ children, _site }: PageLayoutProps) => {
   return (
-    <div className="min-h-screen">
+    <div className="page-wrapper">
       <Header _site={_site} />
       {children}
       <Footer _site={_site} />
