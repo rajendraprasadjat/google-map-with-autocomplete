@@ -1,0 +1,26 @@
+{
+  "$id": "stores-directory_gb_great_britain_london",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "dm_baseEntityCount": "2",
+    "dm_childEntityIds": [
+      "40781111",
+      "40781112"
+    ],
+    "dm_directoryChildren": [
+      "demo4",
+      "demo5"
+    ],
+    "dm_directoryManagerId": "stores-directory",
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb",
+      "stores-directory_gb_great_britain"
+    ],
+    "name": "London",
+    "slug": "london"
+  },
+  "entityType": "ce_city",
+  "labels": []
+}

@@ -1,0 +1,20 @@
+{
+  "$id": "demo7",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "London",
+      "countryCode": "GB",
+      "line1": "40 Lexington Street",
+      "postalCode": "W1F 0LN"
+    },
+    "addressHidden": false,
+    "mainPhone": "+447069584768",
+    "name": "Seven Dials",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

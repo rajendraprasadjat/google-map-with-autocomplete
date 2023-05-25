@@ -1,0 +1,24 @@
+{
+  "$id": "stores-directory_gb",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "dm_baseEntityCount": "10",
+    "dm_childEntityIds": [
+      "41304112",
+      "41304116"
+    ],
+    "dm_directoryChildren": [
+      "stores-directory_gb_great_britain",
+      "stores-directory_gb_greater_london"
+    ],
+    "dm_directoryManagerId": "stores-directory",
+    "dm_directoryParents": [
+      "stores-directory"
+    ],
+    "name": "GB",
+    "slug": "gb"
+  },
+  "entityType": "ce_country",
+  "labels": []
+}

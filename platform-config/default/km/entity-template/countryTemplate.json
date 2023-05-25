@@ -1,0 +1,12 @@
+{
+  "$id": "countryTemplate",
+  "$schema": "https://schema.yext.com/config/km/entity-template/v2",
+  "content": {
+    "description": "Welcome to [[c_addressCountryDisplayName]]!"
+  },
+  "entityTypes": [
+    "ce_country"
+  ],
+  "localeCode": "en",
+  "name": "Country Template"
+}

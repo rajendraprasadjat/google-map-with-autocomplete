@@ -1,0 +1,27 @@
+{
+  "$id": "demo5",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "London",
+      "countryCode": "GB",
+      "line1": "Regent Street",
+      "postalCode": "W1B 5AH",
+      "region": "Great Britain"
+    },
+    "addressHidden": false,
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb",
+      "stores-directory_gb_great_britain",
+      "stores-directory_gb_great_britain_london"
+    ],
+    "mainPhone": "+442038933062",
+    "name": "London Liberty",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

@@ -1,0 +1,20 @@
+{
+  "$id": "demo2",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "Edinburgh",
+      "countryCode": "GB",
+      "line1": "30-34 St Andrew Square",
+      "postalCode": "EH2 2LL"
+    },
+    "addressHidden": false,
+    "mainPhone": "+441315248388",
+    "name": "Andrew Square",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

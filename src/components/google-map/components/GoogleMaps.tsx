@@ -13,6 +13,7 @@ import {
   getPosition,
   getUserIcon,
 } from "../../../config/GlobalFunctions";
+import { Address } from "@yext/pages/components";
 
 const GoogleMap = () => {
   const {
@@ -45,12 +46,21 @@ const GoogleMap = () => {
   };
 
   const fitBoundMap = () => {
-    const bounds = new google.maps.LatLngBounds();
-    locations.map((e: any) => {
-      const position = getPosition(e);
-      bounds.extend(position);
-    });
-    map?.fitBounds(bounds);
+    if (locations.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+
+      locations.map((e: any) => {
+        const position = getPosition(e);
+        bounds.extend(position);
+      });
+      map?.fitBounds(bounds);
+    } else {
+      map?.setCenter({
+        lat: centerCoordinates.latitude,
+        lng: centerCoordinates.longitude,
+      });
+      map?.setZoom(4);
+    }
   };
 
   React.useEffect(() => {
@@ -81,7 +91,7 @@ const GoogleMap = () => {
       onIdle={() => {
         map && showMarkersInViewport(map);
       }}
-      mapContainerClassName="map-box-wrapper w-full h-[calc(100vh_-_28.30rem)] md:h-[calc(100vh_-_12.313rem)] lg:h-[calc(100vh_-_13.125rem)] top-0 order-1 lg:order-none z-[1]"
+      mapContainerClassName="map-box-wrapper"
     >
       {infoWindowContent && (
         <InfoWindow
@@ -100,7 +110,10 @@ const GoogleMap = () => {
             }
           }}
         >
-          <div>{infoWindowContent.id}</div>
+          <div className="infowindow-content">
+            <div className="location-name">{infoWindowContent.name}</div>
+            <Address className="location-address" address={infoWindowContent.rawData.address} />
+          </div>
         </InfoWindow>
       )}
       <MarkerClusterer
@@ -109,8 +122,8 @@ const GoogleMap = () => {
         maxZoom={16}
         ignoreHidden={true}
       >
-        {(clusterer: any) =>
-          locations.map((location: { id: React.Key | null | undefined }) => {
+        {(clusterer) =>
+          locations.map((location) => {
             const position = getPosition(location);
             return (
               <Marker

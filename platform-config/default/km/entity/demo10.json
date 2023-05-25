@@ -1,0 +1,21 @@
+{
+  "$id": "demo10",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "London",
+      "countryCode": "GB",
+      "line1": "Unit 2 Hobbs Court",
+      "line2": "2 Jacob Street",
+      "postalCode": "SE1 2BG"
+    },
+    "addressHidden": false,
+    "mainPhone": "+442080901819",
+    "name": "Trehafod",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

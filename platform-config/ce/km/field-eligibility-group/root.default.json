@@ -5,10 +5,13 @@
   "entityType": "ce_root",
   "fields": [
     "description",
-    "richTextDescription",
-    "slug",
+    "dm_baseEntityCount",
+    "dm_childEntityIds",
     "dm_directoryChildren",
-    "dm_childEntityIds"
+    "dm_directoryManagerId",
+    "dm_directoryParents",
+    "richTextDescription",
+    "slug"
   ],
   "required": []
 }

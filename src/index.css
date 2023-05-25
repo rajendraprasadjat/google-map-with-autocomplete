@@ -1,11 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-.centered-container {
-  @apply mx-auto px-5 md:px-14 max-w-screen-xl mt-8 mb-16;
-}
+@import "assets/css/global.css";
+@import "assets/css/header.css";
+@import "assets/css/footer.css";
+@import "assets/css/locator.css";
 
-.section {
-  @apply mt-8 mb-16;
-}

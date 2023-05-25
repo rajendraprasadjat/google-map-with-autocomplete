@@ -1,0 +1,20 @@
+{
+  "$id": "demo3",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "Leeds",
+      "countryCode": "GB",
+      "line1": "107-111 Briggate",
+      "postalCode": "LS1 6AZ"
+    },
+    "addressHidden": false,
+    "mainPhone": "+441132048888",
+    "name": "Victoria Leeds",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

@@ -1,7 +1,14 @@
 import defaultMarker from "../assets/images/default-marker.png";
 import userMarker from "../assets/images/user-marker.png";
 import cluster from "../assets/images/cluster.png";
-
+import { LocationResult } from "../types/Locator";
+type LinkParams = {
+  link: string;
+  mode?: string;
+  template?: string;
+  locale?: string;
+  devLink?: string;
+};
 export function slugify(slugString: string) {
   slugString.toLowerCase().toString();
   slugString = slugString.replace(/[&/\\#^+()$~%.'":*?<>{}!@]/, "");
@@ -13,9 +20,26 @@ export function slugify(slugString: string) {
   return slugString.toLowerCase();
 }
 
-export const getPosition = (result: any) => {
-  const lat = (result.rawData as any).yextDisplayCoordinate.latitude;
-  const lng = (result.rawData as any).yextDisplayCoordinate.longitude;
+export const getLink = ({
+  link,
+  mode,
+  template,
+  locale,
+  devLink,
+}: LinkParams) => {
+  let url = link;
+
+  if (mode === "development" && template) {
+    url = `/${template}`;
+    devLink && (url += `/${devLink}`);
+    locale && (url += `?locale=${locale}`);
+  }
+  return url;
+};
+
+export const getPosition = (result: LocationResult) => {
+  const lat = result.rawData.yextDisplayCoordinate.latitude;
+  const lng = result.rawData.yextDisplayCoordinate.longitude;
   return { lat, lng };
 };
 
