@@ -1,0 +1,51 @@
+.listing-map{
+    @apply flex flex-col lg:flex-row items-start lg:py-10
+}
+
+/* Search */
+.search-form{
+    @apply w-full py-4 px-4 lg:px-10 sticky top-0 z-10 bg-[#f0f1f1] mb-2.5 shadow
+}
+.search-input{
+    @apply border border-black border-opacity-20 w-full py-2 px-4 pr-10 text-sm font-secondary leading-6
+}
+.search-form .button{
+    @apply absolute top-4 right-4 lg:right-10 leading-6 py-2.5 border border-transparent w-9
+}
+
+/* listing-block */
+.listing{
+    @apply overflow-auto max-h-full
+}
+.listing-block{
+    @apply w-full lg:max-w-[500px] lg:order-1
+}
+
+/* location card */
+.location-card{
+    @apply py-2.5 px-4 lg:px-10 border-b border-b-black border-opacity-5 font-secondary text-sm bg-white hover:bg-black hover:bg-opacity-5
+}
+.location-name{
+    @apply text-lg font-medium font-primary mb-2
+}
+.location-address{
+    @apply pl-6 bg-marker bg-no-repeat bg-left-top bg-[length:20px_auto]
+}
+
+
+/* Map */
+.map-block{
+    @apply w-full lg:max-w-[calc(100%_-_500px)] lg:order-2 lg:sticky top-0 h-[200px] lg:h-screen hidden lg:block
+}
+.map-box-wrapper{
+    @apply h-full
+}
+
+.mobile-view-map{
+    @apply text-center py-2.5 w-full
+}
+.mobile-view-map .map-link{
+    @apply hover:underline text-blue-500
+}
+
+
