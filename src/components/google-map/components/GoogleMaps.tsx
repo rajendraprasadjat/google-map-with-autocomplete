@@ -13,6 +13,7 @@ import {
   getPosition,
   getUserIcon,
 } from "../../../config/GlobalFunctions";
+import { LocationResult } from "../../../types/Locator";
 
 const GoogleMap = () => {
   const {
@@ -45,12 +46,21 @@ const GoogleMap = () => {
   };
 
   const fitBoundMap = () => {
-    const bounds = new google.maps.LatLngBounds();
-    locations.map((e: any) => {
-      const position = getPosition(e);
-      bounds.extend(position);
-    });
-    map?.fitBounds(bounds);
+    if (locations.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+
+      locations.map((e: any) => {
+        const position = getPosition(e);
+        bounds.extend(position);
+      });
+      map?.fitBounds(bounds);
+    } else {
+      map?.setCenter({
+        lat: centerCoordinates.latitude,
+        lng: centerCoordinates.longitude,
+      });
+      map?.setZoom(4);
+    }
   };
 
   React.useEffect(() => {
@@ -109,8 +119,8 @@ const GoogleMap = () => {
         maxZoom={16}
         ignoreHidden={true}
       >
-        {(clusterer: any) =>
-          locations.map((location: { id: React.Key | null | undefined }) => {
+        {(clusterer) =>
+          locations.map((location) => {
             const position = getPosition(location);
             return (
               <Marker

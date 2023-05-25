@@ -14,8 +14,7 @@ import {
   TemplateRenderProps,
 } from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
-import { ExternalImage } from "../types/ExternalImage";
-import Favicon from "../assets/images/yext-favicon.ico";
+import favicon from "../assets/images/favicon.ico";
 import {
   SearchHeadlessProvider,
   provideHeadless,
@@ -24,6 +23,8 @@ import SearchProvider from "../components/google-map/SearchProvider";
 import AutoSuggestions from "../components/google-map/components/AutoSuggestions";
 import LocationList from "../components/locator/LocationList";
 import GoogleMap from "../components/google-map/components/GoogleMaps";
+import { TemplateMeta } from "../types";
+import { LocatorDocument } from "../types/Locator";
 
 /**
  * Not required depending on your use case.
@@ -31,14 +32,18 @@ import GoogleMap from "../components/google-map/components/GoogleMaps";
 export const config: TemplateConfig = {
   // The name of the feature. If not set the name of this file will be used (without extension).
   // Use this when you need to override the feature name.
-  name: "google-map-with-autocomplete",
+  stream: {
+    $id: "locator",
+    filter: {
+      entityIds: ["stores-directory"],
+    },
+    fields: ["id", "uid", "meta", "name", "slug"],
+    localization: {
+      locales: ["en_GB"],
+      primary: false,
+    },
+  },
 };
-
-/**
- * A local type for transformProps. This could live in src/types but it's generally
- * best practice to keep unshared types local to their usage.
- */
-type ExternalImageData = TemplateProps & { externalImage: ExternalImage };
 
 /**
  * Used to either alter or augment the props passed into the template at render time.
@@ -50,9 +55,7 @@ type ExternalImageData = TemplateProps & { externalImage: ExternalImage };
  *
  * If the page is truly static this function is not necessary.
  */
-export const transformProps: TransformProps<ExternalImageData> = async (
-  data
-) => {
+export const transformProps: TransformProps<TemplateProps> = async (data) => {
   return { ...data };
 };
 
@@ -62,12 +65,8 @@ export const transformProps: TransformProps<ExternalImageData> = async (
  * NOTE: This currently has no impact on the local dev path. Local dev urls currently
  * take on the form: featureName/entityId
  */
-export const getPath: GetPath<ExternalImageData> = () => {
-  return `index.html`;
-};
-
-type ExternalImageRenderData = TemplateRenderProps & {
-  externalImage: ExternalImage;
+export const getPath: GetPath<TemplateProps> = ({ document }) => {
+  return document.slug;
 };
 
 /**
@@ -96,18 +95,24 @@ export const getHeadConfig: GetHeadConfig<
         attributes: {
           rel: "icon",
           type: "image/x-icon",
-          href: Favicon,
+          href: favicon,
         },
       },
     ],
   };
 };
 
+interface LocatorTemplateProps extends TemplateRenderProps {
+  __meta: TemplateMeta;
+  document: LocatorDocument;
+}
 /**
  * This is the main template. It can have any name as long as it's the default export.
  * The props passed in here are the direct result from `transformProps`.
  */
-const Locator: Template<ExternalImageRenderData> = () => {
+const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
+  const { _site, meta } = document;
+
   const searcher = provideHeadless({
     experienceKey: YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_KEY,
     apiKey: YEXT_PUBLIC_ANSWER_SEARCH_API_KEY,
@@ -129,7 +134,12 @@ const Locator: Template<ExternalImageRenderData> = () => {
         googleApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}
         limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
       >
-        <PageLayout>
+        <PageLayout
+          _site={_site}
+          meta={__meta}
+          template="country"
+          locale={meta.locale}
+        >
           <section id="main" style={{ display: "flex", height: "100vh" }}>
             <div className="listing-block" style={{ width: "30%" }}>
               <AutoSuggestions />

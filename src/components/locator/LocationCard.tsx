@@ -1,9 +1,10 @@
 import * as React from "react";
 import { SearchContext } from "../google-map/SearchProvider";
 import { Address } from "@yext/pages/components";
+import { LocationResult } from "../../types/Locator";
 
 type LocationCardProps = {
-  location: any;
+  location: LocationResult;
 };
 
 const LocationCard = ({ location }: LocationCardProps) => {

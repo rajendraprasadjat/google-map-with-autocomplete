@@ -1,0 +1,27 @@
+{
+  "$id": "demo8",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "Manchester",
+      "countryCode": "GB",
+      "line1": "1 Exchange Square",
+      "postalCode": "M3 1BD",
+      "region": "Great Britain"
+    },
+    "addressHidden": false,
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb",
+      "stores-directory_gb_great_britain",
+      "stores-directory_gb_great_britain_manchester"
+    ],
+    "mainPhone": "+442071607222",
+    "name": "Manchester Selfridges",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

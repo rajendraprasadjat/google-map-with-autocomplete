@@ -10,7 +10,7 @@ import {
   TemplateRenderProps,
 } from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
-import Favicon from "../assets/images/yext-favicon.ico";
+import favicon from "../assets/images/favicon.ico";
 
 export const config: TemplateConfig = {
   name: "404",
@@ -33,7 +33,7 @@ export const getHeadConfig: GetHeadConfig<
         attributes: {
           rel: "icon",
           type: "image/x-icon",
-          href: Favicon,
+          href: favicon,
         },
       },
     ],

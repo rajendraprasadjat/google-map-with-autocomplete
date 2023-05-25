@@ -1,0 +1,27 @@
+{
+  "$id": "stores-directory_gb_great_britain",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "dm_baseEntityCount": "4",
+    "dm_childEntityIds": [
+      "41304113",
+      "41304114",
+      "41304115"
+    ],
+    "dm_directoryChildren": [
+      "stores-directory_gb_great_britain_birmingham",
+      "stores-directory_gb_great_britain_london",
+      "stores-directory_gb_great_britain_manchester"
+    ],
+    "dm_directoryManagerId": "stores-directory",
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb"
+    ],
+    "name": "Great Britain",
+    "slug": "great-britain"
+  },
+  "entityType": "ce_region",
+  "labels": []
+}

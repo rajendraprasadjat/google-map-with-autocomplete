@@ -1,0 +1,19 @@
+{
+  "$id": "stores-directory",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "dm_baseEntityCount": "10",
+    "dm_childEntityIds": [
+      "41304111"
+    ],
+    "dm_directoryChildren": [
+      "stores-directory_gb"
+    ],
+    "dm_directoryManagerId": "stores-directory",
+    "name": "stores Directory",
+    "slug": "stores"
+  },
+  "entityType": "ce_root",
+  "labels": []
+}

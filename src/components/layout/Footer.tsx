@@ -6,11 +6,15 @@ import {
   Twitter,
   YouTube,
 } from "../../assets/svgs/SocialIcons";
+import { SiteData, TemplateMeta } from "../../types";
 
-export interface FooterProps {
-  _site?: any;
-  logo?: string;
-  paragraph?: string;
+interface FooterProps {
+  _site: SiteData;
+  meta: TemplateMeta;
+  template?: string;
+  devLink?: string;
+  locale?: string;
+  description?: string;
 }
 
 const currentTime = new Date();
@@ -69,7 +73,7 @@ const navigation = {
 };
 
 const Footer = (props: FooterProps) => {
-  const { paragraph } = props;
+  const { meta, template, devLink, locale, description } = props;
 
   return (
     <>
@@ -80,7 +84,7 @@ const Footer = (props: FooterProps) => {
         <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
             <div className="space-y-8">
-              <p className="text-sm leading-6 text-gray-600">{paragraph}</p>
+              <p className="text-sm leading-6 text-gray-600">{description}</p>
               <div className="flex space-x-6">
                 {navigation.social.map((item) => (
                   <a

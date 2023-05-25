@@ -9,12 +9,13 @@
     "c_addressRegionAbbreviation",
     "c_addressRegionDisplayName",
     "description",
-    "richTextDescription",
-    "slug",
+    "dm_baseEntityCount",
+    "dm_childEntityIds",
     "dm_directoryChildren",
     "dm_directoryManagerId",
     "dm_directoryParents",
-    "dm_childEntityIds"
+    "richTextDescription",
+    "slug"
   ],
   "required": []
 }

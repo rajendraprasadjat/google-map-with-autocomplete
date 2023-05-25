@@ -1,0 +1,24 @@
+{
+  "$id": "stores-directory_gb_great_britain_manchester",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "dm_baseEntityCount": "1",
+    "dm_childEntityIds": [
+      "40781119"
+    ],
+    "dm_directoryChildren": [
+      "demo8"
+    ],
+    "dm_directoryManagerId": "stores-directory",
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb",
+      "stores-directory_gb_great_britain"
+    ],
+    "name": "Manchester",
+    "slug": "manchester"
+  },
+  "entityType": "ce_city",
+  "labels": []
+}

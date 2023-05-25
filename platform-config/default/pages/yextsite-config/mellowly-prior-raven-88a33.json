@@ -1,0 +1,95 @@
+{
+  "$id": "mellowly-prior-raven-88a33",
+  "$schema": "https://schema.yext.com/config/pages/yextsite-config/v1",
+  "siteName": "Master Repository",
+  "repoConfig": "upward-tropical-tuna-d1e91",
+  "siteSettings": {
+    "autoDeploy": true,
+    "autoStage": true,
+    "autoPublish": false,
+    "pullRequestsEnabled": false,
+    "stagingCredentials": {
+      "password": "",
+      "username": ""
+    }
+  },
+  "branches": [
+    {
+      "name": "main",
+      "envVars": [
+        {
+          "key": "YEXT_PUBLIC_UNIVERSE",
+          "value": "staging"
+        },
+        {
+          "key": "YEXT_PUBLIC_PAGE_LIMIT\u003d50",
+          "value": "50"
+        },
+        {
+          "key": "YEXT_PUBLIC_TIME_ZONE",
+          "value": "Europe/London"
+        },
+        {
+          "key": "YEXT_PUBLIC_GOOGLE_API_KEY",
+          "value": "AIzaSyDZNQlSlEIkFAct5VzUtsP4dSbvOr2bE18"
+        },
+        {
+          "key": "YEXT_PUBLIC_DEFAULT_LATITUDE",
+          "value": "51.509865"
+        },
+        {
+          "key": "YEXT_PUBLIC_DEFAULT_LONGITUDE",
+          "value": "-0.118092"
+        },
+        {
+          "key": "YEXT_PUBLIC_WEBSITE_URL",
+          "value": "https://pertly-native-marlin.sbx.pgsdemo.com/"
+        },
+        {
+          "key": "YEXT_PUBLIC_DEFAULT_LOCALE",
+          "value": "en"
+        },
+        {
+          "key": "YEXT_PUBLIC_ANALYTICS_ENABLE_DEBUGGING",
+          "value": "false"
+        },
+        {
+          "key": "YEXT_PUBLIC_ANALYTICS_ENABLE_TRACKING_COOKIE",
+          "value": "false"
+        },
+        {
+          "key": "YEXT_PUBLIC_ANSWER_SEARCH_API_KEY",
+          "value": "48e5736904e30ba5b4db22fac8a3be41"
+        },
+        {
+          "key": "YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_KEY",
+          "value": "dotsquares-answer-search"
+        },
+        {
+          "key": "YEXT_PUBLIC_ANSWER_SEARCH_VERTICAL_KEY",
+          "value": "locations"
+        },
+        {
+          "key": "YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_VERSION",
+          "value": "PRODUCTION"
+        }
+      ],
+      "isProductionBranch": true
+    },
+    {
+      "name": "development",
+      "envVars": [],
+      "isProductionBranch": false
+    },
+    {
+      "name": "testing",
+      "envVars": [],
+      "isProductionBranch": false
+    },
+    {
+      "name": "design",
+      "envVars": [],
+      "isProductionBranch": false
+    }
+  ]
+}

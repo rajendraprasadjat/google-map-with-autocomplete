@@ -1,0 +1,27 @@
+{
+  "$id": "demo15",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "London",
+      "countryCode": "GB",
+      "line1": "36, Thornhill Road",
+      "postalCode": "N1 1HW",
+      "region": "Greater London"
+    },
+    "addressHidden": false,
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb",
+      "stores-directory_gb_greater_london",
+      "stores-directory_gb_greater_london_london"
+    ],
+    "mainPhone": "+447902773182",
+    "name": "Islington",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

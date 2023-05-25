@@ -2,9 +2,11 @@
   "$id": "stateTemplate",
   "$schema": "https://schema.yext.com/config/km/entity-template/v2",
   "content": {
-    "description": "Welcome to [[c_addressRegionDisplayName]], located in [[c_addressCountryDisplayName]]!"
+    "description": "Welcome to [[c_addressRegionDisplayName]], located in the great nation of [[c_addressCountryDisplayName]]!"
   },
-  "entityTypes": ["ce_state"],
+  "entityTypes": [
+    "ce_region"
+  ],
   "localeCode": "en",
   "name": "State Template"
 }
