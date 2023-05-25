@@ -2,8 +2,8 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@import "css/global.css";
-@import "css/header.css";
-@import "css/footer.css";
-@import "css/locator.css";
+@import "assets/css/global.css";
+@import "assets/css/header.css";
+@import "assets/css/footer.css";
+@import "assets/css/locator.css";
 

@@ -15,7 +15,7 @@ module.exports = {
         'secondary': ['"Libre Franklin", Helvetica, Arial, Lucida, sans-serif'],
       },
       backgroundImage: {
-        'marker': "url('../assets/images/default-marker.png')",
+        'marker': "url('../../assets/images/default-marker.png')",
       },
     },
   },
