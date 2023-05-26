@@ -13,9 +13,9 @@ import {
   getPosition,
   getUserIcon,
 } from "../../../config/GlobalFunctions";
-import { Address } from "@yext/pages/components";
+import { Address, Link } from "@yext/pages/components";
 
-const GoogleMap = () => {
+const GoogleMap = ({ Infowindow }) => {
   const {
     locations,
     zoomLavel,
@@ -110,10 +110,26 @@ const GoogleMap = () => {
             }
           }}
         >
-          <div className="infowindow-content">
-            <div className="location-name">{infoWindowContent.name}</div>
-            <Address className="location-address" address={infoWindowContent.rawData.address} />
-          </div>
+          {Infowindow ? (
+            <Infowindow location={infoWindowContent} />
+          ) : (
+            <div className="location-card">
+              <Link
+                className="location-name"
+                href={`/${infoWindowContent.slug}`}
+              >
+                {infoWindowContent.name}
+              </Link>
+              <Address
+                className="location-address"
+                address={infoWindowContent.address}
+              />
+
+              <Link className="button link" href={`/${infoWindowContent.slug}`}>
+                View Details
+              </Link>
+            </div>
+          )}
         </InfoWindow>
       )}
       <MarkerClusterer

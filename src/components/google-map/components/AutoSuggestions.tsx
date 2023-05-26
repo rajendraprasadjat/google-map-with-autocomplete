@@ -4,10 +4,10 @@ import { SearchContext } from "../SearchProvider";
 import { SearchIcon } from "../../../assets/svgs/SvgIcons";
 
 const AutoSuggestions = () => {
-  const { getCoordinates } = React.useContext(SearchContext);
+  const { getCoordinates, setInputValue, inputValue } =
+    React.useContext(SearchContext);
   const googleLib = typeof google !== "undefined" ? google : null;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = useState<string>("");
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   useEffect(() => {
@@ -84,12 +84,19 @@ const AutoSuggestions = () => {
           "place_changed",
           function () {
             const place = autoComplete.getPlace();
-            console.log('inputValue', inputRef.current?.value, place.formatted_address)
+            console.log(
+              "inputValue",
+              inputRef.current?.value,
+              place.formatted_address
+            );
             if (inputRef.current?.value && place.formatted_address) {
               setInputValue(place.formatted_address);
-              if(place.geometry?.location){
-                getCoordinates(place.formatted_address, place.geometry?.location.toJSON());
-              }else{
+              if (place.geometry?.location) {
+                getCoordinates(
+                  place.formatted_address,
+                  place.geometry?.location.toJSON()
+                );
+              } else {
                 getCoordinates(place.formatted_address);
               }
             }
@@ -100,11 +107,11 @@ const AutoSuggestions = () => {
     return () => {
       if (autocomplete) {
         autocomplete.unbindAll();
-        setAutocomplete(null)
+        setAutocomplete(null);
       }
     };
   }, [googleLib]);
-console.log('inputValue', inputValue)
+  console.log("inputValue", inputValue);
   return (
     <div className="search-form">
       <input
@@ -114,7 +121,7 @@ console.log('inputValue', inputValue)
         className="search-input"
         value={inputValue}
         onChange={(e) => {
-          setInputValue(e.target.value)
+          setInputValue(e.target.value);
         }}
       />
 
@@ -125,7 +132,7 @@ console.log('inputValue', inputValue)
         id="search-location-button"
         onClick={() => {
           const inputElement = inputRef.current;
-          if(inputElement){
+          if (inputElement) {
             const keydown = document.createEvent("HTMLEvents");
             keydown.initEvent("keydown", true, false);
             Object.defineProperty(keydown, "keyCode", {
