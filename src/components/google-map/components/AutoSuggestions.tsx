@@ -127,7 +127,7 @@ const AutoSuggestions = () => {
 
       {/* Search icon Button  */}
       <button
-        className="button"
+        className="search-button"
         aria-label="Search bar icon"
         id="search-location-button"
         onClick={() => {
