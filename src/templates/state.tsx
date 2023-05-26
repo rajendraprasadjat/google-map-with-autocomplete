@@ -9,8 +9,6 @@ import {
   HeadConfig,
 } from "@yext/pages";
 import favicon from "../assets/images/favicon.ico";
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
 import { EntityMeta, StateDocument, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
 

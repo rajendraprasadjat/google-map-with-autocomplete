@@ -1,4 +1,4 @@
-import { EntityMeta, SiteData } from ".";
+import { EntityMeta } from ".";
 
 export interface DirectoryParent {
   name: string;

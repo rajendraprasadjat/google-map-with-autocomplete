@@ -2,13 +2,12 @@ import * as React from "react";
 import { SearchContext } from "../google-map/SearchProvider";
 import { Address, Link } from "@yext/pages/components";
 import { LocationResult } from "../../types/Locator";
-import { getRecursiveData } from "../../templates/location";
 
 type LocationCardProps = {
   location: LocationResult;
 };
 
-const LocationCard = ({ location, meta }: LocationCardProps) => {
+const LocationCard = ({ location }: LocationCardProps) => {
   const { setInfoWindowContent } = React.useContext(SearchContext);
   const cartRef = React.useRef(null);
   console.log("location.rawData", location.rawData);

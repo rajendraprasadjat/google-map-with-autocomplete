@@ -74,8 +74,8 @@ const navigation = {
 };
 
 const Footer = (props: FooterProps) => {
-  const { meta, template, devLink, locale, description } = props;
-
+  // const { meta, template, devLink, locale, description } = props;
+  console.log("props", props);
   return (
     <>
       <footer className="site-footer" aria-labelledby="footer-heading">

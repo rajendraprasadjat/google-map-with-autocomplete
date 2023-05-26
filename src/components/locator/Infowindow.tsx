@@ -1,5 +1,4 @@
 import * as React from "react";
-import { SearchContext } from "../google-map/SearchProvider";
 import { Address, Link } from "@yext/pages/components";
 import { LocationResult } from "../../types/Locator";
 
