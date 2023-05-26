@@ -11,12 +11,9 @@ import {
 } from "@yext/pages";
 import { fetch } from "@yext/pages/util";
 import favicon from "../assets/images/favicon.ico";
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
 import { EntityMeta, LocationDocument, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
 import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
-import { DirectoryParent } from "../types/DirectoryParent";
 import {
   AnalyticsProvider,
   AnalyticsScopeProvider,
@@ -24,6 +21,7 @@ import {
 import Information from "../components/location/Information";
 import NearByLocation from "../components/location/NearByLocation";
 import "../index.css";
+import { getBreadcrumb } from "../config/GlobalFunctions";
 
 export const config: TemplateConfig = {
   stream: {
@@ -110,67 +108,6 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
     ],
   };
 };
-
-export const getRecursiveData = (
-  element: LocationDocument | DirectoryParent,
-  meta: TemplateMeta
-) => {
-  let slug = "";
-  if (meta.mode === "development") {
-    slug = element.slug;
-  } else {
-    if (element.dm_directoryParents) {
-      element.dm_directoryParents.forEach((e: DirectoryParent) => {
-        slug += `/${e.slug}`;
-      });
-    }
-    slug += `/${element.slug}`;
-  }
-  return slug;
-};
-
-export function getBreadcrumb(
-  data: DirectoryParent[],
-  document: LocationDocument,
-  meta: TemplateMeta
-) {
-  const breadcrumbs: BreadcrumbItem[] = [];
-
-  data.forEach((element: DirectoryParent) => {
-    const slug = getRecursiveData(element, meta);
-    breadcrumbs.push({
-      slug: slug,
-      name: element.name,
-    });
-  });
-
-  breadcrumbs.push({
-    slug: getRecursiveData(document, meta),
-    name: document.name,
-  });
-
-  return breadcrumbs;
-}
-
-function getBreadcrumbSchema<DataType>(
-  data: DataType[],
-  document: LocationDocument
-) {
-  const breadcrumbs: BreadcrumbItem[] = [];
-  data.forEach((element: DataType) => {
-    breadcrumbs.push({
-      slug: element.slug,
-      name: element.name,
-    });
-  });
-
-  breadcrumbs.push({
-    slug: document.slug,
-    name: document.name,
-  });
-
-  return breadcrumbs;
-}
 
 type TransformData = TemplateRenderProps & {
   externalApiData: any;

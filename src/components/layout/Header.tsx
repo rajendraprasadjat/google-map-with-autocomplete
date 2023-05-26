@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Link } from "@yext/pages/components";
 import { SiteData, TemplateMeta } from "../../types";
-import { getLink } from "../../config/GlobalFunctions";
 import logo from "../../assets/images/logo.jpg";
 
 const navigation = [
@@ -18,7 +17,8 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
-  const { meta, template, devLink, locale } = props;
+  // const { meta, template, devLink, locale } = props;
+  console.log("props", props);
   return (
     <header className="site-header">
       <div className="container">

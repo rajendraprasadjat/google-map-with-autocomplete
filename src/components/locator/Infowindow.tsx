@@ -1,25 +1,15 @@
 import * as React from "react";
-import { SearchContext } from "../google-map/SearchProvider";
 import { Address, Link } from "@yext/pages/components";
 import { LocationResult } from "../../types/Locator";
 
-type LocationCardProps = {
+type InfowindowProps = {
   location: LocationResult;
 };
 
-const LocationCard = ({ location }: LocationCardProps) => {
-  const { setInfoWindowContent } = React.useContext(SearchContext);
-  const cartRef = React.useRef(null);
-  console.log("location.rawData", location.rawData);
+const Infowindow = ({ location }: InfowindowProps) => {
   const url = location.rawData.slug;
   return (
-    <div
-      ref={cartRef}
-      className="location-card"
-      onClick={() => {
-        setInfoWindowContent(location);
-      }}
-    >
+    <div className="location-card">
       <Link className="location-name" href={`/${url}`}>
         {location.rawData.name}
       </Link>
@@ -35,4 +25,4 @@ const LocationCard = ({ location }: LocationCardProps) => {
   );
 };
 
-export default LocationCard;
+export default Infowindow;

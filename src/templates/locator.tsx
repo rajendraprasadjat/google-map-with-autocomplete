@@ -25,6 +25,8 @@ import LocationList from "../components/locator/LocationList";
 import GoogleMap from "../components/google-map/components/GoogleMaps";
 import { TemplateMeta } from "../types";
 import { LocatorDocument } from "../types/Locator";
+import Infowindow from "../components/locator/Infowindow";
+import ViewMore from "../components/locator/ViewMore";
 
 /**
  * Not required depending on your use case.
@@ -65,8 +67,8 @@ export const transformProps: TransformProps<TemplateProps> = async (data) => {
  * NOTE: This currently has no impact on the local dev path. Local dev urls currently
  * take on the form: featureName/entityId
  */
-export const getPath: GetPath<TemplateProps> = ({ document }) => {
-  return document.slug;
+export const getPath: GetPath<TemplateProps> = ({ document, __meta }) => {
+  return __meta.mode === "development" ? document.slug : "index.html";
 };
 
 /**
@@ -143,14 +145,17 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
           <main className="main-content">
             <section className="listing-map" id="main">
               <div className="mobile-view-map lg:hidden">
-                <button type="button" className="map-link">Show Map</button>
+                <button type="button" className="map-link">
+                  Show Map
+                </button>
               </div>
               <div className="map-block">
-                <GoogleMap />
+                <GoogleMap Infowindow={Infowindow} />
               </div>
               <div className="listing-block">
                 <AutoSuggestions />
-                <LocationList />
+                <LocationList meta={__meta} />
+                <ViewMore />
               </div>
             </section>
           </main>

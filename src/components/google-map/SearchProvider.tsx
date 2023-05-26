@@ -55,6 +55,8 @@ interface ContextType {
   setInfoWindowContent: (value: LocationResult | null) => void;
   mapCenter: google.maps.LatLngLiteral | null;
   setMapCenter: (value: google.maps.LatLngLiteral | null) => void;
+  inputValue: string;
+  setInputValue: (value: string) => void;
 }
 
 export const SearchContext = createContext<ContextType>({
@@ -102,6 +104,10 @@ export const SearchContext = createContext<ContextType>({
   setMapCenter: function (): void {
     throw new Error("Function not implemented.");
   },
+  inputValue: "",
+  setInputValue: function (): void {
+    throw new Error("Function not implemented.");
+  },
 });
 
 interface SearchProviderProps {
@@ -128,6 +134,7 @@ const SearchProvider = ({
   radius = 0,
 }: SearchProviderProps) => {
   const searchActions = useSearchActions();
+  const [inputValue, setInputValue] = React.useState("");
   const [zoomLavel, setZoomLavel] = React.useState(4);
   const [mapCenter, setMapCenter] =
     React.useState<google.maps.LatLngLiteral | null>(null);
@@ -209,7 +216,7 @@ const SearchProvider = ({
           value: {
             lat: location.latitude,
             lng: location.longitude,
-            radius: 5000,
+            radius: radius,
           },
           matcher: Matcher.Near,
         },
@@ -356,6 +363,8 @@ const SearchProvider = ({
     setInfoWindowContent,
     mapCenter,
     setMapCenter,
+    inputValue,
+    setInputValue,
   };
 
   console.log("pagination", pagination);
