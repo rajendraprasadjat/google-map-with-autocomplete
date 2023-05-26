@@ -111,21 +111,23 @@ const GoogleMap = ({ Infowindow }) => {
           }}
         >
           {Infowindow ? (
-            <Infowindow location={infoWindowContent} />
+            <Infowindow />
           ) : (
-            <div className="location-card">
+            <div className="infowindow-content">
               <Link
                 className="location-name"
-                href={`/${infoWindowContent.slug}`}
+                href={`/${infoWindowContent.rawData.slug}`}
               >
-                {infoWindowContent.name}
+                {infoWindowContent.rawData.name}
               </Link>
               <Address
                 className="location-address"
-                address={infoWindowContent.address}
+                address={infoWindowContent.rawData.address}
               />
-
-              <Link className="button link" href={`/${infoWindowContent.slug}`}>
+              <Link
+                className="button link"
+                href={`/${infoWindowContent.rawData.slug}`}
+              >
                 View Details
               </Link>
             </div>

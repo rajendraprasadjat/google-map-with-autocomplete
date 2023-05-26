@@ -9,7 +9,7 @@ type InfowindowProps = {
 const Infowindow = ({ location }: InfowindowProps) => {
   const url = location.rawData.slug;
   return (
-    <div className="location-card">
+    <div className="infowindow-content">
       <Link className="location-name" href={`/${url}`}>
         {location.rawData.name}
       </Link>
@@ -17,7 +17,6 @@ const Infowindow = ({ location }: InfowindowProps) => {
         className="location-address"
         address={location.rawData.address}
       />
-
       <Link className="button link" href={`/${url}`}>
         View Details
       </Link>
