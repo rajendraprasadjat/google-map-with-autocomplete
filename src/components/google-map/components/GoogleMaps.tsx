@@ -111,7 +111,7 @@ const GoogleMap = ({ Infowindow }) => {
           }}
         >
           {Infowindow ? (
-            <Infowindow />
+            <Infowindow location={infoWindowContent} />
           ) : (
             <div className="infowindow-content">
               <Link
