@@ -9,7 +9,7 @@
 .search-input{
     @apply border border-black border-opacity-20 w-full py-2 px-4 pr-10 text-sm font-secondary leading-6
 }
-.search-form .button{
+.search-form .search-button{
     @apply absolute top-4 right-4 lg:right-10 leading-6 py-2.5 border border-transparent w-9
 }
 
@@ -29,13 +29,16 @@
     @apply text-lg font-medium font-primary mb-2
 }
 .location-address{
-    @apply pl-6 bg-marker bg-no-repeat bg-left-top bg-[length:20px_auto]
+    @apply pl-6 bg-marker bg-no-repeat bg-left-top bg-[length:20px_auto] mb-2.5
 }
 
 
 /* Map */
 .map-block{
     @apply w-full lg:max-w-[calc(100%_-_500px)] lg:order-2 lg:sticky top-0 h-[200px] lg:h-screen hidden lg:block
+}
+.map-block.show{
+    @apply block
 }
 .map-box-wrapper{
     @apply h-full
@@ -48,4 +51,7 @@
     @apply hover:underline text-blue-500
 }
 
-
+/* Load More */
+.view-more-block{
+    @apply text-center pt-2.5
+}
