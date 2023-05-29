@@ -14,8 +14,13 @@ import {
   getUserIcon,
 } from "../../../config/GlobalFunctions";
 import { Address, Link } from "@yext/pages/components";
+import { SiteData } from "../../../types";
+interface GoogleMapProps {
+  InfowindowComponent: React.FC<any>;
+  _site: SiteData;
+}
 
-const GoogleMap = ({ Infowindow }) => {
+const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
   const {
     locations,
     zoomLavel,
@@ -93,77 +98,84 @@ const GoogleMap = ({ Infowindow }) => {
       }}
       mapContainerClassName="map-box-wrapper"
     >
-      {infoWindowContent && (
-        <InfoWindow
-          position={getPosition(infoWindowContent)}
-          onCloseClick={() => {
-            setInfoWindowContent(null);
-            if (zoomLavel === 4) {
-              fitBoundMap();
-            } else {
-              map?.setZoom(zoomLavel);
-            }
-            if (mapCenter) {
-              map?.setCenter(mapCenter);
-            } else {
-              fitBoundMap();
-            }
-          }}
-        >
-          {Infowindow ? (
-            <Infowindow />
-          ) : (
-            <div className="infowindow-content">
-              <Link
-                className="location-name"
-                href={`/${infoWindowContent.rawData.slug}`}
-              >
-                {infoWindowContent.rawData.name}
-              </Link>
-              <Address
-                className="location-address"
-                address={infoWindowContent.rawData.address}
-              />
-              <Link
-                className="button link"
-                href={`/${infoWindowContent.rawData.slug}`}
-              >
-                View Details
-              </Link>
-            </div>
-          )}
-        </InfoWindow>
-      )}
       <MarkerClusterer
         styles={[{ url: getClusterIcon(), height: 35, width: 35 }]}
-        // zoomOnClick
-        maxZoom={16}
-        ignoreHidden={true}
+        zoomOnClick
+        averageCenter
       >
-        {(clusterer) =>
-          locations.map((location) => {
-            const position = getPosition(location);
-            return (
-              <Marker
-                clusterer={clusterer}
-                key={location.id}
-                position={position}
-                icon={getMarkerPin(location).url}
-                onClick={() => {
-                  const currentZoom = map?.getZoom() || 4;
-                  const currentCenter = map?.getCenter()?.toJSON() || {
-                    lat: centerCoordinates.latitude,
-                    lng: centerCoordinates.longitude,
-                  };
-                  setZoomLavel(currentZoom);
-                  setMapCenter(currentCenter);
-                  map?.setCenter(position);
-                  setInfoWindowContent(location);
-                }}
-              />
-            );
-          })
-        }
+        {(clusterer) => {
+          return (
+            <>
+              {locations.map((location) => {
+                const position = getPosition(location);
+                return (
+                  <Marker
+                    clusterer={clusterer}
+                    key={location.id}
+                    position={position}
+                    icon={getMarkerPin(location).url}
+                    onClick={() => {
+                      const currentZoom = map?.getZoom() || 4;
+                      const currentCenter = map?.getCenter()?.toJSON() || {
+                        lat: centerCoordinates.latitude,
+                        lng: centerCoordinates.longitude,
+                      };
+                      setZoomLavel(currentZoom);
+                      setMapCenter(currentCenter);
+                      map?.setCenter(position);
+                      setInfoWindowContent(location);
+                    }}
+                  >
+                    {infoWindowContent && infoWindowContent.id === location.id && (
+                      <InfoWindow
+                        position={getPosition(infoWindowContent)}
+                        onCloseClick={() => {
+                          setInfoWindowContent(null);
+                          if (zoomLavel === 4) {
+                            fitBoundMap();
+                          } else {
+                            map?.setZoom(zoomLavel);
+                          }
+                          if (mapCenter) {
+                            map?.setCenter(mapCenter);
+                          } else {
+                            fitBoundMap();
+                          }
+                        }}
+                      >
+                        {InfowindowComponent ? (
+                          <InfowindowComponent
+                            location={infoWindowContent}
+                            _site={_site}
+                          />
+                        ) : (
+                          <div className="infowindow-content">
+                            <Link
+                              className="location-name"
+                              href={`/${infoWindowContent.rawData.slug}`}
+                            >
+                              {infoWindowContent.rawData.name}
+                            </Link>
+                            <Address
+                              className="location-address"
+                              address={infoWindowContent.rawData.address}
+                            />
+                            <Link
+                              className="button link"
+                              href={`/${infoWindowContent.rawData.slug}`}
+                            >
+                              View Details
+                            </Link>
+                          </div>
+                        )}
+                      </InfoWindow>
+                    )}
+                  </Marker>
+                );
+              })}
+            </>
+          );
+        }}
       </MarkerClusterer>
       {userLocation && userLocation.latitude && userLocation.longitude ? (
         <Marker

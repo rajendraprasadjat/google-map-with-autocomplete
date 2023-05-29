@@ -229,6 +229,7 @@ const SearchProvider = ({
     }
 
     if (apiOffset === 0) {
+      setInfoWindowContent(null);
       setLocations([]);
       setOffset(0);
       setPagination({

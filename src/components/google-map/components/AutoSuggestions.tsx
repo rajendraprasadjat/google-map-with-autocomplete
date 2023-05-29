@@ -2,156 +2,85 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { SearchContext } from "../SearchProvider";
 import { SearchIcon } from "../../../assets/svgs/SvgIcons";
+import { onSearchFunc, SearchBar, DropdownItem } from "@yext/search-ui-react";
+import { provideHeadless } from "@yext/search-headless";
 
-const AutoSuggestions = () => {
+const AutoSuggestions = ({ locale }) => {
   const { getCoordinates, setInputValue, inputValue } =
     React.useContext(SearchContext);
-  const googleLib = typeof google !== "undefined" ? google : null;
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const [autocomplete, setAutocomplete] =
-    useState<google.maps.places.Autocomplete | null>(null);
-  useEffect(() => {
-    if (
-      googleLib &&
-      typeof google.maps === "object" &&
-      inputRef.current &&
-      !autocomplete
-    ) {
-      const options: google.maps.places.AutocompleteOptions = {
-        fields: ["address_component", "geometry", "formatted_address"],
-      };
-      const autoComplete = new google.maps.places.Autocomplete(
-        inputRef.current,
-        options
-      );
-      if (autoComplete) {
-        const pacSelectFirst = (input: HTMLInputElement) => {
-          const _addEventListener = input.addEventListener;
 
-          const getEvent = () => {
-            const keydown = document.createEvent("HTMLEvents");
-            keydown.initEvent("keydown", true, false);
-            Object.defineProperty(keydown, "keyCode", {
-              get: function () {
-                return 40;
-              },
-            });
-            Object.defineProperty(keydown, "which", {
-              get: function () {
-                return 40;
-              },
-            });
-            input.dispatchEvent(keydown);
-          };
-          function addEventListenerWrapper(
-            type: string,
-            listener: EventListenerOrEventListenerObject
-          ) {
-            if (type == "keydown") {
-              const orig_listener = listener;
-
-              listener = function (event: KeyboardEvent | Event) {
-                const suggestion_selected =
-                  document.getElementsByClassName("pac-item-selected").length >
-                  0;
-
-                if (
-                  ((event as KeyboardEvent).which == 13 ||
-                    (event as KeyboardEvent).which == 9) &&
-                  !suggestion_selected
-                ) {
-                  getEvent();
-                  (orig_listener as EventListener).apply(input, [event]);
-                }
-
-                (orig_listener as EventListener).apply(input, [event]);
-              };
-            }
-
-            _addEventListener.apply(input, [type, listener]);
-          }
-
-          if (input.addEventListener) {
-            input.addEventListener = addEventListenerWrapper;
-          }
-        };
-
-        setAutocomplete(autoComplete);
-        pacSelectFirst(inputRef.current);
-
-        google.maps.event.addListener(
-          autoComplete,
-          "place_changed",
-          function () {
-            const place = autoComplete.getPlace();
-            console.log(
-              "inputValue",
-              inputRef.current?.value,
-              place.formatted_address
-            );
-            if (inputRef.current?.value && place.formatted_address) {
-              setInputValue(place.formatted_address);
-              if (place.geometry?.location) {
-                getCoordinates(
-                  place.formatted_address,
-                  place.geometry?.location.toJSON()
-                );
-              } else {
-                getCoordinates(place.formatted_address);
-              }
-            }
-          }
-        );
-      }
+  const handleSearch = (searchEventData: {
+    verticalKey?: string;
+    query?: string;
+  }): void => {
+    const { query } = searchEventData;
+    if (query) {
+      setInputValue(query);
+      getCoordinates(query);
+    } else {
+      setInputValue("");
+      getCoordinates("");
     }
-    return () => {
-      if (autocomplete) {
-        autocomplete.unbindAll();
-        setAutocomplete(null);
-      }
-    };
-  }, [googleLib]);
+  };
+
+  const entityPreviewSearcher = provideHeadless({
+    ...{
+      apiKey: YEXT_PUBLIC_ANSWER_SEARCH_API_KEY,
+      experienceKey: YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_KEY,
+      locale: locale,
+    },
+    headlessId: "entity-preview-searcher",
+  });
+
+  const renderEntityPreviews = (
+    autocompleteLoading: boolean,
+    verticalKeyToResults: Record<string, any>
+  ): JSX.Element | null => {
+    const locationResults = verticalKeyToResults["location"]?.results || [];
+
+    return (
+      <div className="max-h-max overflow-y-scroll sm:max-h-96 sm:shadow-2xl">
+        {renderLocationDropdown(locationResults)}
+      </div>
+    );
+  };
+
+  const renderLocationDropdown = (results: any) => {
+    if (!results || results.length === 0) return null;
+
+    return results.map((result: any) => {
+      const title = result.highlightedFields?.name ?? result.name;
+      return (
+        title &&
+        result.name && (
+          <DropdownItem value={result.name}>
+            <p className="text-black line-clamp-2">{result.name}</p>
+          </DropdownItem>
+        )
+      );
+    });
+  };
+
   console.log("inputValue", inputValue);
   return (
-    <div className="search-form">
-      <input
-        type="text"
-        ref={inputRef}
-        placeholder={"Search.."}
-        className="search-input"
-        value={inputValue}
-        onChange={(e) => {
-          setInputValue(e.target.value);
-        }}
-      />
-
-      {/* Search icon Button  */}
-      <button
-        className="button"
-        aria-label="Search bar icon"
-        id="search-location-button"
-        onClick={() => {
-          const inputElement = inputRef.current;
-          if (inputElement) {
-            const keydown = document.createEvent("HTMLEvents");
-            keydown.initEvent("keydown", true, false);
-            Object.defineProperty(keydown, "keyCode", {
-              get: function () {
-                return 13;
-              },
-            });
-            Object.defineProperty(keydown, "which", {
-              get: function () {
-                return 13;
-              },
-            });
-            inputElement.dispatchEvent(keydown);
-          }
-        }}
-      >
-        <SearchIcon />
-      </button>
-    </div>
+    <SearchBar
+      onSearch={handleSearch}
+      hideRecentSearches={false}
+      recentSearchesLimit={5}
+      customCssClasses={{
+        searchBarContainer: "search-form",
+        inputElement: "search-input",
+        searchButton: "search-location-button",
+        clearButton: "search-clear-button",
+      }}
+      visualAutocompleteConfig={{
+        entityPreviewsDebouncingTime: 300,
+        renderEntityPreviews,
+        entityPreviewSearcher,
+        includedVerticals: ["location"],
+      }}
+      placeholder="e.g, San Francisco, CA"
+    />
   );
 };
 

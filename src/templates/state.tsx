@@ -11,6 +11,8 @@ import {
 import favicon from "../assets/images/favicon.ico";
 import { EntityMeta, StateDocument, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
+import "../index.css";
+import { Link } from "@yext/pages/components";
 
 export const config: TemplateConfig = {
   stream: {
@@ -104,7 +106,7 @@ const State: Template<StateTemplateProps> = ({
   document,
   __meta,
 }: StateTemplateProps) => {
-  const { meta, _site, slug } = document;
+  const { meta, _site, slug, dm_directoryChildren } = document;
 
   return (
     <div id="main">
@@ -115,7 +117,22 @@ const State: Template<StateTemplateProps> = ({
         locale={meta.locale}
         devLink={slug}
       >
-        <div>State</div>
+        <h1>State</h1>
+
+        <div className="directory-children">
+          {dm_directoryChildren &&
+            dm_directoryChildren.map((region: any) => {
+              const url = region.slug;
+
+              return (
+                <div className="directory-children-card" key={region.slug}>
+                  <Link className="directory-children-name" href={`/${url}`}>
+                    {region.name}
+                  </Link>
+                </div>
+              );
+            })}
+        </div>
       </PageLayout>
     </div>
   );

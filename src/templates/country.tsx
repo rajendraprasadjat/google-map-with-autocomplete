@@ -12,6 +12,8 @@ import favicon from "../assets/images/favicon.ico";
 import { EntityMeta, TemplateMeta } from "../types";
 import { CountryDocument } from "../types/index";
 import PageLayout from "../components/layout/PageLayout";
+import "../index.css";
+import { Link } from "@yext/pages/components";
 
 /**
  * Required when Knowledge Graph data is used for a template.
@@ -34,10 +36,6 @@ export const config: TemplateConfig = {
       /* DM children */
       "dm_directoryChildren.name",
       "dm_directoryChildren.slug",
-
-      /* DM children->children */
-      "dm_directoryChildren.dm_directoryChildren.slug",
-      "dm_directoryChildren.dm_directoryChildren.name",
     ],
     // Defines the scope of entities that qualify for this stream.
     filter: {
@@ -117,7 +115,7 @@ const country: Template<CountryTemplateProps> = ({
   document,
   __meta,
 }: CountryTemplateProps) => {
-  const { _site, meta, slug } = document;
+  const { _site, meta, slug, dm_directoryChildren } = document;
 
   return (
     <div id="main">
@@ -128,7 +126,22 @@ const country: Template<CountryTemplateProps> = ({
         locale={meta.locale}
         devLink={slug}
       >
-        <div>Country</div>
+        <h1>Country</h1>
+
+        <div className="directory-children">
+          {dm_directoryChildren &&
+            dm_directoryChildren.map((region: any) => {
+              const url = region.slug;
+
+              return (
+                <div className="directory-children-card" key={region.slug}>
+                  <Link className="directory-children-name" href={`/${url}`}>
+                    {region.name}
+                  </Link>
+                </div>
+              );
+            })}
+        </div>
       </PageLayout>
     </div>
   );

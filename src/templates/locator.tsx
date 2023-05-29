@@ -27,6 +27,8 @@ import { TemplateMeta } from "../types";
 import { LocatorDocument } from "../types/Locator";
 import Infowindow from "../components/locator/Infowindow";
 import ViewMore from "../components/locator/ViewMore";
+import { MapboxMap } from "../components/google-map/components/MapboxMap";
+import GoogleAutoSuggestions from "../components/google-map/components/GoogleAutoSuggestions";
 
 /**
  * Not required depending on your use case.
@@ -135,6 +137,7 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
         }}
         googleApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}
         limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
+        isShowSingleAlternateResult={true}
       >
         <PageLayout
           _site={_site}
@@ -150,10 +153,15 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
                 </button>
               </div>
               <div className="map-block">
-                <GoogleMap Infowindow={Infowindow} />
+                <GoogleMap InfowindowComponent={Infowindow} _site={_site} />
+                {/* <MapboxMap
+                  mapboxAccessToken="pk.eyJ1IjoieWV4dCIsImEiOiJqNzVybUhnIn0.hTOO5A1yqfpN42-_z_GuLw"
+                  InfowindowComponent={Infowindow}
+                  _site={_site}
+                /> */}
               </div>
               <div className="listing-block">
-                <AutoSuggestions />
+                <GoogleAutoSuggestions locale={"en"} />
                 <LocationList meta={__meta} />
                 <ViewMore />
               </div>
