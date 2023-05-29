@@ -128,6 +128,8 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
       verticalSearch: YEXT_PUBLIC_VERTICAL_SEARCH_END_POINT,
     },
   });
+
+  const [isMapView, setIsMapView] = React.useState(false);
   return (
     <SearchHeadlessProvider searcher={searcher}>
       <SearchProvider
@@ -148,11 +150,15 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
           <main className="main-content">
             <section className="listing-map" id="main">
               <div className="mobile-view-map lg:hidden">
-                <button type="button" className="map-link">
-                  Show Map
+                <button
+                  type="button"
+                  className="map-link"
+                  onClick={() => setIsMapView(!isMapView)}
+                >
+                  {isMapView ? "Hide Map" : "Show Map"}
                 </button>
               </div>
-              <div className="map-block">
+              <div className={`map-block ${isMapView ? "show" : ""}`}>
                 <GoogleMap InfowindowComponent={Infowindow} _site={_site} />
                 {/* <MapboxMap
                   mapboxAccessToken="pk.eyJ1IjoieWV4dCIsImEiOiJqNzVybUhnIn0.hTOO5A1yqfpN42-_z_GuLw"

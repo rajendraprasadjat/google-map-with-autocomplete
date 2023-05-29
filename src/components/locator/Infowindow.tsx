@@ -7,6 +7,7 @@ type InfowindowProps = {
 };
 
 const Infowindow = ({ location }: InfowindowProps) => {
+  console.log(location);
   const url = location.rawData.slug;
   return (
     <div className="infowindow-content">
