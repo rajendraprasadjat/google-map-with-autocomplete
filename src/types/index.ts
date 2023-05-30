@@ -3,6 +3,8 @@ import { DirectoryParent } from "./DirectoryParent";
 import { Coordinate } from "../components/google-map/SearchProvider";
 import { AddressType } from "@yext/pages/components";
 
+export type MapTypes = "google" | "mapbox";
+export type AutocompleteTypes = "google" | "mapbox" | "yext";
 export interface SiteData {
   id: string;
   slug: string;

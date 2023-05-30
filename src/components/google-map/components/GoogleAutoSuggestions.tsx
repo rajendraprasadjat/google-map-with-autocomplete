@@ -4,12 +4,18 @@ import { SearchContext } from "../SearchProvider";
 import { SearchIcon } from "../../../assets/svgs/SvgIcons";
 
 const GoogleAutoSuggestions = () => {
-  const { getCoordinates, setInputValue, inputValue } =
-    React.useContext(SearchContext);
+  const {
+    getCoordinates,
+    setInputValue,
+    inputValue,
+    setUserLocation,
+    setIsUserLocationAllowed,
+  } = React.useContext(SearchContext);
   const googleLib = typeof google !== "undefined" ? google : null;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
+  const [isApiCalledOnEmpty, setIsApiCalledOnEmpty] = useState(false);
   useEffect(() => {
     if (
       googleLib &&
@@ -112,46 +118,98 @@ const GoogleAutoSuggestions = () => {
     };
   }, [googleLib]);
   console.log("inputValue", inputValue);
-  return (
-    <div className="search-form">
-      <input
-        type="text"
-        ref={inputRef}
-        placeholder={"Search.."}
-        className="search-input"
-        value={inputValue}
-        onChange={(e) => {
-          setInputValue(e.target.value);
-        }}
-      />
 
-      {/* Search icon Button  */}
-      <button
-        className="button"
-        aria-label="Search bar icon"
-        id="search-location-button"
-        onClick={() => {
-          const inputElement = inputRef.current;
-          if (inputElement) {
-            const keydown = document.createEvent("HTMLEvents");
-            keydown.initEvent("keydown", true, false);
-            Object.defineProperty(keydown, "keyCode", {
-              get: function () {
-                return 13;
-              },
-            });
-            Object.defineProperty(keydown, "which", {
-              get: function () {
-                return 13;
-              },
-            });
-            inputElement.dispatchEvent(keydown);
-          }
-        }}
-      >
-        <SearchIcon />
-      </button>
-    </div>
+  const onClick = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          console.log("position", position);
+          setIsUserLocationAllowed(true);
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          getCoordinates(
+            `${position.coords.latitude},${position.coords.longitude}`,
+            null,
+            true
+          );
+        },
+        (e) => {
+          console.log("e", e);
+        },
+        {
+          timeout: 10000,
+        }
+      );
+    }
+  };
+  return (
+    <>
+      <div className="use-my-location-block">
+        <button
+          className="link-button"
+          title="Search using your current location!"
+          onClick={onClick}
+        >
+          <span>{"Use my location"}</span>
+        </button>
+      </div>
+      <div className="search-form">
+        <input
+          type="text"
+          ref={inputRef}
+          placeholder={"Search.."}
+          className="search-input"
+          value={inputValue}
+          onChange={(e) => {
+            setIsApiCalledOnEmpty(false);
+            setInputValue(e.target.value);
+          }}
+          onKeyUp={(evt) => {
+            if (
+              (evt.key === "Backspace" || evt.key === "Delete") &&
+              !inputValue &&
+              !isApiCalledOnEmpty
+            ) {
+              setIsApiCalledOnEmpty(true);
+              getCoordinates("");
+            }
+
+            /* if (evt.key === "Enter" && value.length === 0) {
+              setErrorStatus(true);
+            } */
+          }}
+        />
+
+        {/* Search icon Button  */}
+        <button
+          className="search-button"
+          aria-label="Search bar icon"
+          id="search-location-button"
+          onClick={() => {
+            const inputElement = inputRef.current;
+            if (inputElement) {
+              const keydown = document.createEvent("HTMLEvents");
+              keydown.initEvent("keydown", true, false);
+              Object.defineProperty(keydown, "keyCode", {
+                get: function () {
+                  return 13;
+                },
+              });
+              Object.defineProperty(keydown, "which", {
+                get: function () {
+                  return 13;
+                },
+              });
+              inputElement.dispatchEvent(keydown);
+            }
+          }}
+        >
+          <SearchIcon />
+        </button>
+      </div>
+    </>
   );
 };
 

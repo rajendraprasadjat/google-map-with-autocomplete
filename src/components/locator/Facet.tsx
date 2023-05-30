@@ -29,8 +29,6 @@ export default function Facet(props: FacetProps): JSX.Element {
     facet,
     onToggle,
     searchable,
-    collapsible,
-    defaultExpanded,
     placeholderText = "Search here...",
   } = props;
 
@@ -52,7 +50,7 @@ export default function Facet(props: FacetProps): JSX.Element {
               : `${option?.displayName}`;
 
           return (
-            <InputBox
+            <Checkbox
               key={option.displayName}
               option={{ id: option.displayName, label: `${a}` }}
               selected={option.selected}
@@ -65,7 +63,8 @@ export default function Facet(props: FacetProps): JSX.Element {
   );
 }
 
-const InputBox = ({ option, selected, onClick }) => {
+const Checkbox = ({ option, selected, onClick }) => {
+  const [isChecked, setIsChecked] = useState(selected);
   return (
     <div className={"input-box"}>
       <input
@@ -73,7 +72,10 @@ const InputBox = ({ option, selected, onClick }) => {
         id={option.id}
         checked={selected}
         className={"facet-checkbox"}
-        onChange={(evt) => onClick(evt.target.checked)}
+        onChange={(evt) => {
+          setIsChecked(!isChecked);
+          onClick(evt.target.checked);
+        }}
       />
       <label className={"input-label"} htmlFor={option.id}>
         {option.label}

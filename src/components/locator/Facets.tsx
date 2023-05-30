@@ -2,6 +2,8 @@ import * as React from "react";
 import {
   useSearchActions,
   DisplayableFacetOption,
+  StaticFilter,
+  SelectableStaticFilter,
 } from "@yext/search-headless-react";
 import useOutsideClick from "../hooks/useOutSideClick";
 import { SearchContext } from "../google-map/SearchProvider";
@@ -14,6 +16,11 @@ interface FacetsProps {
   defaultExpanded?: boolean;
   setActiveFacet?: (index: number | null) => void;
   activeFacet?: number | null;
+}
+
+interface StaticFiltersType {
+  fieldId: string;
+  values: StaticFilter[];
 }
 
 export default function Facets(props: FacetsProps): JSX.Element {
@@ -33,21 +40,75 @@ export default function Facets(props: FacetsProps): JSX.Element {
     setActiveFacet(null);
   };
   useOutsideClick(false, ref, onOutsideClick);
-  const { facets, getSearchData, centerCoordinates, inputValue } =
-    React.useContext(SearchContext);
-
+  const {
+    facets,
+    getSearchData,
+    centerCoordinates,
+    inputValue,
+    setFacetOption,
+    resetFacets,
+  } = React.useContext(SearchContext);
+  const [staticFilters, setStaticFilters] = React.useState<StaticFiltersType[]>(
+    []
+  );
   const searchAction = useSearchActions();
-  const executeSearch = () => {
-    getSearchData(centerCoordinates, inputValue, 0, []);
-  };
+
   const handleFacetOptionChange = (
     fieldId: string,
     option: DisplayableFacetOption
   ) => {
-    searchAction.setFacetOption(fieldId, option, !option.selected);
-    if (searchOnChange) {
-      executeSearch();
+    console.log("fieldId", fieldId, option);
+    searchAction.resetFacets();
+    const staticFilter: SelectableStaticFilter[] = [];
+    let allFilters = staticFilters;
+    const currentFilter = allFilters.find((e) => e.fieldId === fieldId);
+
+    if (currentFilter) {
+      allFilters = allFilters.filter((e) => e.fieldId !== fieldId);
+      const selected = currentFilter.values.find(
+        (e) => e.value === option.value
+      );
+
+      if (selected) {
+        const filtered = currentFilter.values.filter(
+          (f) => f.value !== option.value
+        );
+
+        allFilters.push({
+          fieldId,
+          values: filtered,
+        });
+      } else {
+        allFilters.push({
+          fieldId,
+          values: [...currentFilter.values, option],
+        });
+      }
+    } else {
+      allFilters.push({
+        fieldId,
+        values: [option],
+      });
     }
+
+    allFilters.forEach((element) => {
+      if (element.fieldId) {
+        element.values.forEach((e) => {
+          const itemFilter = {
+            selected: true,
+            fieldId: element.fieldId,
+            value: e.value,
+            matcher: e.matcher,
+          };
+          console.log("itemFilter", itemFilter);
+        });
+      }
+    });
+    console.log("allFilters", allFilters, staticFilter);
+
+    setStaticFilters(allFilters);
+    setFacetOption(fieldId, option, searchOnChange ? searchOnChange : false);
+
   };
 
   const facetComponentOptions =

@@ -2,13 +2,16 @@ import * as React from "react";
 import { SearchContext } from "../google-map/SearchProvider";
 import { Address, Link } from "@yext/pages/components";
 import { LocationResult } from "../../types/Locator";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 type LocationCardProps = {
   location: LocationResult;
 };
 
 const LocationCard = ({ location }: LocationCardProps) => {
-  const { setInfoWindowContent } = React.useContext(SearchContext);
+  const { setInfoWindowContent, setHoveredLocation, hoveredLocation } =
+    React.useContext(SearchContext);
   const cartRef = React.useRef(null);
   console.log("location.rawData", location.rawData);
   const url = location.rawData.slug;
@@ -18,6 +21,12 @@ const LocationCard = ({ location }: LocationCardProps) => {
       className="location-card"
       onClick={() => {
         setInfoWindowContent(location);
+      }}
+      onMouseOver={() => setHoveredLocation(location.id)}
+      onMouseOut={() => {
+        if (hoveredLocation === location.id) {
+          setHoveredLocation(null);
+        }
       }}
     >
       <Link className="location-name" href={`/${url}`}>
@@ -31,6 +40,22 @@ const LocationCard = ({ location }: LocationCardProps) => {
       <Link className="button link" href={`/${url}`}>
         View Details
       </Link>
+    </div>
+  );
+};
+
+export const LocationCardLoader = () => {
+  return (
+    <div className="location-card">
+      <Skeleton height={25} enableAnimation />
+      <Skeleton count={3} width={"50%"} enableAnimation />
+
+      <Skeleton
+        enableAnimation
+        width={140}
+        height={40}
+        style={{ paddingTop: 20, borderRadius: 0 }}
+      />
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import defaultMarker from "../assets/images/default-marker.png";
+import hoverMarker from "../assets/images/hover-marker.png";
 import userMarker from "../assets/images/user-marker.png";
 import cluster from "../assets/images/cluster.png";
 import { LocationResult } from "../types/Locator";
@@ -187,9 +188,19 @@ export const getUserIcon = () => {
   return userMarker;
 };
 
-export const getMarkerPin = (result: any) => {
+export const getMarkerPin = (
+  result: any,
+  isActive = false,
+  isHover = false
+) => {
+  let marker = defaultMarker;
+  if (isHover) {
+    marker = hoverMarker;
+  } else if (isActive) {
+    marker = hoverMarker;
+  }
   const m_icon = {
-    url: defaultMarker,
+    url: marker,
     id: result.id,
   };
   return m_icon;

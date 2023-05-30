@@ -55,3 +55,11 @@
 .view-more-block{
     @apply text-center pt-2.5
 }
+
+.use-my-location-block {
+    @apply text-right pr-4
+}
+
+.no-record-found{
+    @apply p-2.5
+}

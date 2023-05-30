@@ -29,6 +29,9 @@ import Infowindow from "../components/locator/Infowindow";
 import ViewMore from "../components/locator/ViewMore";
 import { MapboxMap } from "../components/google-map/components/MapboxMap";
 import GoogleAutoSuggestions from "../components/google-map/components/GoogleAutoSuggestions";
+import Facets from "../components/locator/Facets";
+import ListLayout from "../components/locator/ListLayout";
+import MapWrapper from "../components/google-map/MapWrapper";
 
 /**
  * Not required depending on your use case.
@@ -137,9 +140,12 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
           latitude: parseFloat(YEXT_PUBLIC_DEFAULT_LATITUDE),
           longitude: parseFloat(YEXT_PUBLIC_DEFAULT_LONGITUDE),
         }}
+        mapboxAccessToken={YEXT_PUBLIC_MAP_BOX_API_KEY}
         googleApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}
         limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
         isShowSingleAlternateResult={true}
+        mapType="google"
+        autocompleteType="google"
       >
         <PageLayout
           _site={_site}
@@ -159,18 +165,13 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
                 </button>
               </div>
               <div className={`map-block ${isMapView ? "show" : ""}`}>
-                <GoogleMap InfowindowComponent={Infowindow} _site={_site} />
-                {/* <MapboxMap
-                  mapboxAccessToken="pk.eyJ1IjoieWV4dCIsImEiOiJqNzVybUhnIn0.hTOO5A1yqfpN42-_z_GuLw"
-                  InfowindowComponent={Infowindow}
-                  _site={_site}
-                /> */}
+                <MapWrapper _site={_site} />
               </div>
-              <div className="listing-block">
-                <GoogleAutoSuggestions locale={"en"} />
-                <LocationList meta={__meta} />
-                <ViewMore />
-              </div>
+              <ListLayout
+                showNoRecordMessage={true}
+                meta={__meta}
+                locale={YEXT_PUBLIC_DEFAULT_LOCALE}
+              />
             </section>
           </main>
         </PageLayout>
