@@ -114,7 +114,6 @@ const City: Template<CityTemplateProps> = ({
   __meta,
 }: CityTemplateProps) => {
   const { meta, _site, slug, dm_directoryChildren } = document;
-  console.log("dm_directoryChildren", dm_directoryChildren);
   return (
     <div id="main">
       <PageLayout

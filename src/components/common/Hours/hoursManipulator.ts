@@ -119,7 +119,6 @@ class HoursManipulator {
     priorDate.setDate(priorDate.getDate() - 1);
     for (const hoursDate of [priorDate, date]) {
       const hours = this.getHours(hoursDate);
-      console.log("hours", hours);
       if (hours && !hours.isClosed) {
         for (const interval of hours.openIntervals || []) {
           const hoursInterval = new HoursIntervalManipulator(
@@ -188,11 +187,7 @@ class HoursManipulator {
     if (this.isTemporarilyClosedAt(date)) {
       return null;
     }
-    console.log(
-      "hours",
-      this.transformDateToYext(date),
-      this.holidayHoursByDate
-    );
+
     return this.holidayHoursByDate[this.transformDateToYext(date)] || null;
   }
   getNormalHours(date: Date) {
@@ -202,11 +197,6 @@ class HoursManipulator {
     return this.hours[dayKeys[date.getDay()] as DayStringType];
   }
   getHours(date: Date) {
-    console.log(
-      "this.getHolidayHours",
-      this.getHolidayHours(date),
-      date.toDateString()
-    );
     return this.getHolidayHours(date) || this.getNormalHours(date);
   }
   isHoliday(date: Date) {

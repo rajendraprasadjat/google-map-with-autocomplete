@@ -14,16 +14,10 @@ type NearByprops = {
 };
 
 const NearByLocation = ({ locations, meta }: NearByprops) => {
-  console.log("locations", locations);
   return (
     <div className="nearby-locations">
       <h3 className="nearby-locations-title">Nearby Locations</h3>
-      <Swiper
-        spaceBetween={50}
-        slidesPerView={5}
-        onSlideChange={() => console.log("slide change")}
-        onSwiper={(swiper) => console.log(swiper)}
-      >
+      <Swiper spaceBetween={50} slidesPerView={5}>
         {locations.map((location) => {
           const { data } = location;
           const url = getRecursiveData(data, meta);

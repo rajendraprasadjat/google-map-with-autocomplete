@@ -74,12 +74,11 @@ const navigation = {
 };
 
 const Footer = (props: FooterProps) => {
-  // const { meta, template, devLink, locale, description } = props;
-  console.log("props", props);
+  const { meta } = props;
   return (
     <>
       <footer className="site-footer" aria-labelledby="footer-heading">
-        <h2 id="footer-heading" className="sr-only">
+        <h2 id="footer-heading" className={`sr-only ${meta.mode}`}>
           Footer
         </h2>
         <div className="container">

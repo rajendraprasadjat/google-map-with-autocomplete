@@ -4,7 +4,6 @@ import { SearchContext } from "../google-map/SearchProvider";
 function ViewMore() {
   const { pagination, getSearchData, centerCoordinates, inputValue } =
     useContext(SearchContext);
-  console.log("pagination", pagination);
   return !pagination.isLastPage ? (
     <div className="view-more-block">
       <button

@@ -17,10 +17,9 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
-  // const { meta, template, devLink, locale } = props;
-  console.log("props", props);
+  const { meta } = props;
   return (
-    <header className="site-header">
+    <header className={`site-header ${meta.mode}`}>
       <div className="container">
         <div className="row">
           <div className="logo">

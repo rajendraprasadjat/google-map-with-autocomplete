@@ -211,7 +211,7 @@ const SearchProvider = ({
   const [pagination, setPagination] = React.useState<PaginationType>({
     totalRecord: 0,
     showingCount: 0,
-    offset: 0,
+    offset: offset,
     totalPage: 0,
     currentPage: 1,
     isLastPage: true,
@@ -236,7 +236,6 @@ const SearchProvider = ({
     resultsLength: number,
     apiOffset = 0
   ) => {
-    console.log("totalRecord", totalRecord, resultsLength, offset, apiOffset);
     if (totalRecord > 0) {
       const showingCount = resultsLength + apiOffset;
       const totalPage = Math.ceil(totalRecord / limit);
@@ -371,7 +370,6 @@ const SearchProvider = ({
     coordinate: { lat: number; lng: number } | undefined | null,
     isUserLocation = false
   ) => {
-    console.log("address", address);
     if (coordinate) {
       setCenterCoordinates({
         latitude: coordinate.lat,
@@ -390,7 +388,6 @@ const SearchProvider = ({
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "OK") {
-            console.log("data", data);
             const response = data.results.length > 0 ? data.results[0] : null;
             if (response) {
               const latitude = response.geometry.location.lat;
@@ -486,7 +483,6 @@ const SearchProvider = ({
     noRecordFound,
   };
 
-  console.log("pagination", pagination);
   return (
     <SearchContext.Provider value={data}>
       {mapType === "google" || autocompleteType === "google" ? (

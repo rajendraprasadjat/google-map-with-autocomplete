@@ -17,7 +17,6 @@ const LocationCard = ({ location }: LocationCardProps) => {
     hoveredLocation,
   } = React.useContext(SearchContext);
   const cardRef = React.useRef<HTMLDivElement>(null);
-  console.log("location.rawData", location.rawData);
   const url = location.rawData.slug;
 
   React.useEffect(() => {

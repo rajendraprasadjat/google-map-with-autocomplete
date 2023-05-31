@@ -4,8 +4,7 @@ import { provideHeadless } from "@yext/search-headless";
 import { SearchBar } from "@yext/search-ui-react";
 
 const YextAutoSuggestions = ({ locale }) => {
-  const { getCoordinates, setInputValue, inputValue } =
-    React.useContext(SearchContext);
+  const { getCoordinates, setInputValue } = React.useContext(SearchContext);
 
   const handleSearch = (searchEventData: {
     verticalKey?: string;
@@ -55,7 +54,6 @@ const YextAutoSuggestions = ({ locale }) => {
     });
   };
 
-  console.log("inputValue", inputValue);
   return (
     <SearchBar
       onSearch={handleSearch}
