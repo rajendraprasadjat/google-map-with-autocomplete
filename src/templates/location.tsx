@@ -140,7 +140,6 @@ const Location: Template<LocationTemplateProps> = ({
   breadcrumbs,
 }) => {
   const { meta, _site, slug } = document;
-
   return (
     <div id="main">
       <AnalyticsProvider
@@ -157,7 +156,7 @@ const Location: Template<LocationTemplateProps> = ({
             devLink={slug}
           >
             <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
-            <Information document={document} />
+            <Information document={document} _site={_site} />
 
             <NearByLocation locations={externalApiData} meta={__meta} />
           </PageLayout>

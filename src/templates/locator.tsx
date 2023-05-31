@@ -20,13 +20,10 @@ import {
   provideHeadless,
 } from "@yext/search-headless-react";
 import SearchProvider from "../components/google-map/SearchProvider";
-import AutoSuggestions from "../components/google-map/components/AutoSuggestions";
-import LocationList from "../components/locator/LocationList";
-import GoogleMap from "../components/google-map/components/GoogleMaps";
 import { TemplateMeta } from "../types";
 import { LocatorDocument } from "../types/Locator";
-import Infowindow from "../components/locator/Infowindow";
-import ViewMore from "../components/locator/ViewMore";
+import ListLayout from "../components/locator/ListLayout";
+import MapWrapper from "../components/google-map/MapWrapper";
 
 /**
  * Not required depending on your use case.
@@ -135,8 +132,12 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
           latitude: parseFloat(YEXT_PUBLIC_DEFAULT_LATITUDE),
           longitude: parseFloat(YEXT_PUBLIC_DEFAULT_LONGITUDE),
         }}
+        mapboxAccessToken={YEXT_PUBLIC_MAP_BOX_API_KEY}
         googleApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}
         limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
+        isShowSingleAlternateResult={true}
+        mapType="google"
+        autocompleteType="google"
       >
         <PageLayout
           _site={_site}
@@ -156,13 +157,13 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
                 </button>
               </div>
               <div className={`map-block ${isMapView ? "show" : ""}`}>
-                <GoogleMap Infowindow={Infowindow} />
+                <MapWrapper _site={_site} />
               </div>
-              <div className="listing-block">
-                <AutoSuggestions />
-                <LocationList meta={__meta} />
-                <ViewMore />
-              </div>
+              <ListLayout
+                showNoRecordMessage={true}
+                meta={__meta}
+                locale={YEXT_PUBLIC_DEFAULT_LOCALE}
+              />
             </section>
           </main>
         </PageLayout>

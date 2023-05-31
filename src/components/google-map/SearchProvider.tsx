@@ -3,14 +3,18 @@ import { createContext } from "react";
 import {
   DisplayableFacet,
   Facet,
+  FacetOption,
   Matcher,
   SelectableStaticFilter,
+  SortBy,
   useSearchActions,
 } from "@yext/search-headless-react";
-import GoogleMapWrapper, { Libraries } from "./GoogleMapWrapper";
+import { Libraries } from "./MapWrapper";
 import { string, array, node, object, number } from "prop-types";
 import { getPosition } from "../../config/GlobalFunctions";
 import { LocationResult } from "../../types/Locator";
+import { Wrapper } from "@googlemaps/react-wrapper";
+import { AutocompleteTypes, MapTypes } from "../../types";
 
 export type PaginationType = {
   totalRecord: number;
@@ -30,7 +34,8 @@ export type Coordinate = {
 interface ContextType {
   getCoordinates: (
     address: string,
-    coordinate?: { lat: number; lng: number }
+    coordinate?: { lat: number; lng: number } | null,
+    isUserLocation?: boolean
   ) => void;
   centerCoordinates: Coordinate;
   pagination: PaginationType;
@@ -57,6 +62,23 @@ interface ContextType {
   setMapCenter: (value: google.maps.LatLngLiteral | null) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
+  isUserLocationAllowed: boolean;
+  setIsUserLocationAllowed: (value: boolean) => void;
+  setFacetOption: (
+    fieldId: string,
+    option: FacetOption,
+    searchOnChange: boolean
+  ) => void;
+  resetFacets: () => void;
+  setSortBy: (sortBy: SortBy[]) => void;
+  mapType: MapTypes;
+  autocompleteType: AutocompleteTypes;
+  isFilterEnable: boolean;
+  isUpdateListAccordingMarkers: boolean;
+  mapboxAccessToken: string;
+  hoveredLocation: string | null;
+  setHoveredLocation: (value: string | null) => void;
+  noRecordFound: boolean;
 }
 
 export const SearchContext = createContext<ContextType>({
@@ -108,6 +130,29 @@ export const SearchContext = createContext<ContextType>({
   setInputValue: function (): void {
     throw new Error("Function not implemented.");
   },
+  isUserLocationAllowed: false,
+  setIsUserLocationAllowed: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  setFacetOption: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  resetFacets: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  setSortBy: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  mapType: "google",
+  autocompleteType: "google",
+  isFilterEnable: false,
+  isUpdateListAccordingMarkers: false,
+  mapboxAccessToken: "",
+  hoveredLocation: null,
+  setHoveredLocation: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  noRecordFound: false,
 });
 
 interface SearchProviderProps {
@@ -120,8 +165,18 @@ interface SearchProviderProps {
   isUseAlternateResult?: boolean;
   isShowSingleAlternateResult?: boolean;
   radius?: number;
+  mapType?: MapTypes;
+  autocompleteType?: AutocompleteTypes;
+  mapboxAccessToken?: string;
+  isFilterEnable?: boolean;
+  isUpdateListAccordingMarkers?: boolean;
 }
-
+/**
+ * This provider used for search action by yext search action
+ * We used google map and map box for showing result into map
+ * @param param0
+ * @returns
+ */
 const SearchProvider = ({
   children,
   defaultCoordinates,
@@ -132,8 +187,13 @@ const SearchProvider = ({
   isUseAlternateResult = false,
   isShowSingleAlternateResult = false,
   radius = 0,
+  mapType = "google",
+  autocompleteType = "google",
+  mapboxAccessToken = "",
+  isFilterEnable = false,
+  isUpdateListAccordingMarkers = false,
 }: SearchProviderProps) => {
-  const searchActions = useSearchActions();
+  const searchAction = useSearchActions();
   const [inputValue, setInputValue] = React.useState("");
   const [zoomLavel, setZoomLavel] = React.useState(4);
   const [mapCenter, setMapCenter] =
@@ -141,9 +201,12 @@ const SearchProvider = ({
   const [centerCoordinates, setCenterCoordinates] =
     React.useState(defaultCoordinates);
   const [userLocation, setUserLocation] = React.useState(defaultCoordinates);
+  const [isUserLocationAllowed, setIsUserLocationAllowed] =
+    React.useState(false);
   const [locations, setLocations] = React.useState<LocationResult[]>([]);
   const [facets, setFacets] = React.useState<DisplayableFacet[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [noRecordFound, setNoRecordFound] = React.useState<boolean>(false);
   const [offset, setOffset] = React.useState<number>(0);
   const [pagination, setPagination] = React.useState<PaginationType>({
     totalRecord: 0,
@@ -163,6 +226,10 @@ const SearchProvider = ({
 
   const [infoWindowContent, setInfoWindowContent] =
     React.useState<LocationResult | null>(null);
+
+  const [hoveredLocation, setHoveredLocation] = React.useState<string | null>(
+    null
+  );
 
   const setPagingData = (
     totalRecord: number,
@@ -190,6 +257,25 @@ const SearchProvider = ({
     }
   };
 
+  const setFacetOption = (
+    fieldId: string,
+    option: FacetOption,
+    searchOnChange = false
+  ) => {
+    searchAction.setFacetOption(fieldId, option, !option.selected);
+    if (searchOnChange) {
+      getSearchData(centerCoordinates, inputValue, 0, []);
+    }
+  };
+
+  const resetFacets = () => {
+    searchAction.resetFacets();
+  };
+
+  const setSortBy = (sortBy: SortBy[]) => {
+    searchAction.setSortBys(sortBy);
+  };
+
   const getSearchData = (
     location: Coordinate | null,
     address: string | null,
@@ -197,14 +283,16 @@ const SearchProvider = ({
     staticFilter: SelectableStaticFilter[]
     // allowEmptySearch = false
   ) => {
+    setNoRecordFound(false);
     setIsLoading(true);
     if (location !== null) {
-      searchActions.setUserLocation(location);
+      searchAction.setUserLocation(location);
     }
-    searchActions.setOffset(apiOffset);
-    searchActions.setVerticalLimit(limit);
+    searchAction.setOffset(apiOffset);
+
+    searchAction.setVerticalLimit(limit);
     if (address !== null) {
-      searchActions.setQuery(address);
+      searchAction.setQuery(address);
     }
 
     if (radius && location) {
@@ -225,10 +313,11 @@ const SearchProvider = ({
     }
 
     if (staticFilter) {
-      searchActions.setStaticFilters(staticFilter);
+      searchAction.setStaticFilters(staticFilter);
     }
 
     if (apiOffset === 0) {
+      setInfoWindowContent(null);
       setLocations([]);
       setOffset(0);
       setPagination({
@@ -242,7 +331,7 @@ const SearchProvider = ({
       });
     }
 
-    searchActions.executeVerticalQuery().then((response) => {
+    searchAction.executeVerticalQuery().then((response) => {
       setFacets(response?.facets || []);
       if (
         response?.verticalResults.results &&
@@ -266,6 +355,7 @@ const SearchProvider = ({
       ) {
         const result = response?.allResultsForVertical?.verticalResults
           .results as unknown as LocationResult[];
+        setNoRecordFound(true);
         if (isShowSingleAlternateResult) {
           setLocations(result.filter((_e, index: number) => index === 0));
         } else if (isUseAlternateResult) {
@@ -278,7 +368,8 @@ const SearchProvider = ({
 
   const getCoordinates = (
     address: string,
-    coordinate: { lat: number; lng: number } | undefined
+    coordinate: { lat: number; lng: number } | undefined | null,
+    isUserLocation = false
   ) => {
     console.log("address", address);
     if (coordinate) {
@@ -300,16 +391,31 @@ const SearchProvider = ({
         .then((data) => {
           if (data.status === "OK") {
             console.log("data", data);
-            data.results.map(
-              (res: {
-                geometry: { location: { lat: number; lng: number } };
-              }) => {
-                const latitude = res.geometry.location.lat;
-                const longitude = res.geometry.location.lng;
-                setCenterCoordinates({ latitude, longitude });
+            const response = data.results.length > 0 ? data.results[0] : null;
+            if (response) {
+              const latitude = response.geometry.location.lat;
+              const longitude = response.geometry.location.lng;
+              setCenterCoordinates({ latitude, longitude });
+              if (isUserLocation) {
+                getSearchData(
+                  { latitude, longitude },
+                  response.formatted_address,
+                  0,
+                  []
+                );
+                setInputValue(response.formatted_address);
+              } else {
                 getSearchData({ latitude, longitude }, address, 0, []);
               }
-            );
+            } else {
+              setCenterCoordinates(defaultCoordinates);
+              getSearchData(
+                defaultCoordinates,
+                isUserLocation ? "" : address,
+                0,
+                []
+              );
+            }
           } else {
             setCenterCoordinates(defaultCoordinates);
             getSearchData(defaultCoordinates, address, 0, []);
@@ -319,7 +425,7 @@ const SearchProvider = ({
   };
 
   const updateViewportLocations = (map: google.maps.Map) => {
-    if (map) {
+    if (map && isUpdateListAccordingMarkers) {
       const bounds = map ? map.getBounds() : null;
       if (bounds) {
         const result = locations.filter((e) => {
@@ -365,18 +471,35 @@ const SearchProvider = ({
     setMapCenter,
     inputValue,
     setInputValue,
+    isUserLocationAllowed,
+    setIsUserLocationAllowed,
+    setFacetOption,
+    resetFacets,
+    setSortBy,
+    mapType,
+    mapboxAccessToken,
+    autocompleteType,
+    isFilterEnable,
+    isUpdateListAccordingMarkers,
+    hoveredLocation,
+    setHoveredLocation,
+    noRecordFound,
   };
 
   console.log("pagination", pagination);
   return (
     <SearchContext.Provider value={data}>
-      <GoogleMapWrapper
-        apiKey={googleApiKey}
-        language={language}
-        libraries={libraries}
-      >
-        {children}
-      </GoogleMapWrapper>
+      {mapType === "google" || autocompleteType === "google" ? (
+        <Wrapper
+          apiKey={googleApiKey}
+          language={language}
+          libraries={libraries}
+        >
+          {children}
+        </Wrapper>
+      ) : (
+        children
+      )}
     </SearchContext.Provider>
   );
 };

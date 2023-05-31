@@ -11,6 +11,8 @@ import {
 import favicon from "../assets/images/favicon.ico";
 import { CityDocument, EntityMeta, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
+import "../index.css";
+import { Address, Link } from "@yext/pages/components";
 
 export const config: TemplateConfig = {
   stream: {
@@ -36,6 +38,10 @@ export const config: TemplateConfig = {
       "dm_directoryChildren.name",
       "dm_directoryChildren.meta.entityType",
       "dm_directoryChildren.slug",
+      "dm_directoryChildren.hours",
+      "dm_directoryChildren.address",
+      "dm_directoryChildren.id",
+      "dm_directoryChildren.yextDisplayCoordinate",
     ],
     localization: {
       locales: ["en_GB"],
@@ -107,8 +113,8 @@ const City: Template<CityTemplateProps> = ({
   document,
   __meta,
 }: CityTemplateProps) => {
-  const { meta, _site, slug } = document;
-
+  const { meta, _site, slug, dm_directoryChildren } = document;
+  console.log("dm_directoryChildren", dm_directoryChildren);
   return (
     <div id="main">
       <PageLayout
@@ -118,7 +124,30 @@ const City: Template<CityTemplateProps> = ({
         locale={meta.locale}
         devLink={slug}
       >
-        <div>City</div>
+        <h1>City</h1>
+        <h3>Locations</h3>
+        <div className="city-locations">
+          {dm_directoryChildren &&
+            dm_directoryChildren.map((location: any) => {
+              const url = location.slug;
+
+              return (
+                <div className="location-card" key={location.id}>
+                  <Link className="location-name" href={`/${url}`}>
+                    {location.name}
+                  </Link>
+                  <Address
+                    className="location-address"
+                    address={location.address}
+                  />
+
+                  <Link className="button link" href={`/${url}`}>
+                    View Details
+                  </Link>
+                </div>
+              );
+            })}
+        </div>
       </PageLayout>
     </div>
   );

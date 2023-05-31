@@ -66,7 +66,11 @@ function defaultIntervalStringsBuilder(dayData, timeOptions) {
     dayData.intervals.forEach((interval) => {
       const startTime = interval.getStartTime("en-US", timeOptions);
       const endTime = interval.getEndTime("en-US", timeOptions);
-      intervalStrings.push(`${startTime} - ${endTime}`);
+      intervalStrings.push(
+        <>
+          <span>{startTime}</span>-<span>{endTime}</span>
+        </>
+      );
     });
   }
   return intervalStrings;

@@ -1,55 +1,102 @@
+import { Hours, Interval } from "@yext/search-core";
+
 const dayKeys = [
   "sunday",
   "monday",
   "tuesday",
   "wednesday",
   "thursday",
-  "friday"
+  "friday",
+  "saturday",
 ];
+
+type DayStringType =
+  | "sunday"
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday";
 class HoursIntervalManipulator {
+  date;
   end;
   start;
-  constructor(date, interval) {
+  hours;
+  interval;
+  constructor(date: Date, interval: Interval, hours: Hours) {
+    this.date = date;
     this.end = new Date(date);
     this.start = new Date(date);
-    [interval.start, interval.end].forEach((time) => {
-      if (time.split(":").length != 2) {
+    this.hours = hours;
+    this.interval = interval;
+    [(interval.start, interval.end)].forEach((time) => {
+      if (time && time.split(":").length != 2) {
         throw new Error(
           `expected interval start and end data to be in the format "HH:MM"`
         );
       }
     });
-    const [startHour, startMinute] = interval.start.split(":");
-    const [endHour, endMinute] = interval.end.split(":");
-    this.end.setHours(Number(endHour), Number(endMinute));
-    this.start.setHours(Number(startHour), Number(startMinute));
-    if (this.end < this.start) {
-      this.end.setDate(this.end.getDate() + 1);
-    }
-    if (this.end.getMinutes() === 59) {
-      this.end.setMinutes(60);
+    if (interval.start && interval.end) {
+      const [startHour, startMinute] = interval.start.split(":");
+      const [endHour, endMinute] = interval.end.split(":");
+      this.end.setHours(Number(endHour), Number(endMinute));
+      this.start.setHours(Number(startHour), Number(startMinute));
+      if (this.end < this.start) {
+        this.end.setDate(this.end.getDate() + 1);
+      }
+      if (this.end.getMinutes() === 59) {
+        this.end.setMinutes(60);
+      }
     }
   }
-  contains(date) {
+  isOpened() {
+    const now = new Date();
+    if (this.start.toLocaleDateString() === now.toLocaleDateString()) {
+      if (
+        this.start.getTime() <= now.getTime() &&
+        this.end.getTime() >= now.getTime()
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (this.interval) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  contains(date: Date) {
     return this.start <= date && date < this.end;
   }
-  getStartTime(locale, opts) {
-    const timeOptions = {
+  getWeekDay() {
+    const now = new Date();
+    const today = now.getDay();
+    const day = this.date.getDay();
+    if (day - today === 1) {
+      return "Tomorrow";
+    } else if (day - today === 0) {
+      return "";
+    }
+    return dayKeys[day];
+  }
+  getStartTime(locale = "") {
+    return this.start.toLocaleString(locale || "en-US", {
       hour: "numeric",
       minute: "numeric",
-      ...opts
-    };
-    return this.start.toLocaleString(locale || "en-US", timeOptions);
+    });
   }
-  getEndTime(locale, opts) {
-    const timeOptions = {
+  getEndTime(locale = "") {
+    return this.end.toLocaleString(locale || "en-US", {
       hour: "numeric",
       minute: "numeric",
-      ...opts
-    };
-    return this.end.toLocaleString(locale || "en-US", timeOptions);
+    });
   }
-  timeIsEqualTo(other) {
+  timeIsEqualTo(other: {
+    getStartTime: () => string;
+    getEndTime: () => string;
+  }) {
     const startEqual = this.getStartTime() === other.getStartTime();
     const endEqual = this.getEndTime() === other.getEndTime();
     return startEqual && endEqual;
@@ -57,14 +104,14 @@ class HoursIntervalManipulator {
 }
 class HoursManipulator {
   holidayHoursByDate;
-  hours;
-  constructor(hours) {
+  hours: Hours;
+  constructor(hours: Hours) {
     this.holidayHoursByDate = Object.fromEntries(
       (hours.holidayHours || []).map((hours2) => [hours2.date, hours2])
     );
     this.hours = hours;
   }
-  getInterval(date) {
+  getInterval(date: Date) {
     if (this.isTemporarilyClosedAt(date)) {
       return null;
     }
@@ -72,11 +119,13 @@ class HoursManipulator {
     priorDate.setDate(priorDate.getDate() - 1);
     for (const hoursDate of [priorDate, date]) {
       const hours = this.getHours(hoursDate);
+      console.log("hours", hours);
       if (hours && !hours.isClosed) {
         for (const interval of hours.openIntervals || []) {
           const hoursInterval = new HoursIntervalManipulator(
             hoursDate,
-            interval
+            interval,
+            this.hours
           );
           if (hoursInterval.contains(date)) {
             return hoursInterval;
@@ -89,11 +138,10 @@ class HoursManipulator {
   getCurrentInterval() {
     return this.getInterval(new Date());
   }
-  getIntervalAfter(date) {
+  getIntervalAfter(date: Date) {
     const intervalsList = this.getIntervalsForNDays(7, date);
-    const sortFn = (interval1, interval2) => {
-      if (interval1.start === interval2.start)
-        return 0;
+    const sortFn = (interval1: any, interval2: any) => {
+      if (interval1.start === interval2.start) return 0;
       return interval1.start > interval2.start ? 1 : -1;
     };
     const sortedIntervals = intervalsList.sort(sortFn);
@@ -114,41 +162,57 @@ class HoursManipulator {
   getNextInterval() {
     return this.getIntervalAfter(new Date());
   }
-  getIntervalsForNDays(n, startDate) {
+  getIntervalsForNDays(n: number, startDate: string | number | Date) {
     const intervalsList = [];
     for (let i = 0; i < n; i++) {
       const theDate = new Date(startDate);
       theDate.setDate(theDate.getDate() + i);
       const hours = this.getHours(theDate);
-      if (hours && !hours.isClosed) {
+      if (hours && !hours.isClosed && hours.openIntervals) {
         intervalsList.push(
-          ...hours.openIntervals.map(
-            (interval) => new HoursIntervalManipulator(theDate, interval)
-          )
+          ...hours.openIntervals.map((interval: Interval) => {
+            const i = new HoursIntervalManipulator(
+              theDate,
+              interval,
+              this.hours
+            );
+
+            return i;
+          })
         );
       }
     }
     return intervalsList;
   }
-  getHolidayHours(date) {
+  getHolidayHours(date: Date) {
     if (this.isTemporarilyClosedAt(date)) {
       return null;
     }
+    console.log(
+      "hours",
+      this.transformDateToYext(date),
+      this.holidayHoursByDate
+    );
     return this.holidayHoursByDate[this.transformDateToYext(date)] || null;
   }
-  getNormalHours(date) {
+  getNormalHours(date: Date) {
     if (this.isTemporarilyClosedAt(date)) {
       return null;
     }
-    return this.hours[dayKeys[date.getDay()]];
+    return this.hours[dayKeys[date.getDay()] as DayStringType];
   }
-  getHours(date) {
+  getHours(date: Date) {
+    console.log(
+      "this.getHolidayHours",
+      this.getHolidayHours(date),
+      date.toDateString()
+    );
     return this.getHolidayHours(date) || this.getNormalHours(date);
   }
-  isHoliday(date) {
+  isHoliday(date: Date) {
     return !!this.getHolidayHours(date);
   }
-  isTemporarilyClosedAt(targetDate) {
+  isTemporarilyClosedAt(targetDate: Date) {
     if (!this.hours.reopenDate) {
       return false;
     }
@@ -157,7 +221,7 @@ class HoursManipulator {
     }
     return false;
   }
-  isOpenAt(date) {
+  isOpenAt(date: Date) {
     if (this.isTemporarilyClosedAt(date)) {
       return false;
     }
@@ -166,19 +230,20 @@ class HoursManipulator {
   isOpenNow() {
     return this.isOpenAt(new Date());
   }
-  transformDateToYext(date) {
+  transformDateToYext(date: Date) {
     const [year, month, day] = date.toISOString().split("T")[0].split("-");
-    const zeroBasedMonth = Number(month) - 1;
-    const monthZeroBased = zeroBasedMonth < 10 ? "0" + zeroBasedMonth : zeroBasedMonth.toString();
+    const zeroBasedMonth = Number(month);
+    const monthZeroBased =
+      zeroBasedMonth < 10 ? "0" + zeroBasedMonth : zeroBasedMonth.toString();
     return `${year}-${monthZeroBased}-${day}`;
   }
 }
-function arrayShift(arr, n) {
+function arrayShift(arr: number[], n: number) {
   const myArr = [...arr];
   n = n % myArr.length;
   return myArr.concat(myArr.splice(0, myArr.length - n));
 }
-function intervalsListsAreEqual(il1, il2) {
+function intervalsListsAreEqual(il1: any, il2: any) {
   if (il1.length != il2.length) {
     return false;
   }
@@ -193,5 +258,5 @@ export {
   HoursIntervalManipulator,
   HoursManipulator,
   arrayShift,
-  intervalsListsAreEqual
+  intervalsListsAreEqual,
 };

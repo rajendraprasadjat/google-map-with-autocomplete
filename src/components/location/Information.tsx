@@ -1,45 +1,58 @@
 import * as React from "react";
 import { Address } from "@yext/pages/components";
-import { LocationDocument } from "../../types";
+import { LocationDocument, SiteData } from "../../types";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Hours } from "../common/Hours/Hours";
+import HolidayHour from "./HolidayHour";
+import OpenCloseStatus from "../common/OpenCloseStatus";
 
 type InformationProps = {
   document: LocationDocument;
+  _site: SiteData;
 };
 
-const Information = (props: InformationProps) => {
-  const location = props.document;
-  console.log("location", location);
+const Information = ({ document, _site }: InformationProps) => {
   const getPosition = (location: LocationDocument) => {
     const lat = location.yextDisplayCoordinate.latitude;
     const lng = location.yextDisplayCoordinate.longitude;
     return { lat, lng };
   };
-  console.log("location.hours", location.hours);
-  const coordinates = getPosition(location);
+  console.log("location.hours", document.hours);
+  const coordinates = getPosition(document);
   return (
     <div className="location-detail-sec">
       <div className="container-lg">
         <div className="boxes">
           <div className="box store-info">
             <div className="inner-box">
-              <h4 className="box-title">{location?.name}</h4>
+              <h4 className="box-title">{document?.name}</h4>
               <div className="address-innerbx">
                 <div className="address-left">
-                  <Address address={location.address} />
+                  <Address address={document.address} />
                 </div>
               </div>
             </div>
           </div>
 
-          {location.hours && (
+          {document.hours && (
             <div className="box timing">
               <div className="inner-box">
-                <h4 className="box-title">{location?.name}</h4>
+                <div className="open-close">
+                  <OpenCloseStatus
+                    hours={document.hours}
+                    site={_site}
+                    timezone={YEXT_PUBLIC_TIME_ZONE}
+                  />
+                </div>
+                <div className="holiday-hours">
+                  <HolidayHour
+                    hours={document.hours.holidayHours}
+                    site={_site}
+                  />
+                </div>
                 <div className="daylist">
                   <Hours
-                    hours={location.hours}
+                    hours={document.hours}
                     showHeader={true}
                     startOfWeek="today"
                   />
