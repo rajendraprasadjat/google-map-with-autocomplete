@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Address } from "@yext/pages/components";
+import { Address, Link } from "@yext/pages/components";
 import { LocationDocument, SiteData } from "../../types";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Hours } from "../common/Hours/Hours";
 import HolidayHour from "./HolidayHour";
 import OpenCloseStatus from "../common/OpenCloseStatus";
+import { getDirectionUrl } from "../../config/GlobalFunctions";
 
 type InformationProps = {
   document: LocationDocument;
@@ -30,6 +31,12 @@ const Information = ({ document, _site }: InformationProps) => {
                   <Address address={document.address} />
                 </div>
               </div>
+              <Link
+                className="button link"
+                href={getDirectionUrl(document.address, document.googlePlaceId)}
+              >
+                Get Direction
+              </Link>
             </div>
           </div>
 

@@ -37,6 +37,7 @@ export const config: TemplateConfig = {
       "slug",
       "address",
       "hours",
+      "googlePlaceId",
       "yextDisplayCoordinate",
       "dm_directoryParents.name",
       "dm_directoryParents.slug",

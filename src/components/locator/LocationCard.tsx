@@ -4,6 +4,7 @@ import { Address, Link } from "@yext/pages/components";
 import { LocationResult } from "../../types/Locator";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { getDirectionUrl } from "../../config/GlobalFunctions";
 
 type LocationCardProps = {
   location: LocationResult;
@@ -53,6 +54,15 @@ const LocationCard = ({ location }: LocationCardProps) => {
 
       <Link className="button link" href={`/${url}`}>
         View Details
+      </Link>
+      <Link
+        className="button link"
+        href={getDirectionUrl(
+          location.rawData.address,
+          location.rawData.googlePlaceId
+        )}
+      >
+        Get Direction
       </Link>
     </div>
   );
