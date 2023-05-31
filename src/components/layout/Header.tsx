@@ -9,7 +9,7 @@ const navigation = [
 ];
 
 interface HeaderProps {
-  _site: SiteData;
+  _site?: SiteData;
   meta: TemplateMeta;
   template?: string;
   devLink?: string;

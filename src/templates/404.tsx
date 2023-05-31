@@ -40,10 +40,10 @@ export const getHeadConfig: GetHeadConfig<
   };
 };
 
-const FourOhFour: Template<TemplateRenderProps> = () => {
+const FourOhFour: Template<TemplateRenderProps> = ({ __meta, document }) => {
   return (
     <>
-      <PageLayout>
+      <PageLayout _site={document._site} meta={__meta}>
         <div className="centered-container">
           <div className="flex justify-center items-center text-2xl bg-gray-200 h-60 rounded-md shadow-md">
             <p>This page does not exist.</p>
