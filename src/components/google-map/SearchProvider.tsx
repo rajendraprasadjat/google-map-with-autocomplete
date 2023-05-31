@@ -9,7 +9,7 @@ import {
   SortBy,
   useSearchActions,
 } from "@yext/search-headless-react";
-import GoogleMapWrapper, { Libraries } from "./MapWrapper";
+import { Libraries } from "./MapWrapper";
 import { string, array, node, object, number } from "prop-types";
 import { getPosition } from "../../config/GlobalFunctions";
 import { LocationResult } from "../../types/Locator";
@@ -171,7 +171,12 @@ interface SearchProviderProps {
   isFilterEnable?: boolean;
   isUpdateListAccordingMarkers?: boolean;
 }
-
+/**
+ * This provider used for search action by yext search action
+ * We used google map and map box for showing result into map
+ * @param param0
+ * @returns
+ */
 const SearchProvider = ({
   children,
   defaultCoordinates,

@@ -26,9 +26,6 @@ interface StaticFiltersType {
 export default function Facets(props: FacetsProps): JSX.Element {
   const {
     searchOnChange,
-    searchable,
-    collapsible,
-    defaultExpanded,
     setActiveFacet = () => {
       ("");
     },
@@ -40,14 +37,7 @@ export default function Facets(props: FacetsProps): JSX.Element {
     setActiveFacet(null);
   };
   useOutsideClick(false, ref, onOutsideClick);
-  const {
-    facets,
-    getSearchData,
-    centerCoordinates,
-    inputValue,
-    setFacetOption,
-    resetFacets,
-  } = React.useContext(SearchContext);
+  const { facets, setFacetOption } = React.useContext(SearchContext);
   const [staticFilters, setStaticFilters] = React.useState<StaticFiltersType[]>(
     []
   );
@@ -108,7 +98,6 @@ export default function Facets(props: FacetsProps): JSX.Element {
 
     setStaticFilters(allFilters);
     setFacetOption(fieldId, option, searchOnChange ? searchOnChange : false);
-
   };
 
   const facetComponentOptions =

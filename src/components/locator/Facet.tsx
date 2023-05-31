@@ -1,5 +1,4 @@
 import {
-  useSearchUtilities,
   DisplayableFacet,
   DisplayableFacetOption,
 } from "@yext/search-headless-react";
@@ -25,20 +24,8 @@ interface FacetProps extends FacetConfig {
 }
 
 export default function Facet(props: FacetProps): JSX.Element {
-  const {
-    facet,
-    onToggle,
-    searchable,
-    placeholderText = "Search here...",
-  } = props;
-
-  const answersUtilities = useSearchUtilities();
-  const hasSelectedFacet = !!facet.options.find((o) => o.selected);
-  const [filterValue, setFilterValue] = useState("");
-
-  const facetOptions = searchable
-    ? answersUtilities.searchThroughFacet(facet, filterValue).options
-    : facet.options;
+  const { facet, onToggle } = props;
+  const facetOptions = facet.options;
 
   return (
     <div className="facet-block">

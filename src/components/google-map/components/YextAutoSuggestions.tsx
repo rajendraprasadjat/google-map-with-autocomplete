@@ -1,9 +1,7 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
 import { SearchContext } from "../SearchProvider";
-import { SearchIcon } from "../../../assets/svgs/SvgIcons";
-import { onSearchFunc, SearchBar, DropdownItem } from "@yext/search-ui-react";
 import { provideHeadless } from "@yext/search-headless";
+import { SearchBar } from "@yext/search-ui-react";
 
 const YextAutoSuggestions = ({ locale }) => {
   const { getCoordinates, setInputValue, inputValue } =
@@ -52,11 +50,7 @@ const YextAutoSuggestions = ({ locale }) => {
       const title = result.highlightedFields?.name ?? result.name;
       return (
         title &&
-        result.name && (
-          <DropdownItem value={result.name}>
-            <p className="text-black line-clamp-2">{result.name}</p>
-          </DropdownItem>
-        )
+        result.name && <p className="text-black line-clamp-2">{result.name}</p>
       );
     });
   };

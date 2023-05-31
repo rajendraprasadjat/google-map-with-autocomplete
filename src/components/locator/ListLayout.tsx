@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import GoogleAutoSuggestions from "../google-map/components/GoogleAutoSuggestions";
 import LocationList from "./LocationList";
 import ViewMore from "./ViewMore";
 import Facets from "./Facets";

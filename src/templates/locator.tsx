@@ -20,16 +20,8 @@ import {
   provideHeadless,
 } from "@yext/search-headless-react";
 import SearchProvider from "../components/google-map/SearchProvider";
-import AutoSuggestions from "../components/google-map/components/AutoSuggestions";
-import LocationList from "../components/locator/LocationList";
-import GoogleMap from "../components/google-map/components/GoogleMaps";
 import { TemplateMeta } from "../types";
 import { LocatorDocument } from "../types/Locator";
-import Infowindow from "../components/locator/Infowindow";
-import ViewMore from "../components/locator/ViewMore";
-import { MapboxMap } from "../components/google-map/components/MapboxMap";
-import GoogleAutoSuggestions from "../components/google-map/components/GoogleAutoSuggestions";
-import Facets from "../components/locator/Facets";
 import ListLayout from "../components/locator/ListLayout";
 import MapWrapper from "../components/google-map/MapWrapper";
 

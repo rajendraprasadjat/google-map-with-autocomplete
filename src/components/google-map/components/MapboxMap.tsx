@@ -174,14 +174,6 @@ export function MapboxMap({
   );
 }
 
-function scrollToRow(index: number) {
-  const offset: HTMLElement = [].slice.call(
-    document.querySelectorAll(`.result`) || []
-  )[index];
-  document.documentElement.scrollTop = document.body.scrollTop =
-    offset.offsetTop - 100;
-}
-
 export const clusterLayer: LayerProps = {
   id: "clusters",
   type: "circle",

@@ -1,4 +1,3 @@
-import { Wrapper } from "@googlemaps/react-wrapper";
 import * as React from "react";
 import { SearchContext } from "./SearchProvider";
 import GoogleMap from "./components/GoogleMaps";

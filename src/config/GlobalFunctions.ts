@@ -5,6 +5,8 @@ import cluster from "../assets/images/cluster.png";
 import { LocationResult } from "../types/Locator";
 import { TemplateMeta } from "../types";
 import { BreadcrumbItem } from "../components/common/Breadcrumbs";
+import { AddressType } from "@yext/pages/components";
+import { Coordinate } from "../components/google-map/SearchProvider";
 type LinkParams = {
   link: string;
   mode?: string;
@@ -124,60 +126,42 @@ export const getPosition = (result: LocationResult) => {
   return { lat, lng };
 };
 
-export const getDirectionUrl = (location: any) => {
-  let userLocation: any = false;
+export const getDirectionUrl = (
+  address: AddressType,
+  googlePlaceId = "",
+  userLocation: null | Coordinate = null
+) => {
   let address_string = "";
-  if (location.address.line1) address_string += location.address.line1 + ",";
-  if (location.address.line2) address_string += location.address.line2 + ",";
-  if (location.address.city) address_string += location.address.city + ",";
-  if (location.address.region) address_string += location.address.region + ",";
-  if (location.address.postalCode)
-    address_string += location.address.postalCode + ",";
-  address_string += regionNames.of(location.address.countryCode);
+  if (address.line1) {
+    address_string += address.line1 + ",";
+  }
+  if (address.line2) {
+    address_string += address.line2 + ",";
+  }
+  if (address.city) {
+    address_string += address.city + ",";
+  }
+  if (address.region) {
+    address_string += address.region + ",";
+  }
+  if (address.postalCode) {
+    address_string += address.postalCode + ",";
+  }
+  address_string += address.countryCode;
   address_string = address_string.replace("undefined,", "");
 
-  const googlePlaceId = location.googlePlaceId ? location.googlePlaceId : false;
-
-  let origin: any = null;
-  if (location.address.city) {
-    origin = location.address.city;
-  } else if (location.address.region) {
-    origin = location.address.region;
-  } else {
-    origin = location.address.country;
-  }
   let directionUrl =
     `https://www.google.com/maps/dir/?api=1&destination=` +
     encodeURIComponent(address_string);
-  if (googlePlaceId) directionUrl += `&destination_place_id=${googlePlaceId}`;
 
-  if (userLocation) {
-    const currentLatitude = userLocation.coords.latitude;
-    const currentLongitude = userLocation.coords.longitude;
-    directionUrl += `&origin=${currentLatitude},${currentLongitude}`;
-    window.open(directionUrl, "_blank");
-  } else if (navigator.geolocation) {
-    const error = () => {
-      directionUrl += `&origin=` + encodeURIComponent(origin);
-      window.open(directionUrl, "_blank");
-    };
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        userLocation = position;
-        const currentLatitude = position.coords.latitude;
-        const currentLongitude = position.coords.longitude;
-        directionUrl += `&origin=${currentLatitude},${currentLongitude}`;
-        window.open(directionUrl, "_blank");
-      },
-      error,
-      {
-        timeout: 10000,
-      }
-    );
-  } else {
-    directionUrl += `&origin=` + encodeURIComponent(origin);
-    window.open(directionUrl, "_blank");
+  if (googlePlaceId) {
+    directionUrl += `&destination_place_id=${googlePlaceId}`;
   }
+
+  if (userLocation && userLocation.latitude && userLocation.longitude) {
+    directionUrl += `&origin=${userLocation.latitude},${userLocation.longitude}`;
+  }
+  return directionUrl;
 };
 
 export const getClusterIcon = () => {

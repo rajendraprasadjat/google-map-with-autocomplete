@@ -10,15 +10,30 @@ type LocationCardProps = {
 };
 
 const LocationCard = ({ location }: LocationCardProps) => {
-  const { setInfoWindowContent, setHoveredLocation, hoveredLocation } =
-    React.useContext(SearchContext);
-  const cartRef = React.useRef(null);
+  const {
+    setInfoWindowContent,
+    infoWindowContent,
+    setHoveredLocation,
+    hoveredLocation,
+  } = React.useContext(SearchContext);
+  const cardRef = React.useRef<HTMLDivElement>(null);
   console.log("location.rawData", location.rawData);
   const url = location.rawData.slug;
+
+  React.useEffect(() => {
+    if (infoWindowContent && cardRef.current) {
+      cardRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, [infoWindowContent]);
   return (
     <div
-      ref={cartRef}
-      className="location-card"
+      ref={cardRef}
+      className={`location-card ${
+        hoveredLocation === location.id ||
+        (infoWindowContent && infoWindowContent.id === location.id)
+          ? "active"
+          : ""
+      }`}
       onClick={() => {
         setInfoWindowContent(location);
       }}
