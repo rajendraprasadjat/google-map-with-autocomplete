@@ -90,11 +90,6 @@ const GoogleAutoSuggestions = () => {
           "place_changed",
           function () {
             const place = autoComplete.getPlace();
-            console.log(
-              "inputValue",
-              inputRef.current?.value,
-              place.formatted_address
-            );
             if (inputRef.current?.value && place.formatted_address) {
               setInputValue(place.formatted_address);
               if (place.geometry?.location) {
@@ -117,31 +112,21 @@ const GoogleAutoSuggestions = () => {
       }
     };
   }, [googleLib]);
-  console.log("inputValue", inputValue);
 
   const onClick = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          console.log("position", position);
-          setIsUserLocationAllowed(true);
-          setUserLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-          getCoordinates(
-            `${position.coords.latitude},${position.coords.longitude}`,
-            null,
-            true
-          );
-        },
-        (e) => {
-          console.log("e", e);
-        },
-        {
-          timeout: 10000,
-        }
-      );
+      navigator.geolocation.getCurrentPosition(function (position) {
+        setIsUserLocationAllowed(true);
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        getCoordinates(
+          `${position.coords.latitude},${position.coords.longitude}`,
+          null,
+          true
+        );
+      });
     }
   };
   return (

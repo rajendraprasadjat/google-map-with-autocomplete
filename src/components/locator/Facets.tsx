@@ -3,11 +3,10 @@ import {
   useSearchActions,
   DisplayableFacetOption,
   StaticFilter,
-  SelectableStaticFilter,
 } from "@yext/search-headless-react";
-import useOutsideClick from "../hooks/useOutSideClick";
 import { SearchContext } from "../google-map/SearchProvider";
 import Facet from "./Facet";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 interface FacetsProps {
   searchOnChange?: boolean;
@@ -47,9 +46,7 @@ export default function Facets(props: FacetsProps): JSX.Element {
     fieldId: string,
     option: DisplayableFacetOption
   ) => {
-    console.log("fieldId", fieldId, option);
     searchAction.resetFacets();
-    const staticFilter: SelectableStaticFilter[] = [];
     let allFilters = staticFilters;
     const currentFilter = allFilters.find((e) => e.fieldId === fieldId);
 
@@ -80,21 +77,6 @@ export default function Facets(props: FacetsProps): JSX.Element {
         values: [option],
       });
     }
-
-    allFilters.forEach((element) => {
-      if (element.fieldId) {
-        element.values.forEach((e) => {
-          const itemFilter = {
-            selected: true,
-            fieldId: element.fieldId,
-            value: e.value,
-            matcher: e.matcher,
-          };
-          console.log("itemFilter", itemFilter);
-        });
-      }
-    });
-    console.log("allFilters", allFilters, staticFilter);
 
     setStaticFilters(allFilters);
     setFacetOption(fieldId, option, searchOnChange ? searchOnChange : false);

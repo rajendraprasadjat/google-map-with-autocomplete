@@ -42,8 +42,6 @@ const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
     lng: centerCoordinates.longitude,
   });
 
-  console.log("center", center);
-
   const showMarkersInViewport = (googleMap: google.maps.Map) => {
     if (googleMap && isUpdateListAccordingMarkers) {
       updateViewportLocations(googleMap);

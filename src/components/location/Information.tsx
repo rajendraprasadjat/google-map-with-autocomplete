@@ -17,7 +17,6 @@ const Information = ({ document, _site }: InformationProps) => {
     const lng = location.yextDisplayCoordinate.longitude;
     return { lat, lng };
   };
-  console.log("location.hours", document.hours);
   const coordinates = getPosition(document);
   return (
     <div className="location-detail-sec">
