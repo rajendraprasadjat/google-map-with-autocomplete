@@ -10,7 +10,7 @@ import { SiteData, TemplateMeta } from "../../types";
 import logo from "../../assets/images/logo.jpg";
 
 interface FooterProps {
-  _site: SiteData;
+  _site?: SiteData;
   meta: TemplateMeta;
   template?: string;
   devLink?: string;

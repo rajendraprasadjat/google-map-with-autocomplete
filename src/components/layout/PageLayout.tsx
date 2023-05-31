@@ -5,7 +5,7 @@ import { SiteData, TemplateMeta } from "../../types";
 
 export interface PageLayoutProps {
   children?: React.ReactNode;
-  _site: SiteData;
+  _site?: SiteData;
   meta: TemplateMeta;
   template?: string;
   devLink?: string;
