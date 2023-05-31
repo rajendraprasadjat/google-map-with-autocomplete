@@ -54,5 +54,6 @@ export interface LocationDocument {
   address: AddressType;
   hours: Hours;
   yextDisplayCoordinate: Coordinate;
+  googlePlaceId: string;
   dm_directoryParents: DirectoryParent[];
 }
