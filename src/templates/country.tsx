@@ -14,6 +14,7 @@ import { CountryDocument } from "../types/index";
 import PageLayout from "../components/layout/PageLayout";
 import "../index.css";
 import { Link } from "@yext/pages/components";
+import { DirectoryChild } from "../types/DirectoryChild";
 
 /**
  * Required when Knowledge Graph data is used for a template.
@@ -130,7 +131,7 @@ const country: Template<CountryTemplateProps> = ({
 
         <div className="directory-children">
           {dm_directoryChildren &&
-            dm_directoryChildren.map((region: any) => {
+            dm_directoryChildren.map((region: DirectoryChild) => {
               const url = region.slug;
 
               return (

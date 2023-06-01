@@ -10,7 +10,7 @@ import {
   useSearchActions,
 } from "@yext/search-headless-react";
 import { Libraries } from "./MapWrapper";
-import { string, array, node, object, number } from "prop-types";
+import { string, array, node, object, number, bool } from "prop-types";
 import { getPosition } from "../../config/GlobalFunctions";
 import { LocationResult } from "../../types/Locator";
 import { Wrapper } from "@googlemaps/react-wrapper";
@@ -79,6 +79,7 @@ interface ContextType {
   hoveredLocation: string | null;
   setHoveredLocation: (value: string | null) => void;
   noRecordFound: boolean;
+  isUseAlternateResult?: IsUseAlternateResult;
 }
 
 export const SearchContext = createContext<ContextType>({
@@ -153,7 +154,13 @@ export const SearchContext = createContext<ContextType>({
     throw new Error("Function not implemented.");
   },
   noRecordFound: false,
+  isUseAlternateResult: { show: false },
 });
+
+interface IsUseAlternateResult {
+  limit?: number;
+  show: boolean;
+}
 
 interface SearchProviderProps {
   children: React.ReactNode;
@@ -162,8 +169,8 @@ interface SearchProviderProps {
   limit: number;
   language: string;
   libraries: Libraries;
-  isUseAlternateResult?: boolean;
-  isShowSingleAlternateResult?: boolean;
+  isUseAlternateResult?: IsUseAlternateResult;
+  autoLoadAllResult?: boolean;
   radius?: number;
   mapType?: MapTypes;
   autocompleteType?: AutocompleteTypes;
@@ -184,8 +191,8 @@ const SearchProvider = ({
   limit,
   language,
   libraries,
-  isUseAlternateResult = false,
-  isShowSingleAlternateResult = false,
+  isUseAlternateResult,
+  autoLoadAllResult = false,
   radius = 0,
   mapType = "google",
   autocompleteType = "google",
@@ -253,6 +260,17 @@ const SearchProvider = ({
         limit,
       };
       setPagination(returnData);
+      return returnData;
+    } else {
+      return {
+        totalRecord: 0,
+        showingCount: 0,
+        offset: offset,
+        totalPage: 0,
+        currentPage: 1,
+        isLastPage: true,
+        limit,
+      };
     }
   };
 
@@ -279,8 +297,8 @@ const SearchProvider = ({
     location: Coordinate | null,
     address: string | null,
     apiOffset = 0,
-    staticFilter: SelectableStaticFilter[]
-    // allowEmptySearch = false
+    staticFilter: SelectableStaticFilter[],
+    lastLocations: LocationResult[] = []
   ) => {
     setNoRecordFound(false);
     setIsLoading(true);
@@ -332,36 +350,63 @@ const SearchProvider = ({
 
     searchAction.executeVerticalQuery().then((response) => {
       setFacets(response?.facets || []);
+      let currentPagination = pagination;
+      const oldLocations = lastLocations.length ? lastLocations : locations;
+      let results: LocationResult[] = [];
+      let resultCount = 0;
       if (
         response?.verticalResults.results &&
         response?.verticalResults.results.length > 0
       ) {
-        const result = response?.verticalResults
+        results = response?.verticalResults
           .results as unknown as LocationResult[];
-        const allData = apiOffset ? [...locations, ...result] : result;
-        const uniqueArray = allData.filter((obj, index, self) => {
-          return index === self.findIndex((o) => o.id === obj.id);
-        });
-        setPagingData(
-          response?.verticalResults.resultsCount || 0,
-          result.length,
-          apiOffset
-        );
-        setLocations(uniqueArray);
+        resultCount = response?.verticalResults.resultsCount || 0;
       } else if (
         response?.allResultsForVertical?.verticalResults &&
-        (isUseAlternateResult || isShowSingleAlternateResult)
+        isUseAlternateResult &&
+        isUseAlternateResult.show
       ) {
-        const result = response?.allResultsForVertical?.verticalResults
-          .results as unknown as LocationResult[];
         setNoRecordFound(true);
-        if (isShowSingleAlternateResult) {
-          setLocations(result.filter((_e, index: number) => index === 0));
-        } else if (isUseAlternateResult) {
-          setLocations(result);
+        results = response?.allResultsForVertical?.verticalResults
+          .results as unknown as LocationResult[];
+        if (
+          isUseAlternateResult.limit &&
+          isUseAlternateResult.limit > 0 &&
+          isUseAlternateResult.limit < limit
+        ) {
+          const alternateLimit = isUseAlternateResult.limit;
+          results = results.filter(
+            (_e, index: number) => index < alternateLimit
+          );
+          resultCount = alternateLimit;
+        } else {
+          results = response?.allResultsForVertical?.verticalResults
+            .results as unknown as LocationResult[];
+
+          resultCount =
+            response?.allResultsForVertical?.verticalResults.resultsCount || 0;
         }
       }
-      setIsLoading(false);
+
+      const allData = apiOffset ? [...oldLocations, ...results] : results;
+      console.log("apiOffset", apiOffset, oldLocations.length, results.length);
+      const uniqueArray = allData.filter((obj, index, self) => {
+        return index === self.findIndex((o) => o.id === obj.id);
+      });
+      currentPagination = setPagingData(resultCount, results.length, apiOffset);
+      setLocations(uniqueArray);
+
+      if (autoLoadAllResult && !currentPagination.isLastPage) {
+        getSearchData(
+          location,
+          address,
+          apiOffset + limit,
+          staticFilter,
+          uniqueArray
+        );
+      } else {
+        setIsLoading(false);
+      }
     });
   };
 
@@ -481,6 +526,7 @@ const SearchProvider = ({
     hoveredLocation,
     setHoveredLocation,
     noRecordFound,
+    isUseAlternateResult,
   };
 
   return (
@@ -507,12 +553,26 @@ SearchProvider.propTypes = {
   libraries: array,
   defaultCoordinates: object.isRequired,
   limit: number,
+
+  isUseAlternateResult: object,
+  autoLoadAllResult: bool,
+  radius: number,
+  mapType: string,
+  autocompleteType: string,
+  mapboxAccessToken: string,
+  isFilterEnable: bool,
+  isUpdateListAccordingMarkers: bool,
 };
 
 SearchProvider.defaultProps = {
   language: "en",
   libraries: ["places", "geometry"],
   limit: 50,
+  autoLoadAllResult: false,
+  mapType: "google",
+  autocompleteType: "google",
+  isFilterEnable: false,
+  isUpdateListAccordingMarkers: false,
 };
 
 export default SearchProvider;

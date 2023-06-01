@@ -173,7 +173,7 @@ export const getUserIcon = () => {
 };
 
 export const getMarkerPin = (
-  result: any,
+  result: LocationResult,
   isActive = false,
   isHover = false
 ) => {

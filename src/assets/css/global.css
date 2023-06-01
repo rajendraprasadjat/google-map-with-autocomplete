@@ -115,3 +115,106 @@ a{
 .button{
     @apply inline-flex items-center justify-center text-center font-primary text-base px-5 py-1.5 leading-[25px] bg-black border border-black text-white hover:bg-orange hover:no-underline
 }
+
+
+/* location card */
+.location-card{
+    @apply py-5 px-[15px] lg:px-8 text-sm leading-5 bg-white hover:bg-gray-200
+}
+.location-card.active{
+    @apply bg-black bg-opacity-5
+}
+
+.location-name{
+    @apply text-base font-medium text-orange leading-6 inline-block mr-24 w-fit
+}
+.icon-row .miles{
+    @apply absolute top-0 right-0 font-medium text-base leading-6
+}
+.arrow-down{
+    @apply w-2.5 h-1.5 bg-caretIcon bg-no-repeat bg-left-top bg-[length:9px_6px] ml-1
+}
+.addressIcon{
+    @apply w-4 h-4 bg-mapIcon bg-no-repeat bg-left-top bg-[length:16px_16px]
+}
+.phoneIcon{
+    @apply w-4 h-4 bg-phoneIcon bg-no-repeat bg-left-top bg-[length:16px_16px]
+}
+.clockIcon{
+    @apply w-4 h-4 bg-clockIcon bg-no-repeat bg-left-top bg-[length:16px_16px]
+}
+.icon-row{
+    @apply pl-6 relative mb-2.5 text-black
+}
+.icon-row .icon{
+    @apply absolute top-1 left-0
+}
+.icon-row .label{
+    @apply text-base font-medium text-orange leading-6
+}
+.icon-row a{
+    @apply hover:underline
+}
+.button-bx-detail{
+    @apply flex items-center max-[360px]:flex-col pt-2.5 gap-2
+}
+.button-bx-detail .button{
+    @apply max-[360px]:w-full
+}
+.button-bx{
+    @apply max-[360px]:w-full max-[360px]:text-center
+}
+.icon-row abbr{
+    @apply no-underline
+}
+
+/* Housrs */
+
+.hours-table{
+    @apply w-full
+}
+.hours-table .hours-table-row{
+    @apply border-b border-gray-300 last:border-b-0
+}
+.hours-table .hours-table-row td{
+    @apply py-1
+}
+.hours-table .hours-table-row .hours-table-day{
+    @apply pr-8 w-full
+}
+.hours-table-interval{
+    @apply w-full flex justify-between
+}
+.hours-table-interval span.time{
+    @apply px-2 leading-6 whitespace-nowrap
+}
+.is-today .hours-table-interval span.time{
+    @apply bg-orange rounded-[5px]
+}
+.hours-table-interval span.seperation{
+    @apply w-[17px] text-center
+}
+.hours-table-interval span.closed{
+    @apply px-2
+}
+
+.holiday-hours{
+    @apply w-full border border-gray-300 mb-4 bg-white
+}
+.holiday-hours td{
+    @apply px-1.5
+}
+
+/* Breadcrumb */
+.breadcrumb-wrapper{
+    @apply py-2.5 w-full z-10 px-[15px] 2xl:px-[30px] text-sm border-b border-gray-100
+}
+.breadcrumbs .breadcrumb-nav{
+    @apply flex flex-wrap
+} 
+.breadcrumbs .breadcrumb-nav .breadcrumb-item{
+    @apply after:content-['>'] last:after:content-none after:font-normal after:mx-1
+}
+.breadcrumbs .breadcrumb-nav .breadcrumb-item .breadcrumb-link{
+    @apply font-normal
+}

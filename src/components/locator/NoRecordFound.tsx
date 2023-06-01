@@ -1,6 +1,9 @@
 import React from "react";
+type NoRecordFoundProps = {
+  message?: string;
+};
 
-function NoRecordFound({ message = "" }) {
+function NoRecordFound({ message = "" }: NoRecordFoundProps) {
   return (
     <div className="no-record-found">
       {message

@@ -15,7 +15,10 @@ module.exports = {
         'secondary': ['"Libre Franklin", Helvetica, Arial, Lucida, sans-serif'],
       },
       backgroundImage: {
-        'marker': "url('../../assets/images/default-marker.png')",
+        'mapIcon': "url('../../assets/images/map-icon.svg')",
+        'phoneIcon': "url('../../assets/images/phone-icon.svg')",
+        'clockIcon': "url('../../assets/images/clock-icon.svg')",
+        'caretIcon': "url('../../assets/images/caret.svg')",
       },
     },
   },

@@ -2,8 +2,16 @@ import * as React from "react";
 import { SearchContext } from "../SearchProvider";
 import { provideHeadless } from "@yext/search-headless";
 import { SearchBar } from "@yext/search-ui-react";
+import {
+  NearByLocationResult,
+  VerticalKeyToResults,
+} from "../../../types/Locator";
 
-const YextAutoSuggestions = ({ locale }) => {
+interface YextAutoSuggestionProps {
+  locale: string;
+}
+
+const YextAutoSuggestions = ({ locale }: YextAutoSuggestionProps) => {
   const { getCoordinates, setInputValue } = React.useContext(SearchContext);
 
   const handleSearch = (searchEventData: {
@@ -30,8 +38,7 @@ const YextAutoSuggestions = ({ locale }) => {
   });
 
   const renderEntityPreviews = (
-    autocompleteLoading: boolean,
-    verticalKeyToResults: Record<string, any>
+    verticalKeyToResults: Record<string, VerticalKeyToResults>
   ): JSX.Element | null => {
     const locationResults = verticalKeyToResults["location"]?.results || [];
 
@@ -42,10 +49,10 @@ const YextAutoSuggestions = ({ locale }) => {
     );
   };
 
-  const renderLocationDropdown = (results: any) => {
+  const renderLocationDropdown = (results: NearByLocationResult[]) => {
     if (!results || results.length === 0) return null;
 
-    return results.map((result: any) => {
+    return results.map((result: NearByLocationResult) => {
       const title = result.highlightedFields?.name ?? result.name;
       return (
         title &&

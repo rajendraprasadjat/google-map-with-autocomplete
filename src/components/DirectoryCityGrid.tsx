@@ -2,17 +2,17 @@ import * as React from "react";
 import { Address } from "@yext/pages/components";
 import { formatPhoneNumber } from "react-phone-number-input";
 import { DirectoryParent } from "../types/DirectoryParent";
-import { DirectoryChild } from "../types/DirectoryChild";
+import { LocationDocument } from "../types";
 
 export interface DirectoryGridProps {
   name?: string;
   description?: string;
   directoryParents?: DirectoryParent[];
-  directoryChildren?: DirectoryChild[];
+  directoryChildren?: LocationDocument[];
   relativePrefixToRoot?: string;
 }
 
-const sortByCity = (a: DirectoryChild, b: DirectoryChild) => {
+const sortByCity = (a: LocationDocument, b: LocationDocument) => {
   const first = a.address.city;
   const second = b.address.city;
   return first < second ? -1 : first > second ? 1 : 0;
@@ -28,7 +28,7 @@ const DirectoryCityGrid = ({
 
   if (directoryChildren) {
     const sortedChildren = directoryChildren?.sort(sortByCity) || [];
-    childrenDivs = sortedChildren.map((child: any) => (
+    childrenDivs = sortedChildren.map((child: LocationDocument) => (
       <div
         key={child.slug}
         className="border rounded-lg drop-shadow-md bg-gray-100 space-y-6 p-3 h-60"

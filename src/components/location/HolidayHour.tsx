@@ -25,60 +25,66 @@ const HolidayHour = ({ hours, specificDay }: HolidayHourProps) => {
   });
   let ddate: string;
 
-  return array.map((res: HolidayHours, i: number) => {
-    const weeks = [
-      "sunday",
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-    ];
-    const d = moment(res.date);
-    return (
-      <React.Fragment key={i}>
-        <tr className="pop-up-holyhrs">
-          <td>{d.format("DD/MM/YYYY")}</td>
-          <td>{weeks[d.day()]}</td>
-          <td>
-            {specificDay &&
-              specificDay?.map((day, i) => {
-                if (
-                  day?.holidayDate &&
-                  day?.holidayDate.toString() === res.date
-                ) {
-                  ddate = res.date;
-                  return (
-                    <span className="specificday" key={i}>
-                      {day?.holidayName ? day.holidayName : "Holiday"}
-                    </span>
-                  );
-                }
-              })}
-            {ddate == res?.date ? <></> : <div>{"Holiday"}</div>}
-          </td>
-          {!res.isClosed && (
-            <td className="">
-              {res.openIntervals?.map(
-                (openinterval: Interval, index: number) => {
-                  return (
-                    <>
-                      <div key={index}>
-                        <span className="op-time">{openinterval?.start}</span>
-                        <span className="spac-bx"> - </span>
-                        <span className="cl-time">{openinterval?.end}</span>
-                      </div>
-                    </>
-                  );
-                }
+  return (
+    <>
+      {array.map((res: HolidayHours, i: number) => {
+        const weeks = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+        const d = moment(res.date);
+        return (
+          <React.Fragment key={i}>
+            <tr className="pop-up-holyhrs">
+              <td>{d.format("DD/MM/YYYY")}</td>
+              <td>{weeks[d.day()]}</td>
+              <td>
+                {specificDay &&
+                  specificDay?.map((day, i) => {
+                    if (
+                      day?.holidayDate &&
+                      day?.holidayDate.toString() === res.date
+                    ) {
+                      ddate = res.date;
+                      return (
+                        <span className="specificday" key={i}>
+                          {day?.holidayName ? day.holidayName : "Holiday"}
+                        </span>
+                      );
+                    }
+                  })}
+                {ddate == res?.date ? <></> : <div>{"Holiday"}</div>}
+              </td>
+              {!res.isClosed && (
+                <td className="">
+                  {res.openIntervals?.map(
+                    (openinterval: Interval, index: number) => {
+                      return (
+                        <>
+                          <div key={index}>
+                            <span className="op-time">
+                              {openinterval?.start}
+                            </span>
+                            <span className="spac-bx"> - </span>
+                            <span className="cl-time">{openinterval?.end}</span>
+                          </div>
+                        </>
+                      );
+                    }
+                  )}
+                </td>
               )}
-            </td>
-          )}
-          {res.isClosed && <div>Closed</div>}
-        </tr>
-      </React.Fragment>
-    );
-  });
+              {res.isClosed && <td>Closed</td>}
+            </tr>
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
 };
 export default HolidayHour;
