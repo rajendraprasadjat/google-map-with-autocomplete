@@ -79,26 +79,29 @@ const LocationCard = ({ location }: LocationCardProps) => {
         }
       }}
     >
-      <Link className="location-name" href={`/${url}`}>
-        {location.rawData.name}
-      </Link>
-      <Address
-        className="location-address"
-        address={location.rawData.address}
-      />
-
-      <Link className="button link" href={`/${url}`}>
-        View Details
-      </Link>
-      <Link
-        className="button link"
-        href={getDirectionUrl(
-          location.rawData.address,
-          location.rawData.googlePlaceId
-        )}
-      >
-        Get Direction
-      </Link>
+      <div className="icon-row">
+        <div className="icon addressIcon"></div>
+        <Link className="location-name" href={`/${url}`}>
+          {location.rawData.name}
+        </Link>
+        <Address
+          address={location.rawData.address}
+        />
+      </div>
+      <div className="button-bx-detail">
+        <Link className="button link" href={`/${url}`}>
+          View Details
+        </Link>
+        <Link
+          className="button link"
+          href={getDirectionUrl(
+            location.rawData.address,
+            location.rawData.googlePlaceId
+          )}
+        >
+          Get Direction
+        </Link>
+      </div>
     </div>
   );
 };

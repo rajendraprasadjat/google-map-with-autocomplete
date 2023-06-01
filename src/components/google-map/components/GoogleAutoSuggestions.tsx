@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { SearchContext } from "../SearchProvider";
-import { SearchIcon } from "../../../assets/svgs/SvgIcons";
+import { SearchIcon, UseLocationIcon } from "../../../assets/svgs/SvgIcons";
 
 const GoogleAutoSuggestions = () => {
   const {
@@ -131,68 +131,71 @@ const GoogleAutoSuggestions = () => {
   };
   return (
     <>
-      <div className="use-my-location-block">
-        <button
-          className="link-button"
-          title="Search using your current location!"
-          onClick={onClick}
-        >
-          <span>{"Use my location"}</span>
-        </button>
-      </div>
-      <div className="search-form">
-        <input
-          type="text"
-          ref={inputRef}
-          placeholder={"Search.."}
-          className="search-input"
-          value={inputValue}
-          onChange={(e) => {
-            setIsApiCalledOnEmpty(false);
-            setInputValue(e.target.value);
-          }}
-          onKeyUp={(evt) => {
-            if (
-              (evt.key === "Backspace" || evt.key === "Delete") &&
-              !inputValue &&
-              !isApiCalledOnEmpty
-            ) {
-              setIsApiCalledOnEmpty(true);
-              getCoordinates("");
-            }
+      <div className="search-warpper">
+        <div className="use-my-location-block">
+          <button
+            className="link-button"
+            title="Search using your current location!"
+            onClick={onClick}
+          >
+            <UseLocationIcon />
+            <span>{"Use my location"}</span>
+          </button>
+        </div>
+        <div className="search-form">
+          <input
+            type="text"
+            ref={inputRef}
+            placeholder={"Search.."}
+            className="search-input"
+            value={inputValue}
+            onChange={(e) => {
+              setIsApiCalledOnEmpty(false);
+              setInputValue(e.target.value);
+            }}
+            onKeyUp={(evt) => {
+              if (
+                (evt.key === "Backspace" || evt.key === "Delete") &&
+                !inputValue &&
+                !isApiCalledOnEmpty
+              ) {
+                setIsApiCalledOnEmpty(true);
+                getCoordinates("");
+              }
 
-            /* if (evt.key === "Enter" && value.length === 0) {
+              /* if (evt.key === "Enter" && value.length === 0) {
               setErrorStatus(true);
             } */
-          }}
-        />
+            }}
+          />
 
-        {/* Search icon Button  */}
-        <button
-          className="search-button"
-          aria-label="Search bar icon"
-          id="search-location-button"
-          onClick={() => {
-            const inputElement = inputRef.current;
-            if (inputElement) {
-              const keydown = document.createEvent("HTMLEvents");
-              keydown.initEvent("keydown", true, false);
-              Object.defineProperty(keydown, "keyCode", {
-                get: function () {
-                  return 13;
-                },
-              });
-              Object.defineProperty(keydown, "which", {
-                get: function () {
-                  return 13;
-                },
-              });
-              inputElement.dispatchEvent(keydown);
-            }
-          }}
-        >
-          <SearchIcon />
-        </button>
+          {/* Search icon Button  */}
+          <button
+            className="search-button"
+            aria-label="Search bar icon"
+            id="search-location-button"
+            onClick={() => {
+              const inputElement = inputRef.current;
+              if (inputElement) {
+                const keydown = document.createEvent("HTMLEvents");
+                keydown.initEvent("keydown", true, false);
+                Object.defineProperty(keydown, "keyCode", {
+                  get: function () {
+                    return 13;
+                  },
+                });
+                Object.defineProperty(keydown, "which", {
+                  get: function () {
+                    return 13;
+                  },
+                });
+                inputElement.dispatchEvent(keydown);
+              }
+            }}
+          >
+            <SearchIcon />
+          </button>
+        </div>
       </div>
     </>
   );

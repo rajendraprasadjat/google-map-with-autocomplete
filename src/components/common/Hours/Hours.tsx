@@ -77,14 +77,20 @@ function collapseDays(hoursDays: HoursCollapseDay[]) {
 function defaultIntervalStringsBuilder(dayData: HoursCollapseDay) {
   const intervalStrings = [];
   if (dayData.intervals.length === 0) {
-    intervalStrings.push("Closed");
+    intervalStrings.push(
+      <>
+        <span className="closed">Closed</span>
+      </>
+    );
   } else {
     dayData.intervals.forEach((interval) => {
       const startTime = interval.getStartTime("en-US");
       const endTime = interval.getEndTime("en-US");
       intervalStrings.push(
         <>
-          <span>{startTime}</span>-<span>{endTime}</span>
+          <span className="time">{startTime}</span>
+          <span className="seperation">-</span>
+          <span className="time">{endTime}</span>
         </>
       );
     });

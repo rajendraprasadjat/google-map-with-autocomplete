@@ -20,26 +20,32 @@ const Information = ({ document, _site }: InformationProps) => {
   };
   const coordinates = getPosition(document);
   return (
-    <div className="location-detail-sec">
-      <div className="container-lg">
-        <div className="boxes">
-          <div className="box store-info">
-            <div className="inner-box">
-              <h4 className="box-title">{document?.name}</h4>
-              <div className="address-innerbx">
-                <div className="address-left">
-                  <Address address={document.address} />
-                </div>
-              </div>
-              <Link
-                className="button link"
-                href={getDirectionUrl(document.address, document.googlePlaceId)}
-              >
-                Get Direction
-              </Link>
-            </div>
+    <div className="location-information">
+      <div className="container">
+        <div className="address-main-sec">
+          <div className="icon-row">
+            <div className="icon addressIcon"></div>
+            <h4 className="location-name">{document?.name}</h4>
+            <Address address={document.address} />
           </div>
-
+          <div className="icon-row">
+            <div className="icon clockIcon"></div>
+            <OpenCloseStatus
+              hours={document.hours}
+              site={_site}
+              timezone={YEXT_PUBLIC_TIME_ZONE}
+            />
+          </div>
+          <div className="button-bx-detail">
+            <Link
+              className="button link"
+              href={getDirectionUrl(document.address, document.googlePlaceId)}
+            >
+              Get Direction
+            </Link>
+          </div>
+        </div>
+        <div className="hours-sec">
           {document.hours && (
             <div className="box timing">
               <div className="inner-box">
@@ -68,16 +74,14 @@ const Information = ({ document, _site }: InformationProps) => {
               </div>
             </div>
           )}
+        </div>
 
-          <div className="box map-info without-hours">
-            <div className="inner-box">
-              <LoadScript googleMapsApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}>
-                <GoogleMap center={coordinates} zoom={12}>
-                  <Marker position={coordinates} clickable={false} />
-                </GoogleMap>
-              </LoadScript>
-            </div>
-          </div>
+        <div className="map-sec">
+          <LoadScript googleMapsApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}>
+            <GoogleMap center={coordinates} zoom={12}>
+              <Marker position={coordinates} clickable={false} />
+            </GoogleMap>
+          </LoadScript>
         </div>
       </div>
     </div>
