@@ -1,0 +1,23 @@
+{
+  "$id": "stores-directory_gb_greater_london",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "dm_baseEntityCount": "6",
+    "dm_childEntityIds": [
+      "41304117"
+    ],
+    "dm_directoryChildren": [
+      "stores-directory_gb_greater_london_london"
+    ],
+    "dm_directoryManagerId": "stores-directory",
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb"
+    ],
+    "name": "Greater London",
+    "slug": "greater-london"
+  },
+  "entityType": "ce_region",
+  "labels": []
+}

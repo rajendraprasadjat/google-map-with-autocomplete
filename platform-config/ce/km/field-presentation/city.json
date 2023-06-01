@@ -5,17 +5,20 @@
   "displayName": "City",
   "presentationEntries": [
     {
-      "displayName": "Core",
+      "displayName": "Content",
+      "entryType": "DIVIDER"
+    },
+    {
+      "displayName": "Core Information",
       "entryType": "SECTION",
       "fields": [
         {
-          "id": "name"
+          "id": "name",
+          "visibleOnAdd": true
         },
         {
-          "id": "entityId"
-        },
-        {
-          "id": "slug"
+          "id": "entityId",
+          "visibleOnAdd": true
         },
         {
           "id": "description"
@@ -24,31 +27,35 @@
           "id": "richTextDescription"
         },
         {
-          "id": "c_addressCountryAbbreviation"
-        },
-        {
-          "id": "c_addressCountryDisplayName"
+          "id": "slug"
         },
         {
           "id": "c_addressRegionAbbreviation"
         },
         {
           "id": "c_addressRegionDisplayName"
+        },
+        {
+          "id": "c_addressCountryAbbreviation"
+        },
+        {
+          "id": "c_addressCountryDisplayName"
         }
       ]
     },
     {
-      "displayName": "Directory Manager",
+      "displayName": "Other",
+      "entryType": "DIVIDER"
+    },
+    {
+      "displayName": "Internal Use Only",
       "entryType": "SECTION",
       "fields": [
         {
-          "id": "dm_directoryParents"
+          "id": "folder"
         },
         {
-          "id": "dm_directoryChildren"
-        },
-        {
-          "id": "dm_directoryManagerId"
+          "id": "labels"
         }
       ]
     }

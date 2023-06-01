@@ -1,0 +1,27 @@
+{
+  "$id": "demo16",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "London",
+      "countryCode": "GB",
+      "line1": "23, Nassau Road",
+      "postalCode": "SW13 9QF",
+      "region": "Greater London"
+    },
+    "addressHidden": false,
+    "dm_directoryParents": [
+      "stores-directory",
+      "stores-directory_gb",
+      "stores-directory_gb_greater_london",
+      "stores-directory_gb_greater_london_london"
+    ],
+    "mainPhone": "+447842378062",
+    "name": "Barnes Nassau",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

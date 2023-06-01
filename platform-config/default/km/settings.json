@@ -48,16 +48,23 @@
       "disabled": true
     },
     {
-      "entityType": "helpArticle",
-      "disabled": true
+      "entityType": "ce_country",
+      "defaultFieldEligibilityGroup": "ce_country.default",
+      "disabled": false
     },
     {
-      "entityType": "product",
-      "disabled": true
+      "entityType": "ce_city",
+      "defaultFieldEligibilityGroup": "ce_city.default",
+      "disabled": false
     },
     {
-      "entityType": "ce_menu",
-      "defaultFieldEligibilityGroup": "ce_menu.default",
+      "entityType": "ce_root",
+      "defaultFieldEligibilityGroup": "ce_root.default",
+      "disabled": false
+    },
+    {
+      "entityType": "ce_region",
+      "defaultFieldEligibilityGroup": "ce_region.default",
       "disabled": false
     },
     {
@@ -66,9 +73,12 @@
       "disabled": false
     },
     {
-      "entityType": "ce_menuItem",
-      "defaultFieldEligibilityGroup": "ce_menuItem.default",
-      "disabled": false
+      "entityType": "helpArticle",
+      "disabled": true
+    },
+    {
+      "entityType": "product",
+      "disabled": true
     },
     {
       "entityType": "financialProfessional",

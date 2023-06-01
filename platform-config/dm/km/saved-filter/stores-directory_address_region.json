@@ -1,0 +1,34 @@
+{
+  "$id": "dm_stores-directory_address_region",
+  "$schema": "https://schema.yext.com/config/km/saved-filter/v1",
+  "name": "stores-directory - address.region",
+  "filter": {
+    "entityField": [
+      {
+        "fieldId": "dm_directoryManagerId",
+        "text": {
+          "search": [
+            "stores-directory"
+          ],
+          "type": "EQUAL_TO"
+        }
+      }
+    ],
+    "entityType": [
+      {
+        "entityTypeId": [
+          "ce_region"
+        ],
+        "type": "IS"
+      }
+    ],
+    "fieldsWithData": [
+      {
+        "fieldId": [
+          "dm_directoryChildren"
+        ],
+        "type": "ALL"
+      }
+    ]
+  }
+}

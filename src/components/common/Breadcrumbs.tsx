@@ -1,31 +1,28 @@
 import * as React from "react";
 import { ReactNode } from "react";
 import { Link } from "@yext/pages/components";
-import classNames from "classnames";
 
-export interface BreadCrumbProps {
+export interface BreadcrumbItemProps {
   name: string;
-  slug?: string;
-  breadcrumbs?: Array<BreadCrumbProps>;
-  className?: string;
+  url: string;
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  slug: string;
+}
+export interface BreadcrumbsProps {
+  breadcrumbs?: BreadcrumbItem[];
   separator?: ReactNode;
   baseUrl: string;
 }
 
-export interface BreadCrumbsProps {
-  name?: any;
-  breadcrumbs?: Array<BreadCrumbProps>;
-  className?: string;
-  separator?: ReactNode;
-  baseUrl: string;
-}
+const BreadcrumbItem = (props: BreadcrumbItemProps) => {
+  const { name, url } = props;
 
-const Breadcrumb = (props: BreadCrumbProps) => {
-  const { name, slug } = props;
-
-  if (slug) {
+  if (url) {
     return (
-      <Link href={slug}>
+      <Link href={url}>
         <span className="font-bold hover:underline hover:cursor-pointer">
           {name}
         </span>
@@ -36,45 +33,44 @@ const Breadcrumb = (props: BreadCrumbProps) => {
   return <span className="Breadcrumbs-label">{name}</span>;
 };
 
-const BreadCrumbs = (props: BreadCrumbsProps) => {
-  const { breadcrumbs, className, separator = ">", baseUrl } = props;
+const Breadcrumbs = (props: BreadcrumbsProps) => {
+  const { breadcrumbs, separator = ">", baseUrl } = props;
 
   return (
-    <nav className="section flex" aria-label="Breadcrumb">
+    <div className="breadcrumb-wrapper">
       {breadcrumbs?.length && (
-        <nav
-          className={classNames("Breadcrumbs", className)}
-          aria-label="Breadcrumb"
-        >
+        <div className="breadcrumbs">
           <ol className="flex space-x-4">
-            {breadcrumbs.map(({ name, slug }, idx) => {
-              const isLast = idx === breadcrumbs.length - 1;
-              const isFirst = idx === 0;
+            {breadcrumbs.map(({ name, slug }, index) => {
+              const isLast = index === breadcrumbs.length - 1;
+              const isFirst = index === 0;
 
               return (
-                <li className="Breadcrumbs-item flex" key={idx}>
+                <li className="breadcrumb-item flex" key={index}>
                   {isFirst ? (
-                    <Breadcrumb
-                      name={'Home'}
-                      slug={isLast ? "" : baseUrl + slug}
+                    <BreadcrumbItem
+                      name={"Home"}
+                      url={isLast ? "" : baseUrl + slug}
                       {...props}
                     />
                   ) : (
-                    <Breadcrumb
+                    <BreadcrumbItem
                       name={name}
-                      slug={isLast ? "" : baseUrl + slug}
+                      url={isLast ? "" : baseUrl + slug}
                       {...props}
                     />
                   )}
-                  {!isLast && <span className="pl-4">{separator}</span>}
+                  {!isLast && (
+                    <span className="breadcrumb-separator">{separator}</span>
+                  )}
                 </li>
               );
             })}
           </ol>
-        </nav>
+        </div>
       )}
-    </nav>
+    </div>
   );
 };
 
-export default BreadCrumbs;
+export default Breadcrumbs;

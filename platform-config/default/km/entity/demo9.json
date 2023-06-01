@@ -1,0 +1,20 @@
+{
+  "$id": "demo9",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "Newcastle upon Tyne",
+      "countryCode": "GB",
+      "line1": "39 Northumberland St",
+      "postalCode": "NE1 7AS"
+    },
+    "addressHidden": false,
+    "mainPhone": "+448007831783",
+    "name": "Newcastle Fenwick",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

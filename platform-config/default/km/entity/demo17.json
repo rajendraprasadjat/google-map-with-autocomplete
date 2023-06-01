@@ -1,0 +1,20 @@
+{
+  "$id": "demo17",
+  "$schema": "https://schema.yext.com/config/km/entity/v1",
+  "primaryLocale": "en_GB",
+  "content": {
+    "address": {
+      "city": "London",
+      "countryCode": "GB",
+      "line1": "46, Carey Place",
+      "postalCode": "SW1V 2RT"
+    },
+    "addressHidden": false,
+    "mainPhone": "+447053683584",
+    "name": "Millbank London",
+    "slug": "[[entityId]]",
+    "timezone": "Europe/London"
+  },
+  "entityType": "location",
+  "labels": []
+}

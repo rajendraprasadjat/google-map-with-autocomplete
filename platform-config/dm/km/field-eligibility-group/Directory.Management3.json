@@ -1,0 +1,10 @@
+{
+  "$id": "dm_Directory.Management3",
+  "$schema": "https://schema.yext.com/config/km/field-eligibility-group/v1",
+  "name": "Directory Management",
+  "entityType": "ce_region",
+  "fields": [
+    "slug"
+  ],
+  "required": []
+}

@@ -1,0 +1,48 @@
+{
+  "$id": "google-map",
+  "$schema": "https://schema.yext.com/config/pages/directory-manager/v1",
+  "name": "Goole Map",
+  "baseEntities": {
+    "entityTypes": [
+      "location"
+    ],
+    "savedFilterIds": [
+      "1192568913"
+    ]
+  },
+  "localization": {
+    "locales": [
+      "en-GB"
+    ]
+  },
+  "root": {
+    "entityType": "ce_root",
+    "slug": "stores"
+  },
+  "levels": [
+    {
+      "entityType": "ce_country",
+      "field": "address.countryCode",
+      "slug": "{{address.countryCode}}",
+      "fieldMappings": {
+        "c_addressCountryDisplayName": "{{#countryDisplayName}}"
+      }
+    },
+    {
+      "entityType": "ce_region",
+      "field": "address.region",
+      "slug": "{{address.region}}",
+      "fieldMappings": {
+        "c_addressRegionDisplayName": "{{#regionDisplayName}}"
+      }
+    },
+    {
+      "entityType": "ce_city",
+      "field": "address.city",
+      "slug": "{{address.city}}",
+      "fieldMappings": {
+        "c_addressRegionDisplayName": "{{#regionDisplayName}}"
+      }
+    }
+  ]
+}

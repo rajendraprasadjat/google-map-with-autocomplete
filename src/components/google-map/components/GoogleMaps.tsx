@@ -13,8 +13,14 @@ import {
   getPosition,
   getUserIcon,
 } from "../../../config/GlobalFunctions";
+import { Address, Link } from "@yext/pages/components";
+import { SiteData } from "../../../types";
+interface GoogleMapProps {
+  InfowindowComponent: React.FC<any>;
+  _site: SiteData;
+}
 
-const GoogleMap = () => {
+const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
   const {
     locations,
     zoomLavel,
@@ -25,6 +31,10 @@ const GoogleMap = () => {
     setInfoWindowContent,
     mapCenter,
     setMapCenter,
+    isUpdateListAccordingMarkers,
+    updateViewportLocations,
+    setHoveredLocation,
+    hoveredLocation,
   } = React.useContext(SearchContext);
   const [map, setMap] = React.useState<google.maps.Map | null>(null);
   const [center] = React.useState({
@@ -32,11 +42,9 @@ const GoogleMap = () => {
     lng: centerCoordinates.longitude,
   });
 
-  console.log("center", center);
-
   const showMarkersInViewport = (googleMap: google.maps.Map) => {
-    if (googleMap) {
-      //updateViewportLocations(googleMap);
+    if (googleMap && isUpdateListAccordingMarkers) {
+      updateViewportLocations(googleMap);
     }
   };
 
@@ -44,13 +52,42 @@ const GoogleMap = () => {
     setMap(map);
   };
 
-  const fitBoundMap = () => {
-    const bounds = new google.maps.LatLngBounds();
-    locations.map((e: any) => {
-      const position = getPosition(e);
-      bounds.extend(position);
-    });
-    map?.fitBounds(bounds);
+  const fitBoundMap = (force = false) => {
+    if (!infoWindowContent || force) {
+      if (locations.length > 0) {
+        const bounds = new google.maps.LatLngBounds();
+        if (userLocation && userLocation.latitude && userLocation.longitude) {
+          bounds.extend({
+            lat: userLocation.latitude,
+            lng: userLocation.longitude,
+          });
+        } else {
+          bounds.extend(center);
+        }
+        locations.map((e: any) => {
+          const position = getPosition(e);
+          bounds.extend(position);
+        });
+        map?.fitBounds(bounds);
+      } else {
+        if (userLocation && userLocation.latitude && userLocation.longitude) {
+          map?.setCenter({
+            lat: userLocation.latitude,
+            lng: userLocation.longitude,
+          });
+        } else {
+          map?.setCenter({
+            lat: centerCoordinates.latitude,
+            lng: centerCoordinates.longitude,
+          });
+        }
+        map?.setCenter({
+          lat: centerCoordinates.latitude,
+          lng: centerCoordinates.longitude,
+        });
+        map?.setZoom(4);
+      }
+    }
   };
 
   React.useEffect(() => {
@@ -81,58 +118,104 @@ const GoogleMap = () => {
       onIdle={() => {
         map && showMarkersInViewport(map);
       }}
-      mapContainerClassName="map-box-wrapper w-full h-[calc(100vh_-_28.30rem)] md:h-[calc(100vh_-_12.313rem)] lg:h-[calc(100vh_-_13.125rem)] top-0 order-1 lg:order-none z-[1]"
+      mapContainerClassName="map-box-wrapper"
     >
-      {infoWindowContent && (
-        <InfoWindow
-          position={getPosition(infoWindowContent)}
-          onCloseClick={() => {
-            setInfoWindowContent(null);
-            if (zoomLavel === 4) {
-              fitBoundMap();
-            } else {
-              map?.setZoom(zoomLavel);
-            }
-            if (mapCenter) {
-              map?.setCenter(mapCenter);
-            } else {
-              fitBoundMap();
-            }
-          }}
-        >
-          <div>{infoWindowContent.id}</div>
-        </InfoWindow>
-      )}
       <MarkerClusterer
         styles={[{ url: getClusterIcon(), height: 35, width: 35 }]}
-        // zoomOnClick
-        maxZoom={16}
-        ignoreHidden={true}
+        zoomOnClick
+        averageCenter
       >
-        {(clusterer: any) =>
-          locations.map((location: { id: React.Key | null | undefined }) => {
-            const position = getPosition(location);
-            return (
-              <Marker
-                clusterer={clusterer}
-                key={location.id}
-                position={position}
-                icon={getMarkerPin(location).url}
-                onClick={() => {
-                  const currentZoom = map?.getZoom() || 4;
-                  const currentCenter = map?.getCenter()?.toJSON() || {
-                    lat: centerCoordinates.latitude,
-                    lng: centerCoordinates.longitude,
-                  };
-                  setZoomLavel(currentZoom);
-                  setMapCenter(currentCenter);
-                  map?.setCenter(position);
-                  setInfoWindowContent(location);
-                }}
-              />
-            );
-          })
-        }
+        {(clusterer) => {
+          return (
+            <>
+              {locations.map((location) => {
+                const position = getPosition(location);
+                let icon = getMarkerPin(location).url;
+
+                if (hoveredLocation === location.id) {
+                  icon = getMarkerPin(location, false, true).url;
+                } else if (
+                  infoWindowContent &&
+                  infoWindowContent.id === location.id
+                ) {
+                  icon = getMarkerPin(location, true).url;
+                }
+                return (
+                  <Marker
+                    clusterer={clusterer}
+                    key={location.id}
+                    position={position}
+                    icon={icon}
+                    onClick={() => {
+                      if (!infoWindowContent) {
+                        const currentZoom = map?.getZoom() || 4;
+                        const currentCenter = map?.getCenter()?.toJSON() || {
+                          lat: centerCoordinates.latitude,
+                          lng: centerCoordinates.longitude,
+                        };
+                        setZoomLavel(currentZoom);
+                        setMapCenter(currentCenter);
+                      }
+                      map?.setCenter(position);
+                      setInfoWindowContent(location);
+                    }}
+                    onMouseOver={() => setHoveredLocation(location.id)}
+                    onMouseOut={() => {
+                      if (hoveredLocation === location.id) {
+                        setHoveredLocation(null);
+                      }
+                    }}
+                  >
+                    {infoWindowContent && infoWindowContent.id === location.id && (
+                      <InfoWindow
+                        position={getPosition(infoWindowContent)}
+                        onCloseClick={() => {
+                          setInfoWindowContent(null);
+                          if (zoomLavel === 4) {
+                            fitBoundMap(true);
+                          } else {
+                            map?.setZoom(zoomLavel);
+                          }
+                          if (mapCenter) {
+                            map?.setCenter(mapCenter);
+                          } else {
+                            fitBoundMap(true);
+                          }
+                        }}
+                      >
+                        {InfowindowComponent ? (
+                          <InfowindowComponent
+                            location={infoWindowContent}
+                            _site={_site}
+                          />
+                        ) : (
+                          <div className="infowindow-content">
+                            <Link
+                              className="location-name"
+                              href={`/${infoWindowContent.rawData.slug}`}
+                            >
+                              {infoWindowContent.rawData.name}
+                            </Link>
+                            <Address
+                              className="location-address"
+                              address={infoWindowContent.rawData.address}
+                            />
+                            <Link
+                              className="button link"
+                              href={`/${infoWindowContent.rawData.slug}`}
+                            >
+                              View Details
+                            </Link>
+                          </div>
+                        )}
+                      </InfoWindow>
+                    )}
+                  </Marker>
+                );
+              })}
+            </>
+          );
+        }}
       </MarkerClusterer>
       {userLocation && userLocation.latitude && userLocation.longitude ? (
         <Marker

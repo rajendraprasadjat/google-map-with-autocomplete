@@ -1,0 +1,12 @@
+{
+  "$id": "site-entity",
+  "filter": {
+    "entityIds": ["stores-directory"]
+  },
+  "source": "knowledgeGraph",
+  "fields": ["name", "slug", "id"],
+  "localization": {
+    "locales": ["en_GB"],
+    "primary": false
+  }
+}

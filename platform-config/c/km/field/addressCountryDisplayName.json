@@ -1,6 +1,7 @@
 {
   "$id": "c_addressCountryDisplayName",
   "$schema": "https://schema.yext.com/config/km/field/v1",
+  "description": "",
   "displayName": "Address Country Display Name",
   "group": "NONE",
   "localization": "LOCALE_SPECIFIC",

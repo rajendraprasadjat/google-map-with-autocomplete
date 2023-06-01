@@ -1,25 +1,85 @@
 import * as React from "react";
 import { SearchContext } from "../google-map/SearchProvider";
-import { Address } from "@yext/pages/components";
+import { Address, Link } from "@yext/pages/components";
+import { LocationResult } from "../../types/Locator";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { getDirectionUrl } from "../../config/GlobalFunctions";
 
 type LocationCardProps = {
-  location: any;
+  location: LocationResult;
 };
 
 const LocationCard = ({ location }: LocationCardProps) => {
-  const { setInfoWindowContent } = React.useContext(SearchContext);
+  const {
+    setInfoWindowContent,
+    infoWindowContent,
+    setHoveredLocation,
+    hoveredLocation,
+  } = React.useContext(SearchContext);
+  const cardRef = React.useRef<HTMLDivElement>(null);
+  const url = location.rawData.slug;
+
+  React.useEffect(() => {
+    if (infoWindowContent && cardRef.current) {
+      cardRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, [infoWindowContent]);
   return (
     <div
+      ref={cardRef}
+      className={`location-card ${
+        hoveredLocation === location.id ||
+        (infoWindowContent && infoWindowContent.id === location.id)
+          ? "active"
+          : ""
+      }`}
       onClick={() => {
         setInfoWindowContent(location);
       }}
-      style={{
-        margin: "10px 0px",
-        border: "1px solid",
+      onMouseOver={() => setHoveredLocation(location.id)}
+      onMouseOut={() => {
+        if (hoveredLocation === location.id) {
+          setHoveredLocation(null);
+        }
       }}
     >
-      {location.rawData.name}
-      <Address address={location.rawData.address} />
+      <Link className="location-name" href={`/${url}`}>
+        {location.rawData.name}
+      </Link>
+      <Address
+        className="location-address"
+        address={location.rawData.address}
+      />
+
+      <Link className="button link" href={`/${url}`}>
+        View Details
+      </Link>
+      <Link
+        className="button link"
+        href={getDirectionUrl(
+          location.rawData.address,
+          location.rawData.googlePlaceId
+        )}
+      >
+        Get Direction
+      </Link>
+    </div>
+  );
+};
+
+export const LocationCardLoader = () => {
+  return (
+    <div className="location-card">
+      <Skeleton height={25} enableAnimation />
+      <Skeleton count={3} width={"50%"} enableAnimation />
+
+      <Skeleton
+        enableAnimation
+        width={140}
+        height={40}
+        style={{ paddingTop: 20, borderRadius: 0 }}
+      />
     </div>
   );
 };
