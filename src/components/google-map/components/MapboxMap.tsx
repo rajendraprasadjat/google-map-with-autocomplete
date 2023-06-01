@@ -8,10 +8,11 @@ import { getMarkerPin, getPosition } from "../../../config/GlobalFunctions";
 import { Address, Link } from "@yext/pages/components";
 import { SiteData } from "../../../types";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { InfowindowProps } from "../../locator/Infowindow";
 
 interface MapboxMapProps {
   mapboxAccessToken: string;
-  InfowindowComponent: React.FC<any>;
+  InfowindowComponent: React.FC<InfowindowProps>;
   _site: SiteData;
 }
 

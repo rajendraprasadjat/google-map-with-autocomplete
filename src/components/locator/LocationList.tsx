@@ -1,8 +1,12 @@
 import * as React from "react";
 import { SearchContext } from "../google-map/SearchProvider";
 import LocationCard, { LocationCardLoader } from "./LocationCard";
-
-const LocationList = ({ meta }) => {
+import { TemplateMeta } from "../../types";
+import { LocationResult } from "../../types/Locator";
+type LocationListProps = {
+  meta?: TemplateMeta;
+};
+const LocationList = ({ meta }: LocationListProps) => {
   const {
     locations,
     isLoading,
@@ -10,18 +14,23 @@ const LocationList = ({ meta }) => {
     isUpdateListAccordingMarkers,
     showViewportLocations,
   } = React.useContext(SearchContext);
-
+  const [pageLoading, setPageLoading] = React.useState(true);
+  React.useEffect(() => {
+    if (!isLoading) {
+      setPageLoading(false);
+    }
+  }, [isLoading]);
   return (
     <div className="listing">
       {showViewportLocations && isUpdateListAccordingMarkers
-        ? viewportLocations.map((location: any) => (
+        ? viewportLocations.map((location: LocationResult) => (
             <LocationCard key={location.id} location={location} meta={meta} />
           ))
-        : locations.map((location: any) => (
+        : locations.map((location: LocationResult) => (
             <LocationCard key={location.id} location={location} meta={meta} />
           ))}
 
-      {isLoading && (
+      {pageLoading && (
         <>
           <LocationCardLoader />
           <LocationCardLoader />

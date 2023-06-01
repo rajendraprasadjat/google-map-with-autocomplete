@@ -5,9 +5,11 @@ import { LocationResult } from "../../types/Locator";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { getDirectionUrl } from "../../config/GlobalFunctions";
+import { TemplateMeta } from "../../types";
 
 type LocationCardProps = {
   location: LocationResult;
+  meta?: TemplateMeta;
 };
 
 const LocationCard = ({ location }: LocationCardProps) => {
@@ -20,16 +22,42 @@ const LocationCard = ({ location }: LocationCardProps) => {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const url = location.rawData.slug;
 
+  const scrollIntoView = (element: HTMLDivElement, offset: number) => {
+    const elementPosition = element.getBoundingClientRect().top;
+    /* const elementBottom = element.getBoundingClientRect().bottom;
+    const scrollHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight,
+      document.body.clientHeight,
+      document.documentElement.clientHeight
+    );
+    const windowHeight = window.innerHeight;
+    const max = scrollHeight - windowHeight;
+    console.log(
+      "elementBottom",
+      scrollHeight,
+      elementBottom,
+
+      elementPosition,
+      window.pageYOffset
+    ); */
+    const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  };
+
   React.useEffect(() => {
     if (
       infoWindowContent &&
       infoWindowContent.id === location.id &&
       cardRef.current
     ) {
-      cardRef.current.scrollIntoView({
-        block: "nearest",
-        behavior: "smooth",
-      });
+      scrollIntoView(cardRef.current, 80);
     }
   }, [infoWindowContent]);
   return (

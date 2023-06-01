@@ -2,6 +2,8 @@ import { Hours } from "@yext/search-headless-react";
 import { DirectoryParent } from "./DirectoryParent";
 import { Coordinate } from "../components/google-map/SearchProvider";
 import { AddressType } from "@yext/pages/components";
+import { DirectoryChild } from "./DirectoryChild";
+import { E164Number } from "libphonenumber-js/types";
 
 export type MapTypes = "google" | "mapbox";
 export type AutocompleteTypes = "google" | "mapbox" | "yext";
@@ -36,6 +38,7 @@ export interface StateDocument {
   slug: string;
   meta: EntityMeta;
   _site: SiteData;
+  dm_directoryChildren: DirectoryChild[];
 }
 
 export interface CityDocument {
@@ -43,6 +46,7 @@ export interface CityDocument {
   slug: string;
   meta: EntityMeta;
   _site: SiteData;
+  dm_directoryChildren: LocationDocument[];
 }
 
 export interface LocationDocument {
@@ -53,7 +57,9 @@ export interface LocationDocument {
   slug: string;
   address: AddressType;
   hours: Hours;
+  additionalHoursText: string;
   yextDisplayCoordinate: Coordinate;
   googlePlaceId: string;
+  mainPhone: E164Number;
   dm_directoryParents: DirectoryParent[];
 }

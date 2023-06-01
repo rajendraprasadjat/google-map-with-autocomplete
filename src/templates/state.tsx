@@ -13,6 +13,7 @@ import { EntityMeta, StateDocument, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
 import "../index.css";
 import { Link } from "@yext/pages/components";
+import { DirectoryChild } from "../types/DirectoryChild";
 
 export const config: TemplateConfig = {
   stream: {
@@ -121,7 +122,7 @@ const State: Template<StateTemplateProps> = ({
 
         <div className="directory-children">
           {dm_directoryChildren &&
-            dm_directoryChildren.map((region: any) => {
+            dm_directoryChildren.map((region: DirectoryChild) => {
               const url = region.slug;
 
               return (

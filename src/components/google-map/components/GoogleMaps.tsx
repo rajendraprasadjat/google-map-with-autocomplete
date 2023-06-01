@@ -15,8 +15,10 @@ import {
 } from "../../../config/GlobalFunctions";
 import { Address, Link } from "@yext/pages/components";
 import { SiteData } from "../../../types";
+import { LocationResult } from "../../../types/Locator";
+import { InfowindowProps } from "../../locator/Infowindow";
 interface GoogleMapProps {
-  InfowindowComponent: React.FC<any>;
+  InfowindowComponent: React.FC<InfowindowProps>;
   _site: SiteData;
 }
 
@@ -64,7 +66,7 @@ const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
         } else {
           bounds.extend(center);
         }
-        locations.map((e: any) => {
+        locations.map((e: LocationResult) => {
           const position = getPosition(e);
           bounds.extend(position);
         });

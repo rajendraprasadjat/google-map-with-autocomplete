@@ -31,7 +31,7 @@ const Header = (props: HeaderProps) => {
             <ul>
               {navigation.map((link) => (
                 <li key={link.href}>
-                  <Link as="a" href={link.href} className="">
+                  <Link href={link.href} className="">
                     {link.name}
                   </Link>
                 </li>

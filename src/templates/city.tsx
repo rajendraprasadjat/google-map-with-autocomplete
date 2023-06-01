@@ -9,7 +9,12 @@ import {
   HeadConfig,
 } from "@yext/pages";
 import favicon from "../assets/images/favicon.ico";
-import { CityDocument, EntityMeta, TemplateMeta } from "../types";
+import {
+  CityDocument,
+  EntityMeta,
+  LocationDocument,
+  TemplateMeta,
+} from "../types";
 import PageLayout from "../components/layout/PageLayout";
 import "../index.css";
 import { Address, Link } from "@yext/pages/components";
@@ -127,7 +132,7 @@ const City: Template<CityTemplateProps> = ({
         <h3>Locations</h3>
         <div className="city-locations">
           {dm_directoryChildren &&
-            dm_directoryChildren.map((location: any) => {
+            dm_directoryChildren.map((location: LocationDocument) => {
               const url = location.slug;
 
               return (

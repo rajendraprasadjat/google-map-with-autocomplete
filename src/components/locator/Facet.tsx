@@ -50,7 +50,12 @@ export default function Facet(props: FacetProps): JSX.Element {
   );
 }
 
-const Checkbox = ({ option, selected, onClick }) => {
+interface CheckboxProps {
+  option: { id: string; label: string };
+  selected: boolean;
+  onClick: (value: boolean) => void;
+}
+const Checkbox = ({ option, selected, onClick }: CheckboxProps) => {
   const [isChecked, setIsChecked] = useState(selected);
   return (
     <div className={"input-box"}>

@@ -3,7 +3,10 @@ import { SearchContext } from "../SearchProvider";
 import GoogleAutoSuggestions from "./GoogleAutoSuggestions";
 import YextAutoSuggestions from "./YextAutoSuggestions";
 
-const AutoSuggestions = ({ locale }) => {
+interface AutoSuggestionProps {
+  locale: string;
+}
+const AutoSuggestions = ({ locale }: AutoSuggestionProps) => {
   const { autocompleteType } = React.useContext(SearchContext);
 
   return autocompleteType === "google" ? (

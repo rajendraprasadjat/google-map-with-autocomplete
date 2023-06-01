@@ -43,24 +43,26 @@ const Information = ({ document, _site }: InformationProps) => {
           {document.hours && (
             <div className="box timing">
               <div className="inner-box">
-                <div className="open-close">
-                  <OpenCloseStatus
-                    hours={document.hours}
-                    site={_site}
-                    timezone={YEXT_PUBLIC_TIME_ZONE}
-                  />
-                </div>
-                <div className="holiday-hours">
-                  <HolidayHour
-                    hours={document.hours.holidayHours}
-                    site={_site}
-                  />
-                </div>
+                <OpenCloseStatus
+                  hours={document.hours}
+                  site={_site}
+                  timezone={YEXT_PUBLIC_TIME_ZONE}
+                />
+
+                {document.hours.holidayHours && (
+                  <div className="holiday-hours">
+                    <HolidayHour
+                      hours={document.hours.holidayHours}
+                      site={_site}
+                    />
+                  </div>
+                )}
                 <div className="daylist">
                   <Hours
                     hours={document.hours}
                     showHeader={true}
                     startOfWeek="today"
+                    message={document.additionalHoursText}
                   />
                 </div>
               </div>

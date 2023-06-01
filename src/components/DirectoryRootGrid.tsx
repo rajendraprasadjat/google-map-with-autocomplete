@@ -5,7 +5,7 @@ import { DirectoryParent } from "../types/DirectoryParent";
 interface DirectoryRootProps {
   name?: string;
   description?: string;
-  directoryChildren?: any;
+  directoryChildren?: DirectoryChild[];
   relativePrefixToRoot?: string;
 }
 

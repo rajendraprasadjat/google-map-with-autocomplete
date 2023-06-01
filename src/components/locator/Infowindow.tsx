@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Address, Link } from "@yext/pages/components";
 import { LocationResult } from "../../types/Locator";
+import { SiteData } from "../../types";
 
-type InfowindowProps = {
+export type InfowindowProps = {
   location: LocationResult;
+  _site: SiteData;
 };
 
 const Infowindow = ({ location }: InfowindowProps) => {

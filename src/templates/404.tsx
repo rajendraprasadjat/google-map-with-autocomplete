@@ -11,6 +11,8 @@ import {
 } from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
 import favicon from "../assets/images/favicon.ico";
+import { TemplateMeta } from "../types";
+import { FourOhFourDocument } from "../types/Locator";
 
 export const config: TemplateConfig = {
   name: "404",
@@ -40,7 +42,15 @@ export const getHeadConfig: GetHeadConfig<
   };
 };
 
-const FourOhFour: Template<TemplateRenderProps> = ({ __meta, document }) => {
+interface FourOhFourProps extends TemplateRenderProps {
+  __meta: TemplateMeta;
+  document: FourOhFourDocument;
+}
+
+const FourOhFour: Template<FourOhFourProps> = ({
+  __meta,
+  document,
+}: FourOhFourProps) => {
   return (
     <>
       <PageLayout _site={document._site} meta={__meta}>

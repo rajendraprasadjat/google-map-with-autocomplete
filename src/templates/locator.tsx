@@ -109,7 +109,10 @@ interface LocatorTemplateProps extends TemplateRenderProps {
  * This is the main template. It can have any name as long as it's the default export.
  * The props passed in here are the direct result from `transformProps`.
  */
-const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
+const Locator: Template<LocatorTemplateProps> = ({
+  document,
+  __meta,
+}: LocatorTemplateProps) => {
   const { _site, meta } = document;
 
   const searcher = provideHeadless({
@@ -135,7 +138,8 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
         mapboxAccessToken={YEXT_PUBLIC_MAP_BOX_API_KEY}
         googleApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}
         limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
-        isShowSingleAlternateResult={true}
+        autoLoadAllResult={true}
+        isUseAlternateResult={{ limit: 1, show: true }}
         mapType="google"
         autocompleteType="google"
       >

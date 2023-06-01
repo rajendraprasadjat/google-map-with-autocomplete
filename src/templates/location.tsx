@@ -22,6 +22,7 @@ import Information from "../components/location/Information";
 import NearByLocation from "../components/location/NearByLocation";
 import "../index.css";
 import { getBreadcrumb } from "../config/GlobalFunctions";
+import { NearByLocationResult } from "../types/Locator";
 
 export const config: TemplateConfig = {
   stream: {
@@ -37,6 +38,7 @@ export const config: TemplateConfig = {
       "slug",
       "address",
       "hours",
+      "additionalHoursText",
       "googlePlaceId",
       "yextDisplayCoordinate",
       "dm_directoryParents.name",
@@ -110,8 +112,13 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   };
 };
 
+type ExternalApiData = {
+  response: {
+    results: NearByLocationResult[];
+  };
+};
 type TransformData = TemplateRenderProps & {
-  externalApiData: any;
+  externalApiData: NearByLocationResult[];
   breadcrumbs: BreadcrumbItem[];
 };
 export const transformProps: TransformProps<TransformData> = async (data) => {
@@ -120,8 +127,11 @@ export const transformProps: TransformProps<TransformData> = async (data) => {
   const longitude = document.yextDisplayCoordinate?.longitude;
   const directoryParents = document.dm_directoryParents || [];
   const url = `${YEXT_PUBLIC_VERTICAL_SEARCH_END_POINT}?experienceKey=${YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_KEY}&api_key=${YEXT_PUBLIC_ANSWER_SEARCH_API_KEY}&v=20220511&version=${YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_VERSION}&locale=${data.document.meta.locale}&location=${latitude},${longitude}&verticalKey=${YEXT_PUBLIC_ANSWER_SEARCH_VERTICAL_KEY}&limit=5&retrieveFacets=true&skipSpellCheck=false&session_id=12727528-aa0b-4558-9d58-12a815eb3761&sessionTrackingEnabled=true&source=STANDARD&allowEmptySearch=true`;
-  const externalApiData = (await fetch(url).then((res) => res.json())) as any;
-  let response = [];
+  const externalApiData = (await fetch(url).then((res) =>
+    res.json()
+  )) as ExternalApiData;
+  console.log("externalApiData", JSON.stringify(externalApiData));
+  let response: NearByLocationResult[] = [];
   if (externalApiData && externalApiData.response) {
     response = externalApiData.response.results;
   }
@@ -139,7 +149,7 @@ const Location: Template<LocationTemplateProps> = ({
   __meta,
   externalApiData,
   breadcrumbs,
-}) => {
+}: LocationTemplateProps) => {
   const { meta, _site, slug } = document;
   return (
     <div id="main">

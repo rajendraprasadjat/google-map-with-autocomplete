@@ -45,9 +45,6 @@ class HoursIntervalManipulator {
       if (this.end < this.start) {
         this.end.setDate(this.end.getDate() + 1);
       }
-      if (this.end.getMinutes() === 59) {
-        this.end.setMinutes(60);
-      }
     }
   }
   isOpened() {
@@ -139,7 +136,10 @@ class HoursManipulator {
   }
   getIntervalAfter(date: Date) {
     const intervalsList = this.getIntervalsForNDays(7, date);
-    const sortFn = (interval1: any, interval2: any) => {
+    const sortFn = (
+      interval1: HoursIntervalManipulator,
+      interval2: HoursIntervalManipulator
+    ) => {
       if (interval1.start === interval2.start) return 0;
       return interval1.start > interval2.start ? 1 : -1;
     };
@@ -169,15 +169,10 @@ class HoursManipulator {
       const hours = this.getHours(theDate);
       if (hours && !hours.isClosed && hours.openIntervals) {
         intervalsList.push(
-          ...hours.openIntervals.map((interval: Interval) => {
-            const i = new HoursIntervalManipulator(
-              theDate,
-              interval,
-              this.hours
-            );
-
-            return i;
-          })
+          ...hours.openIntervals.map(
+            (interval: Interval) =>
+              new HoursIntervalManipulator(theDate, interval, this.hours)
+          )
         );
       }
     }
@@ -233,7 +228,10 @@ function arrayShift(arr: number[], n: number) {
   n = n % myArr.length;
   return myArr.concat(myArr.splice(0, myArr.length - n));
 }
-function intervalsListsAreEqual(il1: any, il2: any) {
+function intervalsListsAreEqual(
+  il1: HoursIntervalManipulator[],
+  il2: HoursIntervalManipulator[]
+) {
   if (il1.length != il2.length) {
     return false;
   }

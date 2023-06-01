@@ -11,6 +11,14 @@ export interface LocatorDocument {
   slug: string;
 }
 
+export interface FourOhFourDocument {
+  meta: EntityMeta;
+  _site: SiteData;
+  name: string;
+  id: string;
+  slug: string;
+}
+
 export interface RawData {
   id: string;
   type: string;
@@ -40,6 +48,13 @@ export interface LocationResult {
 }
 
 export interface NearByLocationResult {
+  highlightedFields: { name: string };
   data: RawData;
   distance: number;
+  name: string;
+  id: string;
+}
+
+export interface VerticalKeyToResults {
+  [key: string]: NearByLocationResult[];
 }
