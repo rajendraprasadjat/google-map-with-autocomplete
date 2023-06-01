@@ -21,8 +21,15 @@ const LocationCard = ({ location }: LocationCardProps) => {
   const url = location.rawData.slug;
 
   React.useEffect(() => {
-    if (infoWindowContent && cardRef.current) {
-      cardRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (
+      infoWindowContent &&
+      infoWindowContent.id === location.id &&
+      cardRef.current
+    ) {
+      cardRef.current.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
     }
   }, [infoWindowContent]);
   return (
