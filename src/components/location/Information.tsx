@@ -30,11 +30,13 @@ const Information = ({ document, _site }: InformationProps) => {
           </div>
           <div className="icon-row">
             <div className="icon clockIcon"></div>
-            <OpenCloseStatus
-              hours={document.hours}
-              site={_site}
-              timezone={YEXT_PUBLIC_TIME_ZONE}
-            />
+            {document.hours && (
+              <OpenCloseStatus
+                hours={document.hours}
+                site={_site}
+                timezone={YEXT_PUBLIC_TIME_ZONE}
+              />
+            )}
           </div>
           <div className="button-bx-detail">
             <Link
