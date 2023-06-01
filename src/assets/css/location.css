@@ -1,0 +1,53 @@
+.location-information{
+    @apply py-8 md:py-[50px] px-0
+}
+.location-information .container{
+    @apply flex flex-wrap
+}
+
+.address-main-sec{
+    @apply w-full sm:w-[288px] md:w-[340px] sm:pr-5
+}
+
+.address-main-sec .location-name {
+    @apply mr-0
+}
+.address-main-sec .button-bx-detail{
+    @apply mt-7 gap-4
+}
+
+.hours-sec{
+    @apply w-full sm:w-[320px] bg-gray-100 py-3 px-3 capitalize text-[13px] min-[992px]:mr-5 mt-5 sm:mt-0
+}
+.hours-title{
+    @apply text-sm font-medium mb-1.5
+}
+.daylist{
+    @apply border-t border-gray-300 pt-2
+}
+  
+.map-sec{
+    @apply w-full min-[992px]:w-[calc(100%_-_680px)] min-h-[200px] sm:min-h-[332px] mt-5 min-[992px]:mt-0
+}
+.map-sec.without-hours{
+    @apply md:w-[calc(100%_-_340px)] md:mt-0
+}
+.map-sec > div:not(:first-child){
+    @apply h-full
+}
+
+/* Nearby location */
+.nearby-locations{
+    @apply pb-8
+}
+.nearby-locations-title{
+    @apply text-center text-3xl mb-6
+}
+.nearby-locations-actions{
+    @apply text-center py-5
+}
+.nearby-locations .location-card{
+    @apply border-b-0 bg-gray-100 pt-5 hover:bg-gray-200
+}
+
+

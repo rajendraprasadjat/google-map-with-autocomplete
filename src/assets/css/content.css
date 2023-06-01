@@ -1,0 +1,9 @@
+.city-locations{
+    @apply py-10
+}
+.city-locations > .container{
+    @apply flex flex-wrap
+}
+.city-locations .city-location{
+    @apply w-1/4 px-2.5
+}

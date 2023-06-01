@@ -138,6 +138,7 @@ const Locator: Template<LocatorTemplateProps> = ({ document, __meta }) => {
         isShowSingleAlternateResult={true}
         mapType="google"
         autocompleteType="google"
+        isFilterEnable={true}
       >
         <PageLayout
           _site={_site}
