@@ -75,7 +75,7 @@ const HolidayHour = ({ hours, specificDay }: HolidayHourProps) => {
               )}
             </td>
           )}
-          {res.isClosed && <div>Closed</div>}
+          {res.isClosed && <td>Closed</td>}
         </tr>
       </React.Fragment>
     );

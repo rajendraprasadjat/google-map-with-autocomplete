@@ -126,26 +126,31 @@ const City: Template<CityTemplateProps> = ({
         <h1>City</h1>
         <h3>Locations</h3>
         <div className="city-locations">
-          {dm_directoryChildren &&
-            dm_directoryChildren.map((location: any) => {
-              const url = location.slug;
+          <div className="container">
+            {dm_directoryChildren &&
+              dm_directoryChildren.map((location: any) => {
+                const url = location.slug;
 
-              return (
-                <div className="location-card" key={location.id}>
-                  <Link className="location-name" href={`/${url}`}>
-                    {location.name}
-                  </Link>
-                  <Address
-                    className="location-address"
-                    address={location.address}
-                  />
-
-                  <Link className="button link" href={`/${url}`}>
-                    View Details
-                  </Link>
-                </div>
-              );
-            })}
+                return (
+                  <div className="city-location" key={location.id}>
+                    <div className="location-card">
+                      <div className="icon-row">
+                        <div className="icon addressIcon"></div>
+                        <Link className="location-name" href={`/${url}`}>
+                          {location.name}
+                        </Link>
+                        <Address address={location.address} />
+                      </div>
+                      <div className="button-bx-detail">
+                        <Link className="button link" href={`/${url}`}>
+                          View Details
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </PageLayout>
     </div>
