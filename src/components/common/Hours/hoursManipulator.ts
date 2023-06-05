@@ -104,7 +104,7 @@ class HoursManipulator {
   hours: Hours;
   constructor(hours: Hours) {
     this.holidayHoursByDate = Object.fromEntries(
-      (hours.holidayHours || []).map((hours2) => [hours2.date, hours2])
+      ((hours && hours.holidayHours) || []).map((hours2) => [hours2.date, hours2])
     );
     this.hours = hours;
   }
@@ -198,7 +198,7 @@ class HoursManipulator {
     return !!this.getHolidayHours(date);
   }
   isTemporarilyClosedAt(targetDate: Date) {
-    if (!this.hours.reopenDate) {
+    if (!this.hours?.reopenDate) {
       return false;
     }
     if (this.transformDateToYext(targetDate) < this.hours.reopenDate) {

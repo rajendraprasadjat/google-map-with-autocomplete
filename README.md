@@ -38,6 +38,46 @@ YEXT_PUBLIC_ANSWER_SEARCH_VERTICAL_KEY=
 YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_VERSION="STAGING or PRODUCTION"
 ```
 
+### Uses
+
+## SearchProvider 
+
+```jsx
+<SearchProvider
+    // default coordinates are required
+    defaultCoordinates={{
+        latitude: parseFloat(YEXT_PUBLIC_DEFAULT_LATITUDE),
+        longitude: parseFloat(YEXT_PUBLIC_DEFAULT_LONGITUDE),
+    }}
+    // if you use mapbox then mapbox token is required
+    mapboxAccessToken={YEXT_PUBLIC_MAP_BOX_API_KEY}
+    // if you use google map or google autocomplete then google map api key is required
+    googleApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}
+    // limit for results
+    limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
+    // map type google | mapbox
+    mapType="google"
+    // autocomplete type google | mapbox | text
+    autocompleteType="google"
+>
+  ...Your code
+</SearchProvider>
+```
+
+## props
+
+| name                           | type                      | description                                                                                                                                                  |
+| ------------------------------ | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **defaultCoordinates**         | object                    | This object is used for default center coordinates of google map or mapbox. **The data is passed as `object` which is pair of `Latitude` and `Longitude`.**  |
+| **mapboxAccessToken**          | string                    | This is for `mapbox` access token. if you use `mapbox` as map this is require key.                                                                           |
+| **googleApiKey**               | string                    | This is for `google map` or `google autocomplete` api key. if you use `google map` as map or `google autocomplete` as autocomplete then this is require key. |
+| **limit**                      | number                    | This is for `limit`.                                                                                                                                         |
+| **mapType**                    | google or mapbox          | used for which maptype you want `google` or `mapbox`.                                                                                                        |
+| **autocompleteType**           | google / mapbox / yext    | used for which autocomplete type you want `google` or `mapbox` or `yext`.                                                                                    |
+
+
+
+
 While _developing locally_, run the following command:
 ```
 npm run dev

@@ -48,11 +48,21 @@ export interface LocationResult {
 }
 
 export interface NearByLocationResult {
-  highlightedFields: { name: string };
-  data: RawData;
-  distance: number;
-  name: string;
   id: string;
+  type: string;
+  googlePlaceId: string;
+  savedFilters: string[];
+  slug: string;
+  address: AddressType;
+  addressHidden: boolean;
+  hours: Hours;
+  name: string;
+  closed: boolean;
+  dm_directoryParents: DirectoryParent[];
+  mainPhone: string;
+  timezone: string;
+  yextDisplayCoordinate: Coordinate;
+  uid: string;
 }
 
 export interface VerticalKeyToResults {
