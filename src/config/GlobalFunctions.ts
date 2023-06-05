@@ -189,3 +189,42 @@ export const getMarkerPin = (
   };
   return m_icon;
 };
+
+export const getOgTags = (
+  title: string,
+  description: string,
+  url: string,
+  image: string
+) => {
+  return [
+    {
+      type: "meta",
+      attributes: {
+        property: "og:title",
+        content: title,
+      },
+    },
+    {
+      type: "meta",
+      attributes: {
+        property: "og:description",
+        content: description,
+      },
+    },
+    {
+      type: "meta",
+      attributes: {
+        property: "og:url",
+        content: url,
+      },
+    },
+
+    {
+      type: "meta",
+      attributes: {
+        property: "og:image",
+        content: image,
+      },
+    },
+  ];
+};

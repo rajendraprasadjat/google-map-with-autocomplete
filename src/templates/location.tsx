@@ -112,31 +112,15 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
   };
 };
 
-type ExternalApiData = {
-  response: {
-    results: NearByLocationResult[];
-  };
-};
 type TransformData = TemplateRenderProps & {
   externalApiData: NearByLocationResult[];
   breadcrumbs: BreadcrumbItem[];
 };
 export const transformProps: TransformProps<TransformData> = async (data) => {
   const document = data.document as LocationDocument;
-  const latitude = document.yextDisplayCoordinate?.latitude;
-  const longitude = document.yextDisplayCoordinate?.longitude;
   const directoryParents = document.dm_directoryParents || [];
-  const url = `${YEXT_PUBLIC_VERTICAL_SEARCH_END_POINT}?experienceKey=${YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_KEY}&api_key=${YEXT_PUBLIC_ANSWER_SEARCH_API_KEY}&v=20220511&version=${YEXT_PUBLIC_ANSWER_SEARCH_EXPERIENCE_VERSION}&locale=${data.document.meta.locale}&location=${latitude},${longitude}&verticalKey=${YEXT_PUBLIC_ANSWER_SEARCH_VERTICAL_KEY}&limit=5&retrieveFacets=true&skipSpellCheck=false&session_id=12727528-aa0b-4558-9d58-12a815eb3761&sessionTrackingEnabled=true&source=STANDARD&allowEmptySearch=true`;
-  const externalApiData = (await fetch(url).then((res) =>
-    res.json()
-  )) as ExternalApiData;
-  console.log("externalApiData", JSON.stringify(externalApiData));
-  let response: NearByLocationResult[] = [];
-  if (externalApiData && externalApiData.response) {
-    response = externalApiData.response.results;
-  }
   const breadcrumbs = getBreadcrumb(directoryParents, document, data.__meta);
-  return { ...data, externalApiData: response, breadcrumbs };
+  return { ...data, breadcrumbs };
 };
 
 interface LocationTemplateProps extends TransformData {
@@ -147,7 +131,6 @@ interface LocationTemplateProps extends TransformData {
 const Location: Template<LocationTemplateProps> = ({
   document,
   __meta,
-  externalApiData,
   breadcrumbs,
 }: LocationTemplateProps) => {
   const { meta, _site, slug } = document;
@@ -169,7 +152,12 @@ const Location: Template<LocationTemplateProps> = ({
             <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
             <Information document={document} _site={_site} />
 
-            <NearByLocation locations={externalApiData} meta={__meta} />
+            <NearByLocation
+              apiKey={YEXT_PUBLIC_ANSWER_SEARCH_API_KEY}
+              coordinate={document.yextDisplayCoordinate}
+              id={document.id}
+              meta={__meta}
+            />
           </PageLayout>
         </AnalyticsScopeProvider>
       </AnalyticsProvider>

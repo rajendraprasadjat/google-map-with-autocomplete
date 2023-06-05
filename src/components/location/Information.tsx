@@ -28,16 +28,16 @@ const Information = ({ document, _site }: InformationProps) => {
             <h4 className="location-name">{document?.name}</h4>
             <Address address={document.address} />
           </div>
-          <div className="icon-row">
-            <div className="icon clockIcon"></div>
-            {document.hours && (
+          {document.hours && (
+            <div className="icon-row">
+              <div className="icon clockIcon"></div>
               <OpenCloseStatus
                 hours={document.hours}
                 site={_site}
                 timezone={YEXT_PUBLIC_TIME_ZONE}
               />
-            )}
-          </div>
+            </div>
+          )}
           <div className="button-bx-detail">
             <Link
               className="button link"
@@ -51,12 +51,6 @@ const Information = ({ document, _site }: InformationProps) => {
           {document.hours && (
             <div className="box timing">
               <div className="inner-box">
-                <OpenCloseStatus
-                  hours={document.hours}
-                  site={_site}
-                  timezone={YEXT_PUBLIC_TIME_ZONE}
-                />
-
                 {document.hours.holidayHours && (
                   <div className="holiday-hours">
                     <HolidayHour
