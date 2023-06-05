@@ -162,6 +162,23 @@ interface IsUseAlternateResult {
   show: boolean;
 }
 
+interface MapConfig {
+  defaultZoom?: number;
+  maxZoom?: number;
+  minZoom?: number;
+  zoomLevelInfowindow?: number;
+}
+
+interface NoResultFound {
+  show: boolean;
+  message: string;
+  showWithAlternateResult?: boolean;
+}
+
+interface GoogleAutocompleteConfig {
+  countries?: string[]
+}
+
 interface SearchProviderProps {
   children: React.ReactNode;
   defaultCoordinates: Coordinate;
@@ -177,6 +194,10 @@ interface SearchProviderProps {
   mapboxAccessToken?: string;
   isFilterEnable?: boolean;
   isUpdateListAccordingMarkers?: boolean;
+  mapConfig?: MapConfig;
+  googleAutocompleteConfig?: GoogleAutocompleteConfig
+  noResultFound?: NoResultFound;
+  showResultOnIntialLoad?: boolean;
 }
 /**
  * This provider used for search action by yext search action

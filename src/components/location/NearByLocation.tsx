@@ -6,47 +6,100 @@ import { NearByLocationResult } from "../../types/Locator";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
-import { getRecursiveData } from "../../config/GlobalFunctions";
+import {
+  getDirectionUrl,
+  getRecursiveData,
+} from "../../config/GlobalFunctions";
+import { Coordinate } from "../google-map/SearchProvider";
+import { fetch } from "@yext/pages/util";
 
-type NearByprops = {
-  locations: NearByLocationResult[];
-  meta: TemplateMeta;
+type NearbyAPIConfig = {
+  endpoint:
+    | "https://liveapi-sandbox.yext.com/v2/accounts/me/entities/geosearch"
+    | "https://liveapi.yext.com/v2/accounts/me/entities/geosearch";
+  params: {
+    api_key: string;
+    entityTypes?: string;
+    limit?: string;
+    radius?: string;
+    savedFilterIds?: string;
+    v: string;
+  };
 };
 
-const NearByLocation = ({ locations, meta }: NearByprops) => {
+const getConfig = (api_key: string): NearbyAPIConfig => {
+  return {
+    endpoint: YEXT_PUBLIC_GEO_SEARCH_END_POINT,
+    params: {
+      api_key,
+      entityTypes: "location",
+      limit: "4",
+      v: "20220927",
+    },
+  };
+};
+
+type NearbyProps = {
+  coordinate: Coordinate;
+  id: string;
+  meta: TemplateMeta;
+  apiKey: string;
+};
+
+const NearByLocation = ({ meta, coordinate, id, apiKey }: NearbyProps) => {
+  const [locations, setLocations] = React.useState<NearByLocationResult[]>([]);
+  React.useEffect(() => {
+    if (!coordinate || !apiKey) {
+      return;
+    }
+
+    const config = getConfig(apiKey);
+    const searchParams = new URLSearchParams({
+      ...config.params,
+      location: `${coordinate.latitude},${coordinate.longitude}`,
+      filter: JSON.stringify({ "meta.id": { "!$eq": `${id}` } }),
+    });
+
+    fetch(`${config.endpoint}?${searchParams.toString()}`)
+      .then((resp) => resp.json())
+      .then((data) => setLocations(data.response.entities || []))
+      .catch((error) => console.error(error));
+  }, [coordinate, id, apiKey]);
   return (
     <div className="nearby-locations">
       <div className="container">
         <h3 className="nearby-locations-title">Nearby Locations</h3>
         <Swiper spaceBetween={50} slidesPerView={3}>
           {locations.map((location) => {
-            const { data } = location;
-            const url = getRecursiveData(data, meta);
+            const url = getRecursiveData(location, meta);
             return (
-              <SwiperSlide key={data.id}>
+              <SwiperSlide key={location.id}>
                 <div className="location-card">
                   <div className="icon-row">
                     <div className="icon addressIcon"></div>
                     <Link className="location-name" href={`${url}`}>
-                      {data.name}
+                      {location.name}
                     </Link>
-                    <Address address={data.address} />
+                    <Address address={location.address} />
                   </div>
 
                   <div className="button-bx-detail">
                     <Link className="button link" href={`${url}`}>
                       View Details
                     </Link>
-                    {/* <Link
-                  data-ya-track="getdirections"
-                  eventName={`getdirections`}
-                  target="_blank"
-                  className="direction button before-icon"
-                  href={getDirectionUrl(location)}
-                  rel="noopener noreferrer"
-                >
-                  Get Direction
-                </Link> */}
+                    <Link
+                      data-ya-track="getdirections"
+                      eventName={`getdirections`}
+                      target="_blank"
+                      className="direction button before-icon"
+                      href={getDirectionUrl(
+                        location.address,
+                        location.googlePlaceId
+                      )}
+                      rel="noopener noreferrer"
+                    >
+                      Get Direction
+                    </Link>
                   </div>
                 </div>
               </SwiperSlide>
