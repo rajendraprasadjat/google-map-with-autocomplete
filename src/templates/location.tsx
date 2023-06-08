@@ -134,6 +134,7 @@ const Location: Template<LocationTemplateProps> = ({
   breadcrumbs,
 }: LocationTemplateProps) => {
   const { meta, _site, slug } = document;
+  const [nearByLocations, setNearByLocations] = React.useState([]);
   return (
     <div id="main">
       <AnalyticsProvider
@@ -150,13 +151,18 @@ const Location: Template<LocationTemplateProps> = ({
             devLink={slug}
           >
             <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
-            <Information document={document} _site={_site} />
+            <Information
+              document={document}
+              _site={_site}
+              nearByLocations={nearByLocations}
+            />
 
             <NearByLocation
               apiKey={YEXT_PUBLIC_ANSWER_SEARCH_API_KEY}
               coordinate={document.yextDisplayCoordinate}
               id={document.id}
               meta={__meta}
+              setNearByLocations={setNearByLocations}
             />
           </PageLayout>
         </AnalyticsScopeProvider>

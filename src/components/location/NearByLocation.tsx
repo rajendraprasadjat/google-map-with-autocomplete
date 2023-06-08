@@ -33,7 +33,8 @@ const getConfig = (api_key: string): NearbyAPIConfig => {
     params: {
       api_key,
       entityTypes: "location",
-      limit: "4",
+      limit: "3",
+      radius: "2500",
       v: "20220927",
     },
   };
@@ -44,9 +45,16 @@ type NearbyProps = {
   id: string;
   meta: TemplateMeta;
   apiKey: string;
+  setNearByLocations: (value: []) => void;
 };
 
-const NearByLocation = ({ meta, coordinate, id, apiKey }: NearbyProps) => {
+const NearByLocation = ({
+  meta,
+  coordinate,
+  id,
+  apiKey,
+  setNearByLocations,
+}: NearbyProps) => {
   const [locations, setLocations] = React.useState<NearByLocationResult[]>([]);
   React.useEffect(() => {
     if (!coordinate || !apiKey) {
@@ -62,14 +70,35 @@ const NearByLocation = ({ meta, coordinate, id, apiKey }: NearbyProps) => {
 
     fetch(`${config.endpoint}?${searchParams.toString()}`)
       .then((resp) => resp.json())
-      .then((data) => setLocations(data.response.entities || []))
+      .then((data) => {
+        console.log("data.response", data.response);
+        setLocations(data.response.entities || []);
+        setNearByLocations(data.response.entities || []);
+      })
       .catch((error) => console.error(error));
   }, [coordinate, id, apiKey]);
   return (
     <div className="nearby-locations">
       <div className="container">
         <h3 className="nearby-locations-title">Nearby Locations</h3>
-        <Swiper spaceBetween={50} slidesPerView={3}>
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={3}
+          breakpoints={{
+            "@0.00": {
+              slidesPerView: 1,
+              spaceBetween: 10,
+            },
+            "@1.00": {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            "@1.50": {
+              slidesPerView: 3,
+              spaceBetween: 40,
+            },
+          }}
+        >
           {locations.map((location) => {
             const url = getRecursiveData(location, meta);
             return (
