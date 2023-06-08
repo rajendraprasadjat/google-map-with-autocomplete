@@ -176,7 +176,7 @@ interface NoResultFound {
 }
 
 interface GoogleAutocompleteConfig {
-  countries?: string[]
+  countries?: string[];
 }
 
 interface SearchProviderProps {
@@ -195,7 +195,7 @@ interface SearchProviderProps {
   isFilterEnable?: boolean;
   isUpdateListAccordingMarkers?: boolean;
   mapConfig?: MapConfig;
-  googleAutocompleteConfig?: GoogleAutocompleteConfig
+  googleAutocompleteConfig?: GoogleAutocompleteConfig;
   noResultFound?: NoResultFound;
   showResultOnIntialLoad?: boolean;
 }
@@ -220,6 +220,7 @@ const SearchProvider = ({
   mapboxAccessToken = "",
   isFilterEnable = false,
   isUpdateListAccordingMarkers = false,
+  noResultFound,
 }: SearchProviderProps) => {
   const searchAction = useSearchActions();
   const [inputValue, setInputValue] = React.useState("");
@@ -548,6 +549,7 @@ const SearchProvider = ({
     setHoveredLocation,
     noRecordFound,
     isUseAlternateResult,
+    noResultFound
   };
 
   return (
