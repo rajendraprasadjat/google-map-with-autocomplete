@@ -168,7 +168,7 @@ const Hours = (props: HoursProps) => {
     hoursDays = collapseDays(hoursDays);
   }
 
-  console.log("hoursDays", hoursDays);
+  // console.log("hoursDays", hoursDays);
   return (
     <React.Fragment>
       {isClient && (

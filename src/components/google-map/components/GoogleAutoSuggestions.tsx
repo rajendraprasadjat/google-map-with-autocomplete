@@ -4,32 +4,17 @@ import { SearchContext } from "../SearchProvider";
 import { SearchIcon, UseLocationIcon } from "../../../assets/svgs/SvgIcons";
 
 const GoogleAutoSuggestions = () => {
-  const {
-    getCoordinates,
-    setInputValue,
-    inputValue,
-    setUserLocation,
-    setIsUserLocationAllowed,
-  } = React.useContext(SearchContext);
+  const { getCoordinates, setInputValue, inputValue, setUserLocation, setIsUserLocationAllowed } = React.useContext(SearchContext);
   const googleLib = typeof google !== "undefined" ? google : null;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [autocomplete, setAutocomplete] =
-    useState<google.maps.places.Autocomplete | null>(null);
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   const [isApiCalledOnEmpty, setIsApiCalledOnEmpty] = useState(false);
   useEffect(() => {
-    if (
-      googleLib &&
-      typeof google.maps === "object" &&
-      inputRef.current &&
-      !autocomplete
-    ) {
+    if (googleLib && typeof google.maps === "object" && inputRef.current && !autocomplete) {
       const options: google.maps.places.AutocompleteOptions = {
         fields: ["address_component", "geometry", "formatted_address"],
       };
-      const autoComplete = new google.maps.places.Autocomplete(
-        inputRef.current,
-        options
-      );
+      const autoComplete = new google.maps.places.Autocomplete(inputRef.current, options);
       if (autoComplete) {
         const pacSelectFirst = (input: HTMLInputElement) => {
           const _addEventListener = input.addEventListener;
@@ -49,23 +34,14 @@ const GoogleAutoSuggestions = () => {
             });
             input.dispatchEvent(keydown);
           };
-          function addEventListenerWrapper(
-            type: string,
-            listener: EventListenerOrEventListenerObject
-          ) {
+          function addEventListenerWrapper(type: string, listener: EventListenerOrEventListenerObject) {
             if (type == "keydown") {
               const orig_listener = listener;
 
               listener = function (event: KeyboardEvent | Event) {
-                const suggestion_selected =
-                  document.getElementsByClassName("pac-item-selected").length >
-                  0;
+                const suggestion_selected = document.getElementsByClassName("pac-item-selected").length > 0;
 
-                if (
-                  ((event as KeyboardEvent).which == 13 ||
-                    (event as KeyboardEvent).which == 9) &&
-                  !suggestion_selected
-                ) {
+                if (((event as KeyboardEvent).which == 13 || (event as KeyboardEvent).which == 9) && !suggestion_selected) {
                   getEvent();
                   (orig_listener as EventListener).apply(input, [event]);
                 }
@@ -85,24 +61,17 @@ const GoogleAutoSuggestions = () => {
         setAutocomplete(autoComplete);
         pacSelectFirst(inputRef.current);
 
-        google.maps.event.addListener(
-          autoComplete,
-          "place_changed",
-          function () {
-            const place = autoComplete.getPlace();
-            if (inputRef.current?.value && place.formatted_address) {
-              setInputValue(place.formatted_address);
-              if (place.geometry?.location) {
-                getCoordinates(
-                  place.formatted_address,
-                  place.geometry?.location.toJSON()
-                );
-              } else {
-                getCoordinates(place.formatted_address);
-              }
+        google.maps.event.addListener(autoComplete, "place_changed", function () {
+          const place = autoComplete.getPlace();
+          if (inputRef.current?.value && place.formatted_address) {
+            setInputValue(place.formatted_address);
+            if (place.geometry?.location) {
+              getCoordinates(place.formatted_address, place.geometry?.location.toJSON());
+            } else {
+              getCoordinates(place.formatted_address);
             }
           }
-        );
+        });
       }
     }
     return () => {
@@ -114,18 +83,14 @@ const GoogleAutoSuggestions = () => {
   }, [googleLib]);
 
   const onClick = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
+    if (typeof window !== "undefined" && window.navigator.geolocation) {
+      window.navigator.geolocation.getCurrentPosition(function (position) {
         setIsUserLocationAllowed(true);
         setUserLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
-        getCoordinates(
-          `${position.coords.latitude},${position.coords.longitude}`,
-          null,
-          true
-        );
+        getCoordinates(`${position.coords.latitude},${position.coords.longitude}`, null, true);
       });
     }
   };
@@ -133,11 +98,7 @@ const GoogleAutoSuggestions = () => {
     <>
       <div className="search-warpper">
         <div className="use-my-location-block">
-          <button
-            className="link-button"
-            title="Search using your current location!"
-            onClick={onClick}
-          >
+          <button className="link-button" title="Search using your current location!" onClick={onClick}>
             <UseLocationIcon />
             <span>{"Use my location"}</span>
           </button>
@@ -154,11 +115,7 @@ const GoogleAutoSuggestions = () => {
               setInputValue(e.target.value);
             }}
             onKeyUp={(evt) => {
-              if (
-                (evt.key === "Backspace" || evt.key === "Delete") &&
-                !inputValue &&
-                !isApiCalledOnEmpty
-              ) {
+              if ((evt.key === "Backspace" || evt.key === "Delete") && !inputValue && !isApiCalledOnEmpty) {
                 setIsApiCalledOnEmpty(true);
                 getCoordinates("");
               }

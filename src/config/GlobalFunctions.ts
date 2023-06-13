@@ -26,10 +26,15 @@ export function slugify(slugString: string) {
 }
 
 export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecursive = true, skip = 0) => {
-  let url = `/${document.slug}`;
-  if (isRecursive) {
-    url = getRecursiveData(document, meta, skip);
+  let url = `/${document.slug}.html`;
+  if (meta.mode === "development") {
+    url = `${document.slug}`;
+  } else {
+    if (isRecursive) {
+      url = getRecursiveData(document, meta, skip);
+    }
   }
+
   return url;
 };
 

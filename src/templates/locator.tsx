@@ -85,6 +85,13 @@ export const getHeadConfig: GetHeadConfig<
       {
         type: "meta",
         attributes: {
+          name: "robots",
+          content: "noindex,nofollow",
+        },
+      },
+      {
+        type: "meta",
+        attributes: {
           name: "description",
           content: "Static page example meta description.",
         },

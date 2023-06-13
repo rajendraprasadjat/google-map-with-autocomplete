@@ -19,6 +19,7 @@ type NearbyAPIConfig = {
     radius?: string;
     savedFilterIds?: string;
     v: string;
+    fields: ["dm_directoryParents", "name", "slug", "address", "yextDisplayCoordinate"];
   };
 };
 

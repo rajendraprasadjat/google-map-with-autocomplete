@@ -1,23 +1,11 @@
 import * as React from "react";
-import {
-  Template,
-  GetPath,
-  TemplateConfig,
-  TemplateProps,
-  TemplateRenderProps,
-  GetHeadConfig,
-  HeadConfig,
-  TransformProps,
-} from "@yext/pages";
+import { Template, GetPath, TemplateConfig, TemplateProps, TemplateRenderProps, GetHeadConfig, HeadConfig, TransformProps } from "@yext/pages";
 import { fetch } from "@yext/pages/util";
 import favicon from "../assets/images/favicon.ico";
 import { EntityMeta, LocationDocument, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
 import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
-import {
-  AnalyticsProvider,
-  AnalyticsScopeProvider,
-} from "@yext/pages/components";
+import { AnalyticsProvider, AnalyticsScopeProvider } from "@yext/pages/components";
 import Information from "../components/location/Information";
 import NearByLocation from "../components/location/NearByLocation";
 import "../index.css";
@@ -60,31 +48,23 @@ export const config: TemplateConfig = {
 };
 
 export const getPath: GetPath<TemplateProps> = ({ document }) => {
-  if (
-    document.dm_directoryParents &&
-    document.dm_directoryParents != "undefined"
-  ) {
+  if (document.dm_directoryParents && document.dm_directoryParents != "undefined") {
     const parent: string[] = [];
-    document.dm_directoryParents?.map(
-      (i: { meta: EntityMeta; slug: string; name: string }) => {
-        parent.push(i.slug);
-      }
-    );
+    document.dm_directoryParents?.map((i: { meta: EntityMeta; slug: string; name: string }) => {
+      parent.push(i.slug);
+    });
     return `${parent.join("/")}/${document.slug.toString()}.html`;
   } else {
     return `${document.slug.toString()}.html`;
   }
 };
 
-export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
-  document,
-}): HeadConfig => {
+export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({ document }): HeadConfig => {
   const metaTitle = `Dotsquares | ${document.name}`;
   return {
     title: metaTitle,
     charset: "UTF-8",
-    viewport:
-      "width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0",
+    viewport: "width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0",
     tags: [
       {
         type: "link",
@@ -94,7 +74,13 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
           href: favicon,
         },
       },
-
+      {
+        type: "meta",
+        attributes: {
+          name: "robots",
+          content: "noindex,nofollow",
+        },
+      },
       {
         type: "meta",
         attributes: {
@@ -129,11 +115,7 @@ interface LocationTemplateProps extends TransformData {
   document: LocationDocument;
 }
 
-const Location: Template<LocationTemplateProps> = ({
-  document,
-  __meta,
-  breadcrumbs,
-}: LocationTemplateProps) => {
+const Location: Template<LocationTemplateProps> = ({ document, __meta, breadcrumbs }: LocationTemplateProps) => {
   const { meta, _site, slug } = document;
   const [nearByLocations, setNearByLocations] = React.useState([]);
   return (
@@ -144,19 +126,9 @@ const Location: Template<LocationTemplateProps> = ({
         enableTrackingCookie={YEXT_PUBLIC_ANALYTICS_ENABLE_TRACKING_COOKIE}
       >
         <AnalyticsScopeProvider name={document.name}>
-          <PageLayout
-            _site={_site}
-            meta={__meta}
-            template="country"
-            locale={meta.locale}
-            devLink={slug}
-          >
+          <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
             <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
-            <Information
-              document={document}
-              _site={_site}
-              nearByLocations={nearByLocations}
-            />
+            <Information document={document} _site={_site} nearByLocations={nearByLocations} />
 
             <NearByLocation
               apiKey={YEXT_PUBLIC_ANSWER_SEARCH_API_KEY}
