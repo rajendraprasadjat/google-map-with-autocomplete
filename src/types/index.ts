@@ -11,6 +11,7 @@ export interface SiteData {
   id: string;
   slug: string;
   name: string;
+  meta: EntityMeta;
 }
 
 export interface TemplateMeta {
@@ -57,6 +58,7 @@ export interface LocationDocument {
   slug: string;
   address: AddressType;
   hours: Hours;
+  timezone: string;
   additionalHoursText: string;
   yextDisplayCoordinate: Coordinate;
   googlePlaceId: string;

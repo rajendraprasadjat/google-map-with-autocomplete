@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Address, Link } from "@yext/pages/components";
+import { Address, Link, getDirections } from "@yext/pages/components";
 import { LocationDocument, SiteData } from "../../types";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Hours } from "../common/Hours/Hours";
@@ -25,6 +25,7 @@ const Information = ({
     return { lat, lng };
   };
   const coordinates = getPosition(document);
+  console.log("document", document);
   return (
     <div className="location-information">
       <div className="container">
@@ -40,7 +41,7 @@ const Information = ({
               <OpenCloseStatus
                 hours={document.hours}
                 site={_site}
-                timezone={YEXT_PUBLIC_TIME_ZONE}
+                timezone={document.timezone}
               />
             </div>
           )}
@@ -71,6 +72,8 @@ const Information = ({
                     showHeader={true}
                     startOfWeek="today"
                     message={document.additionalHoursText}
+                    locale={_site.meta.locale}
+                    timeZone={document.timezone}
                   />
                 </div>
               </div>

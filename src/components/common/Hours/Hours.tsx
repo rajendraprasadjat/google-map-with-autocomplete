@@ -6,7 +6,7 @@ import {
   HoursIntervalManipulator,
 } from "./hoursManipulator";
 import { Hours as ComponentHours, DayHour } from "@yext/search-core";
-import moment from "moment";
+import moment, { Moment } from "moment-timezone";
 
 const defaultDayOfWeekNames = [
   "sunday",
@@ -31,10 +31,10 @@ interface CollapseDay extends HoursCollapseDay {
 }
 
 const defaultDayOfWeekSortIdx = [0, 1, 2, 3, 4, 5, 6];
-function getSortIdx(props: HoursProps, todayDate: Date) {
+function getSortIdx(props: HoursProps, todayDate: Moment) {
   let startIdx = 0;
   if (props.startOfWeek === "today") {
-    startIdx = todayDate.getDay();
+    startIdx = todayDate.get("day");
     return arrayShift(defaultDayOfWeekSortIdx, startIdx);
   } else if (props.startOfWeek) {
     startIdx = defaultDayOfWeekNames.indexOf(props.startOfWeek);
@@ -74,7 +74,11 @@ function collapseDays(hoursDays: HoursCollapseDay[]) {
         : `${day.startDay} - ${day.endDay}`,
   }));
 }
-function defaultIntervalStringsBuilder(dayData: HoursCollapseDay) {
+function defaultIntervalStringsBuilder(
+  dayData: HoursCollapseDay,
+  locale: string,
+  timeZone: string
+) {
   const intervalStrings = [];
   if (dayData.intervals.length === 0) {
     intervalStrings.push(
@@ -84,8 +88,8 @@ function defaultIntervalStringsBuilder(dayData: HoursCollapseDay) {
     );
   } else {
     dayData.intervals.forEach((interval) => {
-      const startTime = interval.getStartTime("en-US");
-      const endTime = interval.getEndTime("en-US");
+      const startTime = interval.getStartTime(locale, { timeZone });
+      const endTime = interval.getEndTime(locale, { timeZone });
       intervalStrings.push(
         <>
           <span className="time">{startTime}</span>
@@ -118,6 +122,8 @@ interface HoursProps {
   intervalStringsBuilderFn?: () => string[];
   startOfWeek?: string;
   message?: string;
+  timeZone: string;
+  locale: string;
 }
 
 const Hours = (props: HoursProps) => {
@@ -125,8 +131,8 @@ const Hours = (props: HoursProps) => {
   useEffect(() => {
     setIsClient(true);
   }, []);
-  const h = new HoursManipulator(props.hours);
-  console.log("props", props);
+  const h = new HoursManipulator(props.hours, props.timeZone);
+
   if (h.hours.reopenDate) {
     const date = moment(h.hours.reopenDate);
     return (
@@ -136,9 +142,9 @@ const Hours = (props: HoursProps) => {
       </div>
     );
   }
-  const now = new Date();
+  const now = moment();
   const dayOfWeekNames = defaultDayOfWeekNames;
-  const dayOfWeekSortIdx = getSortIdx(props, new Date());
+  const dayOfWeekSortIdx = getSortIdx(props, moment());
   const allIntervals = h.getIntervalsForNDays(7, now);
   let hoursDays = [];
   for (let i = 0; i < 7; i++) {
@@ -146,9 +152,9 @@ const Hours = (props: HoursProps) => {
       dayOfWeek: dayOfWeekNames[i],
       sortIdx: dayOfWeekSortIdx[i],
       intervals: allIntervals.filter(
-        (interval) => interval.start.getDay() === i
+        (interval) => interval.start.get("day") === i
       ),
-      isToday: now.getDay() === i,
+      isToday: now.get("day") === i,
     });
   }
   const sortFn = (day1: { sortIdx: number }, day2: { sortIdx: number }) => {
@@ -178,7 +184,11 @@ const Hours = (props: HoursProps) => {
           {hoursDays.map((dayData) => {
             const intervalStringsBuilder =
               props.intervalStringsBuilderFn || defaultIntervalStringsBuilder;
-            const intervalStrings = intervalStringsBuilder(dayData);
+            const intervalStrings = intervalStringsBuilder(
+              dayData,
+              props.locale,
+              props.timeZone
+            );
 
             return (
               <tr
