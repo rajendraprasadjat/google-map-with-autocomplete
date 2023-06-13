@@ -25,7 +25,7 @@ export function slugify(slugString: string) {
   return slugString.toLowerCase();
 }
 
-export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecursive = true, skip = 0) => {
+export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecursive = true, skip = 0, useHtml = false) => {
   let url = `/${document.slug}.html`;
   if (meta.mode === "development") {
     url = `${document.slug}`;
@@ -35,7 +35,7 @@ export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecu
     }
   }
 
-  return url;
+  return `${url}${useHtml ? ".html" : ""}`;
 };
 
 export const getRecursiveData = <DataType>(element: DataType, meta: TemplateMeta, skip = 0) => {

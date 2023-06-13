@@ -5,7 +5,7 @@ import { CityDocument, EntityMeta, LocationDocument, TemplateMeta } from "../typ
 import PageLayout from "../components/layout/PageLayout";
 import "../index.css";
 import { Address, Link } from "@yext/pages/components";
-import { BreadcrumbItem } from "../components/common/Breadcrumbs";
+import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
 import { DirectoryParent } from "../types/DirectoryParent";
 import { getBreadcrumb, getLink } from "../config/GlobalFunctions";
 
@@ -49,8 +49,7 @@ export const getPath: GetPath<TemplateProps> = ({ document, __meta }) => {
   if (__meta.mode === "development") {
     return document.slug;
   } else {
-    const slug = getLink(document, __meta);
-    return `${slug}.html`;
+    return getLink(document, __meta, true, 0, true);
   }
 };
 
@@ -104,18 +103,19 @@ interface CityTemplateProps extends TransformData {
   document: CityDocument;
 }
 
-const City: Template<CityTemplateProps> = ({ document, __meta }: CityTemplateProps) => {
+const City: Template<CityTemplateProps> = ({ document, __meta, breadcrumbs }: CityTemplateProps) => {
   const { meta, _site, slug, dm_directoryChildren } = document;
   return (
     <div id="main">
       <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
+        <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
         <h1>City</h1>
         <h3>Locations</h3>
         <div className="city-locations">
           <div className="container">
             {dm_directoryChildren &&
               dm_directoryChildren.map((location: LocationDocument) => {
-                const url = location.slug;
+                const url = getLink<LocationDocument>(location, __meta, true, 0, true);
 
                 return (
                   <div className="city-location" key={location.id}>

@@ -90,7 +90,7 @@ const NearByLocation = ({ meta, coordinate, id, apiKey, setNearByLocations }: Ne
           }}
         >
           {locations.map((location) => {
-            const url = getLink<NearByLocationResult>(location, meta);
+            const url = getLink<NearByLocationResult>(location, meta, true, 0, true);
             return (
               <SwiperSlide key={location.id}>
                 <div className="location-card">

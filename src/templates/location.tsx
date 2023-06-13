@@ -9,7 +9,7 @@ import { AnalyticsProvider, AnalyticsScopeProvider } from "@yext/pages/component
 import Information from "../components/location/Information";
 import NearByLocation from "../components/location/NearByLocation";
 import "../index.css";
-import { getBreadcrumb } from "../config/GlobalFunctions";
+import { getBreadcrumb, getLink } from "../config/GlobalFunctions";
 import { NearByLocationResult } from "../types/Locator";
 
 export const config: TemplateConfig = {
@@ -47,15 +47,11 @@ export const config: TemplateConfig = {
   },
 };
 
-export const getPath: GetPath<TemplateProps> = ({ document }) => {
-  if (document.dm_directoryParents && document.dm_directoryParents != "undefined") {
-    const parent: string[] = [];
-    document.dm_directoryParents?.map((i: { meta: EntityMeta; slug: string; name: string }) => {
-      parent.push(i.slug);
-    });
-    return `${parent.join("/")}/${document.slug.toString()}.html`;
+export const getPath: GetPath<TemplateProps> = ({ document, __meta }) => {
+  if (__meta.mode === "development") {
+    return document.slug;
   } else {
-    return `${document.slug.toString()}.html`;
+    return getLink(document, __meta, true, 0, true);
   }
 };
 

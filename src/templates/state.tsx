@@ -8,7 +8,7 @@ import { Link } from "@yext/pages/components";
 import { DirectoryChild } from "../types/DirectoryChild";
 import { DirectoryParent } from "../types/DirectoryParent";
 import { getBreadcrumb, getLink } from "../config/GlobalFunctions";
-import { BreadcrumbItem } from "../components/common/Breadcrumbs";
+import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
 
 export const config: TemplateConfig = {
   stream: {
@@ -43,8 +43,7 @@ export const getPath: GetPath<TemplateProps> = ({ document, __meta }) => {
   if (__meta.mode === "development") {
     return document.slug;
   } else {
-    const slug = getLink(document, __meta);
-    return `${slug}.html`;
+    return getLink(document, __meta, true, 0, true);
   }
 };
 
@@ -98,12 +97,13 @@ interface StateTemplateProps extends TemplateRenderProps {
   document: StateDocument;
 }
 
-const State: Template<StateTemplateProps> = ({ document, __meta }: StateTemplateProps) => {
+const State: Template<StateTemplateProps> = ({ document, __meta, breadcrumbs }: StateTemplateProps) => {
   const { meta, _site, slug, dm_directoryChildren } = document;
 
   return (
     <div id="main">
       <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
+        <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
         <h1>State</h1>
 
         <div className="directory-children">

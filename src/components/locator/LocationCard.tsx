@@ -1,26 +1,21 @@
 import * as React from "react";
 import { SearchContext } from "../google-map/SearchProvider";
 import { Address, Link } from "@yext/pages/components";
-import { LocationResult } from "../../types/Locator";
+import { LocationResult, RawData } from "../../types/Locator";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { getDirectionUrl } from "../../config/GlobalFunctions";
+import { getDirectionUrl, getLink } from "../../config/GlobalFunctions";
 import { TemplateMeta } from "../../types";
 
 type LocationCardProps = {
   location: LocationResult;
-  meta?: TemplateMeta;
+  meta: TemplateMeta;
 };
 
-const LocationCard = ({ location }: LocationCardProps) => {
-  const {
-    setInfoWindowContent,
-    infoWindowContent,
-    setHoveredLocation,
-    hoveredLocation,
-  } = React.useContext(SearchContext);
+const LocationCard = ({ location, meta }: LocationCardProps) => {
+  const { setInfoWindowContent, infoWindowContent, setHoveredLocation, hoveredLocation } = React.useContext(SearchContext);
   const cardRef = React.useRef<HTMLDivElement>(null);
-  const url = location.rawData.slug;
+  const url = getLink<RawData>(location.rawData, meta, true, 0, true);
 
   const scrollIntoView = (element: HTMLDivElement, offset: number) => {
     const elementPosition = element.getBoundingClientRect().top;
@@ -52,23 +47,14 @@ const LocationCard = ({ location }: LocationCardProps) => {
   };
 
   React.useEffect(() => {
-    if (
-      infoWindowContent &&
-      infoWindowContent.id === location.id &&
-      cardRef.current
-    ) {
+    if (infoWindowContent && infoWindowContent.id === location.id && cardRef.current) {
       scrollIntoView(cardRef.current, 80);
     }
   }, [infoWindowContent]);
   return (
     <div
       ref={cardRef}
-      className={`location-card ${
-        hoveredLocation === location.id ||
-        (infoWindowContent && infoWindowContent.id === location.id)
-          ? "active"
-          : ""
-      }`}
+      className={`location-card ${hoveredLocation === location.id || (infoWindowContent && infoWindowContent.id === location.id) ? "active" : ""}`}
       onClick={() => {
         setInfoWindowContent(location);
       }}
@@ -84,21 +70,13 @@ const LocationCard = ({ location }: LocationCardProps) => {
         <Link className="location-name" href={`/${url}`}>
           {location.rawData.name}
         </Link>
-        <Address
-          address={location.rawData.address}
-        />
+        <Address address={location.rawData.address} />
       </div>
       <div className="button-bx-detail">
         <Link className="button link" href={`/${url}`}>
           View Details
         </Link>
-        <Link
-          className="button link"
-          href={getDirectionUrl(
-            location.rawData.address,
-            location.rawData.googlePlaceId
-          )}
-        >
+        <Link className="button link" href={getDirectionUrl(location.rawData.address, location.rawData.googlePlaceId)}>
           Get Direction
         </Link>
       </div>
@@ -112,12 +90,7 @@ export const LocationCardLoader = () => {
       <Skeleton height={25} enableAnimation />
       <Skeleton count={3} width={"50%"} enableAnimation />
 
-      <Skeleton
-        enableAnimation
-        width={140}
-        height={40}
-        style={{ paddingTop: 20, borderRadius: 0 }}
-      />
+      <Skeleton enableAnimation width={140} height={40} style={{ paddingTop: 20, borderRadius: 0 }} />
     </div>
   );
 };
