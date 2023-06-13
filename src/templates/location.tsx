@@ -37,6 +37,7 @@ export const config: TemplateConfig = {
       "name",
       "slug",
       "address",
+      "timezone",
       "hours",
       "additionalHoursText",
       "googlePlaceId",

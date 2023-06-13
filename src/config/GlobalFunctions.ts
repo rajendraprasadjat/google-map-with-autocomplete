@@ -25,28 +25,15 @@ export function slugify(slugString: string) {
   return slugString.toLowerCase();
 }
 
-export const getLink = ({
-  link,
-  mode,
-  template,
-  locale,
-  devLink,
-}: LinkParams) => {
-  let url = link;
-
-  if (mode === "development" && template) {
-    url = `/${template}`;
-    devLink && (url += `/${devLink}`);
-    locale && (url += `?locale=${locale}`);
+export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecursive = true, skip = 0) => {
+  let url = `/${document.slug}`;
+  if (isRecursive) {
+    url = getRecursiveData(document, meta, skip);
   }
   return url;
 };
 
-export const getRecursiveData = <DataType>(
-  element: DataType,
-  meta: TemplateMeta,
-  skip = 0
-) => {
+export const getRecursiveData = <DataType>(element: DataType, meta: TemplateMeta, skip = 0) => {
   let slug = "";
   if (meta.mode === "development") {
     slug = element.slug;
@@ -82,9 +69,15 @@ export const getBreadcrumb = <DataType, Document>(
           slug: slug,
           name: element.name,
         });
-      } else if (index === 0) {
+      } else if (index === 0 && basePrefix) {
         breadcrumbs.push({
           slug: basePrefix,
+          name: baseName ? baseName : element.name,
+        });
+      } else if (index === 0) {
+        const slug = getRecursiveData<DataType>(element, meta, skip);
+        breadcrumbs.push({
+          slug: slug,
           name: baseName ? baseName : element.name,
         });
       }
@@ -126,11 +119,7 @@ export const getPosition = (result: LocationResult) => {
   return { lat, lng };
 };
 
-export const getDirectionUrl = (
-  address: AddressType,
-  googlePlaceId = "",
-  userLocation: null | Coordinate = null
-) => {
+export const getDirectionUrl = (address: AddressType, googlePlaceId = "", userLocation: null | Coordinate = null) => {
   let address_string = "";
   if (address.line1) {
     address_string += address.line1 + ",";
@@ -150,9 +139,7 @@ export const getDirectionUrl = (
   address_string += address.countryCode;
   address_string = address_string.replace("undefined,", "");
 
-  let directionUrl =
-    `https://www.google.com/maps/dir/?api=1&destination=` +
-    encodeURIComponent(address_string);
+  let directionUrl = `https://www.google.com/maps/dir/?api=1&destination=` + encodeURIComponent(address_string);
 
   if (googlePlaceId) {
     directionUrl += `&destination_place_id=${googlePlaceId}`;
@@ -172,11 +159,7 @@ export const getUserIcon = () => {
   return userMarker;
 };
 
-export const getMarkerPin = (
-  result: LocationResult,
-  isActive = false,
-  isHover = false
-) => {
+export const getMarkerPin = (result: LocationResult, isActive = false, isHover = false) => {
   let marker = defaultMarker;
   if (isHover) {
     marker = hoverMarker;
@@ -190,12 +173,7 @@ export const getMarkerPin = (
   return m_icon;
 };
 
-export const getOgTags = (
-  title: string,
-  description: string,
-  url: string,
-  image: string
-) => {
+export const getOgTags = (title: string, description: string, url: string, image: string) => {
   return [
     {
       type: "meta",

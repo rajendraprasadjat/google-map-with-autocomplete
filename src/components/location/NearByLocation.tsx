@@ -6,17 +6,12 @@ import { NearByLocationResult } from "../../types/Locator";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
-import {
-  getDirectionUrl,
-  getRecursiveData,
-} from "../../config/GlobalFunctions";
+import { getDirectionUrl, getLink, getRecursiveData } from "../../config/GlobalFunctions";
 import { Coordinate } from "../google-map/SearchProvider";
 import { fetch } from "@yext/pages/util";
 
 type NearbyAPIConfig = {
-  endpoint:
-    | "https://liveapi-sandbox.yext.com/v2/accounts/me/entities/geosearch"
-    | "https://liveapi.yext.com/v2/accounts/me/entities/geosearch";
+  endpoint: "https://liveapi-sandbox.yext.com/v2/accounts/me/entities/geosearch" | "https://liveapi.yext.com/v2/accounts/me/entities/geosearch";
   params: {
     api_key: string;
     entityTypes?: string;
@@ -48,13 +43,7 @@ type NearbyProps = {
   setNearByLocations: (value: []) => void;
 };
 
-const NearByLocation = ({
-  meta,
-  coordinate,
-  id,
-  apiKey,
-  setNearByLocations,
-}: NearbyProps) => {
+const NearByLocation = ({ meta, coordinate, id, apiKey, setNearByLocations }: NearbyProps) => {
   const [locations, setLocations] = React.useState<NearByLocationResult[]>([]);
   React.useEffect(() => {
     if (!coordinate || !apiKey) {
@@ -100,7 +89,7 @@ const NearByLocation = ({
           }}
         >
           {locations.map((location) => {
-            const url = getRecursiveData(location, meta);
+            const url = getLink<NearByLocationResult>(location, meta);
             return (
               <SwiperSlide key={location.id}>
                 <div className="location-card">
@@ -121,10 +110,7 @@ const NearByLocation = ({
                       eventName={`getdirections`}
                       target="_blank"
                       className="direction button before-icon"
-                      href={getDirectionUrl(
-                        location.address,
-                        location.googlePlaceId
-                      )}
+                      href={getDirectionUrl(location.address, location.googlePlaceId)}
                       rel="noopener noreferrer"
                     >
                       Get Direction
