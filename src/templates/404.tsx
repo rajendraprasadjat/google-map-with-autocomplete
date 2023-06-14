@@ -1,6 +1,16 @@
 import * as React from "react";
 import "../index.css";
-import { Template, GetPath, GetHeadConfig, HeadConfig, TemplateConfig, TemplateProps, TemplateRenderProps, TransformProps } from "@yext/pages";
+import {
+  Template,
+  GetPath,
+  GetHeadConfig,
+  HeadConfig,
+  TemplateConfig,
+  TemplateProps,
+  TemplateRenderProps,
+  TransformProps,
+  Render,
+} from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
 import favicon from "../assets/images/favicon.ico";
 import { TemplateMeta } from "../types";
@@ -32,16 +42,12 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = (): HeadConfig 
   };
 };
 
-export const transformProps: TransformProps<TemplateRenderProps> = async (data) => {
-  return { ...data, relativePrefixToRoot: "/" };
-};
-
 interface FourOhFourProps extends TemplateRenderProps {
   __meta: TemplateMeta;
   document: FourOhFourDocument;
 }
 
-const FourOhFour: Template<FourOhFourProps> = ({ __meta, document }: FourOhFourProps) => {
+const FourOhFour: Template<FourOhFourProps> = ({ __meta, document, relativePrefixToRoot }: FourOhFourProps) => {
   return (
     <>
       <PageLayout _site={document._site} meta={__meta}>
