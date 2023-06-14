@@ -3,7 +3,7 @@
     "assets": [
       {
         "root": "dist",
-        "pattern": "/assets/**/*"
+        "pattern": "assets/**/*"
       }
     ],
     "features": "sites-config/features.json",
@@ -17,7 +17,7 @@
           },
           {
             "root": "dist",
-            "pattern": "assets/{server,static,renderer}/**/*{.js,.css}"
+            "pattern": "/assets/{server,static,renderer}/**/*{.js,.css}"
           }
         ],
         "event": "ON_PAGE_GENERATE",

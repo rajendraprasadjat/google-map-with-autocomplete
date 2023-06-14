@@ -36,10 +36,10 @@ class HoursIntervalManipulator {
       }
     }
   }
-  isOpened(locale = "en_GB", opts?: Intl.DateTimeFormatOptions) {
+  isOpened(locale = "en_GB") {
     const now = moment.tz(moment(), this.timeZone);
-    console.log("this.getStartTime", this.getStartTime(locale, opts), now.toLocaleString());
-    if (this.getStartTime(locale, opts) === now.toLocaleString()) {
+    console.log("this.getStartTime", this.getStartTime(locale), now.toLocaleString());
+    if (this.getStartTime(locale) === now.toLocaleString()) {
       if (this.start.get("millisecond") <= now.get("millisecond") && this.end.get("millisecond") >= now.get("millisecond")) {
         return true;
       } else {
@@ -55,9 +55,10 @@ class HoursIntervalManipulator {
     return this.start <= date && date < this.end;
   }
   getWeekDay() {
-    const now = moment();
+    const now = moment.tz(moment(), this.timeZone);
     const today = now.get("day");
     const day = this.date.get("day");
+    console.log("today", now, this.date);
     if (day - today === 1) {
       return "Tomorrow";
     } else if (day - today === 0) {
@@ -65,20 +66,10 @@ class HoursIntervalManipulator {
     }
     return dayKeys[day];
   }
-  getStartTime(locale = "", opts?: Intl.DateTimeFormatOptions) {
-    const timeOptions: Intl.DateTimeFormatOptions = {
-      hour: "numeric",
-      minute: "numeric",
-      ...opts,
-    };
+  getStartTime(locale = "") {
     return this.start.locale(locale).format("hh:mm A");
   }
-  getEndTime(locale = "", opts?: Intl.DateTimeFormatOptions) {
-    const timeOptions: Intl.DateTimeFormatOptions = {
-      hour: "numeric",
-      minute: "numeric",
-      ...opts,
-    };
+  getEndTime(locale = "") {
     return this.end.locale(locale).format("hh:mm A");
   }
   timeIsEqualTo(other: { getStartTime: () => string; getEndTime: () => string }) {
@@ -100,7 +91,7 @@ class HoursManipulator {
     if (this.isTemporarilyClosedAt(date)) {
       return null;
     }
-    const priorDate = moment(date);
+    const priorDate = moment.tz(date, this.timeZone);
     priorDate.set("date", priorDate.get("date") - 1);
     for (const hoursDate of [priorDate, date]) {
       const hours = this.getHours(hoursDate);
@@ -116,7 +107,7 @@ class HoursManipulator {
     return null;
   }
   getCurrentInterval() {
-    return this.getInterval(moment());
+    return this.getInterval(moment.tz(moment(), this.timeZone));
   }
   getIntervalAfter(date: Moment) {
     const intervalsList = this.getIntervalsForNDays(7, date);
@@ -145,7 +136,7 @@ class HoursManipulator {
   getIntervalsForNDays(n: number, startDate: string | number | Moment) {
     const intervalsList = [];
     for (let i = 0; i < n; i++) {
-      const theDate = moment(startDate);
+      const theDate = moment.tz(startDate, this.timeZone);
       theDate.set("date", theDate.get("date") + i);
       const hours = this.getHours(theDate);
       if (hours && !hours.isClosed && hours.openIntervals) {
@@ -191,13 +182,10 @@ class HoursManipulator {
     return !!this.getInterval(date);
   }
   isOpenNow() {
-    return this.isOpenAt(moment());
+    return this.isOpenAt(moment.tz(moment(), this.timeZone));
   }
   transformDateToYext(date: Moment) {
-    const [year, month, day] = date.toISOString().split("T")[0].split("-");
-    const zeroBasedMonth = Number(month);
-    const monthZeroBased = zeroBasedMonth < 10 ? "0" + zeroBasedMonth : zeroBasedMonth.toString();
-    return date.format("YYYY-MM-DD"); //`${year}-${monthZeroBased}-${day}`;
+    return date.format("YYYY-MM-DD");
   }
 }
 function arrayShift(arr: number[], n: number) {

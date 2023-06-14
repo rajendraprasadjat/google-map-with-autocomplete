@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  HoursManipulator,
-  arrayShift,
-  intervalsListsAreEqual,
-  HoursIntervalManipulator,
-} from "./hoursManipulator";
+import { HoursManipulator, arrayShift, intervalsListsAreEqual, HoursIntervalManipulator } from "./hoursManipulator";
 import { Hours as ComponentHours, DayHour } from "@yext/search-core";
 import moment, { Moment } from "moment-timezone";
 
-const defaultDayOfWeekNames = [
-  "sunday",
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-];
+const defaultDayOfWeekNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
 interface HoursCollapseDay {
   isToday: boolean;
@@ -68,17 +55,10 @@ function collapseDays(hoursDays: HoursCollapseDay[]) {
   });
   return collapsedDays.map((day) => ({
     ...day,
-    dayOfWeek:
-      day.startDay === day.endDay
-        ? `${day.startDay}`
-        : `${day.startDay} - ${day.endDay}`,
+    dayOfWeek: day.startDay === day.endDay ? `${day.startDay}` : `${day.startDay} - ${day.endDay}`,
   }));
 }
-function defaultIntervalStringsBuilder(
-  dayData: HoursCollapseDay,
-  locale: string,
-  timeZone: string
-) {
+function defaultIntervalStringsBuilder(dayData: HoursCollapseDay, locale: string, timeZone: string) {
   const intervalStrings = [];
   if (dayData.intervals.length === 0) {
     intervalStrings.push(
@@ -88,8 +68,8 @@ function defaultIntervalStringsBuilder(
     );
   } else {
     dayData.intervals.forEach((interval) => {
-      const startTime = interval.getStartTime(locale, { timeZone });
-      const endTime = interval.getEndTime(locale, { timeZone });
+      const startTime = interval.getStartTime(locale);
+      const endTime = interval.getEndTime(locale);
       intervalStrings.push(
         <>
           <span className="time">{startTime}</span>
@@ -151,9 +131,7 @@ const Hours = (props: HoursProps) => {
     hoursDays.push({
       dayOfWeek: dayOfWeekNames[i],
       sortIdx: dayOfWeekSortIdx[i],
-      intervals: allIntervals.filter(
-        (interval) => interval.start.get("day") === i
-      ),
+      intervals: allIntervals.filter((interval) => interval.start.get("day") === i),
       isToday: now.get("day") === i,
     });
   }
@@ -182,21 +160,11 @@ const Hours = (props: HoursProps) => {
             </thead>
           )}
           {hoursDays.map((dayData) => {
-            const intervalStringsBuilder =
-              props.intervalStringsBuilderFn || defaultIntervalStringsBuilder;
-            const intervalStrings = intervalStringsBuilder(
-              dayData,
-              props.locale,
-              props.timeZone
-            );
+            const intervalStringsBuilder = props.intervalStringsBuilderFn || defaultIntervalStringsBuilder;
+            const intervalStrings = intervalStringsBuilder(dayData, props.locale, props.timeZone);
 
             return (
-              <tr
-                key={dayData.sortIdx}
-                className={`hours-table-row ${
-                  dayData.isToday ? "is-today" : ""
-                }`}
-              >
+              <tr key={dayData.sortIdx} className={`hours-table-row ${dayData.isToday ? "is-today" : ""}`}>
                 <td className="hours-table-day">{dayData.dayOfWeek}</td>
                 <td className="hours-table-intervals">
                   {intervalStrings.map((intervalString, idx) => (
