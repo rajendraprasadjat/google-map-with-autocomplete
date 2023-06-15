@@ -1,16 +1,6 @@
 import * as React from "react";
 import "../index.css";
-import {
-  Template,
-  GetPath,
-  GetHeadConfig,
-  HeadConfig,
-  TemplateConfig,
-  TemplateProps,
-  TemplateRenderProps,
-  TransformProps,
-  Render,
-} from "@yext/pages";
+import { Template, GetPath, GetHeadConfig, HeadConfig, TemplateConfig, TemplateProps, TemplateRenderProps } from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
 import favicon from "../assets/images/favicon.ico";
 import { TemplateMeta } from "../types";
@@ -21,7 +11,7 @@ export const config: TemplateConfig = {
 };
 
 export const getPath: GetPath<TemplateProps> = () => {
-  return `404.html`;
+  return `/404.html`;
 };
 
 export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = (): HeadConfig => {

@@ -7,6 +7,7 @@ import { TemplateMeta } from "../types";
 import { BreadcrumbItem } from "../components/common/Breadcrumbs";
 import { AddressType } from "@yext/pages/components";
 import { Coordinate } from "../components/google-map/SearchProvider";
+import { Tag } from "@yext/pages/*";
 type LinkParams = {
   link: string;
   mode?: string;
@@ -26,21 +27,18 @@ export function slugify(slugString: string) {
 }
 
 export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecursive = true, skip = 0, useHtml = false) => {
-  let url = `/${document.slug}.html`;
-  if (meta.mode === "development") {
-    url = `${document.slug}`;
-  } else {
-    if (isRecursive) {
-      url = getRecursiveData(document, meta, skip);
-    }
+  const isDevelopment = meta.mode === "development" || false;
+  let url = `${isDevelopment ? "" : "/"}${document.slug}`;
+  if (!isDevelopment && isRecursive) {
+    url = getRecursiveData(document, meta, skip);
   }
-
-  return `${url}${useHtml ? ".html" : ""}`;
+  return `${url}${useHtml && !isDevelopment ? ".html" : ""}`;
 };
 
-export const getRecursiveData = <DataType>(element: DataType, meta: TemplateMeta, skip = 0) => {
-  let slug = "";
-  if (meta.mode === "development") {
+export const getRecursiveData = <DataType>(element: DataType, meta: TemplateMeta, skip = 0, useHtml = false) => {
+  let slug = YEXT_PUBLIC_BASE_URL;
+  const isDevelopment = meta.mode === "development" || false;
+  if (isDevelopment) {
     slug = element.slug;
   } else {
     if (element.dm_directoryParents) {
@@ -50,7 +48,7 @@ export const getRecursiveData = <DataType>(element: DataType, meta: TemplateMeta
         }
       });
     }
-    slug += `/${element.slug}`;
+    slug += `/${element.slug}${useHtml && !isDevelopment ? ".html" : ""}`;
   }
   return slug;
 };
@@ -61,15 +59,16 @@ export const getBreadcrumb = <DataType, Document>(
   meta: TemplateMeta,
   isRecursive = true,
   skip = 0,
+  useHtml = false,
   basePrefix = "",
   baseName = ""
 ) => {
   const breadcrumbs: BreadcrumbItem[] = [];
-
+  const isDevelopment = meta.mode === "development" || false;
   if (isRecursive) {
     data.forEach((element: DataType, index: number) => {
       if (index >= skip && index !== 0) {
-        const slug = getRecursiveData<DataType>(element, meta, skip);
+        const slug = getRecursiveData<DataType>(element, meta, skip, useHtml);
         breadcrumbs.push({
           slug: slug,
           name: element.name,
@@ -80,7 +79,7 @@ export const getBreadcrumb = <DataType, Document>(
           name: baseName ? baseName : element.name,
         });
       } else if (index === 0) {
-        const slug = getRecursiveData<DataType>(element, meta, skip);
+        const slug = getRecursiveData<DataType>(element, meta, skip, useHtml);
         breadcrumbs.push({
           slug: slug,
           name: baseName ? baseName : element.name,
@@ -89,14 +88,14 @@ export const getBreadcrumb = <DataType, Document>(
     });
 
     breadcrumbs.push({
-      slug: getRecursiveData(document, meta),
+      slug: getRecursiveData(document, meta, skip, useHtml),
       name: document.name,
     });
   } else {
-    let slug = "";
+    let slug = YEXT_PUBLIC_BASE_URL;
     data.forEach((element: DataType, index: number) => {
       if (element.slug && index >= skip) {
-        slug += `/${element.slug}`;
+        slug += `/${element.slug}${useHtml && !isDevelopment ? ".html" : ""}`;
         breadcrumbs.push({
           slug: slug,
           name: element.name,
@@ -110,7 +109,7 @@ export const getBreadcrumb = <DataType, Document>(
     });
 
     breadcrumbs.push({
-      slug: slug + `/${document.slug}`,
+      slug: slug + `/${document.slug}${useHtml && !isDevelopment ? ".html" : ""}`,
       name: document.name,
     });
   }
@@ -178,8 +177,57 @@ export const getMarkerPin = (result: LocationResult, isActive = false, isHover =
   return m_icon;
 };
 
-export const getOgTags = (title: string, description: string, url: string, image: string) => {
-  return [
+export const getMetaTags = (title: string, description: string, robots: string, url?: string, favicon?: string): Tag[] => {
+  const data: Tag[] = [
+    {
+      type: "meta",
+      attributes: {
+        name: "title",
+        content: title,
+      },
+    },
+    {
+      type: "meta",
+      attributes: {
+        name: "description",
+        content: description,
+      },
+    },
+    {
+      type: "meta",
+      attributes: {
+        name: "robots",
+        content: robots,
+      },
+    },
+  ];
+
+  if (favicon) {
+    data.push({
+      type: "link",
+      attributes: {
+        rel: "icon",
+        property: "image/png",
+        href: favicon,
+      },
+    });
+  }
+
+  if (url) {
+    data.push({
+      type: "link",
+      attributes: {
+        rel: "canonical",
+        href: url,
+      },
+    });
+  }
+
+  return data;
+};
+
+export const getOgTags = (title: string, description: string, url?: string, image?: string): Tag[] => {
+  const data: Tag[] = [
     {
       type: "meta",
       attributes: {
@@ -194,20 +242,86 @@ export const getOgTags = (title: string, description: string, url: string, image
         content: description,
       },
     },
-    {
-      type: "meta",
-      attributes: {
-        property: "og:url",
-        content: url,
-      },
-    },
+  ];
 
-    {
+  if (image) {
+    data.push({
       type: "meta",
       attributes: {
         property: "og:image",
         content: image,
       },
+    });
+  }
+
+  if (url) {
+    data.push({
+      type: "meta",
+      attributes: {
+        property: "og:url",
+        content: url,
+      },
+    });
+  }
+
+  return data;
+};
+
+export const getTwitterTags = (title: string, description: string, image?: string): Tag[] => {
+  const data: Tag[] = [
+    {
+      type: "meta",
+      attributes: {
+        property: "twitter:card",
+        content: "summary_large_image",
+      },
+    },
+    {
+      type: "meta",
+      attributes: {
+        property: "twitter:title",
+        content: title,
+      },
+    },
+    {
+      type: "meta",
+      attributes: {
+        property: "twitter:description",
+        content: description,
+      },
     },
   ];
+
+  if (image) {
+    data.push({
+      type: "meta",
+      attributes: {
+        property: "twitter:image",
+        content: image,
+      },
+    });
+  }
+
+  return data;
+};
+
+export const getBreadcrumbSchema = (breadcrumbs: BreadcrumbItem[]) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbs.map((breadcrumb, key) => {
+      return {
+        "@type": "ListItem",
+        position: key,
+        item: {
+          "@id": `${breadcrumb.slug}`,
+          name: `${breadcrumb.name}`,
+        },
+      };
+    }),
+  };
+};
+
+export const getSchema = <SchemaType>(schema: SchemaType): string => {
+  return `<script>${JSON.stringify(schema)}</script>`;
 };

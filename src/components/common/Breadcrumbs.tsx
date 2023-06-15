@@ -19,14 +19,12 @@ export interface BreadcrumbsProps {
 
 const BreadcrumbItem = (props: BreadcrumbItemProps) => {
   const { name, url } = props;
-
+  console.log("url", url);
   if (url) {
     return (
-      <Link href={url}>
-        <span className="font-bold hover:underline hover:cursor-pointer">
-          {name}
-        </span>
-      </Link>
+      <a href={url}>
+        <span className="font-bold hover:underline hover:cursor-pointer">{name}</span>
+      </a>
     );
   }
 
@@ -48,21 +46,11 @@ const Breadcrumbs = (props: BreadcrumbsProps) => {
               return (
                 <li className="breadcrumb-item flex" key={index}>
                   {isFirst ? (
-                    <BreadcrumbItem
-                      name={"Home"}
-                      url={isLast ? "" : baseUrl + slug}
-                      {...props}
-                    />
+                    <BreadcrumbItem name={"Home"} url={isLast ? "" : baseUrl + slug} {...props} />
                   ) : (
-                    <BreadcrumbItem
-                      name={name}
-                      url={isLast ? "" : baseUrl + slug}
-                      {...props}
-                    />
+                    <BreadcrumbItem name={name} url={isLast ? "" : baseUrl + slug} {...props} />
                   )}
-                  {!isLast && (
-                    <span className="breadcrumb-separator">{separator}</span>
-                  )}
+                  {!isLast && <span className="breadcrumb-separator">{separator}</span>}
                 </li>
               );
             })}

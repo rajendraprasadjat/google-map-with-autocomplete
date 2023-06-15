@@ -88,11 +88,11 @@ type TransformData = TemplateRenderProps & {
 export const transformProps: TransformProps<TransformData> = async (data) => {
   const document = data.document as StateDocument;
   const directoryParents = document.dm_directoryParents || [];
-  const breadcrumbs = getBreadcrumb<DirectoryParent, StateDocument>(directoryParents, document, data.__meta);
+  const breadcrumbs = getBreadcrumb<DirectoryParent, StateDocument>(directoryParents, document, data.__meta, true, 0, true);
   return { ...data, breadcrumbs };
 };
 
-interface StateTemplateProps extends TemplateRenderProps {
+interface StateTemplateProps extends TransformData {
   __meta: TemplateMeta;
   document: StateDocument;
 }
@@ -103,7 +103,7 @@ const State: Template<StateTemplateProps> = ({ document, __meta, breadcrumbs }: 
   return (
     <div id="main">
       <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
-        <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
+        <Breadcrumbs baseUrl="" breadcrumbs={breadcrumbs} />
         <h1>State</h1>
 
         <div className="directory-children">
@@ -113,9 +113,9 @@ const State: Template<StateTemplateProps> = ({ document, __meta, breadcrumbs }: 
 
               return (
                 <div className="directory-children-card" key={region.slug}>
-                  <Link className="directory-children-name" href={`/${url}`}>
+                  <a className="directory-children-name" href={`/${url}`}>
                     {region.name}
-                  </Link>
+                  </a>
                 </div>
               );
             })}

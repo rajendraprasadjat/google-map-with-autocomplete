@@ -3,7 +3,7 @@ import * as React from "react";
 import { GoogleMap as ReactGoogleMap, Marker, MarkerClusterer, InfoWindow } from "@react-google-maps/api";
 import { SearchContext } from "../SearchProvider";
 import { getClusterIcon, getMarkerPin, getPosition, getUserIcon } from "../../../config/GlobalFunctions";
-import { Address, Link } from "@yext/pages/components";
+import { Address } from "@yext/pages/components";
 import { SiteData, TemplateMeta } from "../../../types";
 import { LocationResult } from "../../../types/Locator";
 import { InfowindowProps } from "../../locator/Infowindow";
@@ -173,13 +173,13 @@ const GoogleMap = ({ InfowindowComponent, _site, meta }: GoogleMapProps) => {
                           <InfowindowComponent meta={meta} location={infoWindowContent} _site={_site} />
                         ) : (
                           <div className="infowindow-content">
-                            <Link className="location-name" href={`/${infoWindowContent.rawData.slug}`}>
+                            <a className="location-name" href={`/${infoWindowContent.rawData.slug}`}>
                               {infoWindowContent.rawData.name}
-                            </Link>
+                            </a>
                             <Address className="location-address" address={infoWindowContent.rawData.address} />
-                            <Link className="button link" href={`/${infoWindowContent.rawData.slug}`}>
+                            <a className="button link" href={`/${infoWindowContent.rawData.slug}`}>
                               View Details
-                            </Link>
+                            </a>
                           </div>
                         )}
                       </InfoWindow>

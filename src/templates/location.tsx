@@ -1,16 +1,16 @@
 import * as React from "react";
 import { Template, GetPath, TemplateConfig, TemplateProps, TemplateRenderProps, GetHeadConfig, HeadConfig, TransformProps } from "@yext/pages";
-import { fetch } from "@yext/pages/util";
 import favicon from "../assets/images/favicon.ico";
-import { EntityMeta, LocationDocument, TemplateMeta } from "../types";
+import { LocationDocument, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
 import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
 import { AnalyticsProvider, AnalyticsScopeProvider } from "@yext/pages/components";
 import Information from "../components/location/Information";
 import NearByLocation from "../components/location/NearByLocation";
 import "../index.css";
-import { getBreadcrumb, getLink } from "../config/GlobalFunctions";
+import { getBreadcrumb, getBreadcrumbSchema, getLink } from "../config/GlobalFunctions";
 import { NearByLocationResult } from "../types/Locator";
+import { DirectoryParent } from "../types/DirectoryParent";
 
 export const config: TemplateConfig = {
   stream: {
@@ -102,7 +102,7 @@ type TransformData = TemplateRenderProps & {
 export const transformProps: TransformProps<TransformData> = async (data) => {
   const document = data.document as LocationDocument;
   const directoryParents = document.dm_directoryParents || [];
-  const breadcrumbs = getBreadcrumb(directoryParents, document, data.__meta);
+  const breadcrumbs = getBreadcrumb<DirectoryParent, LocationDocument>(directoryParents, document, data.__meta, true, 0, true);
   return { ...data, breadcrumbs };
 };
 
@@ -114,6 +114,7 @@ interface LocationTemplateProps extends TransformData {
 const Location: Template<LocationTemplateProps> = ({ document, __meta, breadcrumbs }: LocationTemplateProps) => {
   const { meta, _site, slug } = document;
   const [nearByLocations, setNearByLocations] = React.useState([]);
+  console.log("getBreadcrumbSchema", getBreadcrumbSchema(breadcrumbs));
   return (
     <div id="main">
       <AnalyticsProvider
@@ -123,7 +124,7 @@ const Location: Template<LocationTemplateProps> = ({ document, __meta, breadcrum
       >
         <AnalyticsScopeProvider name={document.name}>
           <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
-            <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
+            <Breadcrumbs baseUrl="" breadcrumbs={breadcrumbs} />
             <Information document={document} _site={_site} nearByLocations={nearByLocations} />
 
             <NearByLocation

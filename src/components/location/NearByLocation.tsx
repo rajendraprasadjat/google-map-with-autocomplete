@@ -96,16 +96,16 @@ const NearByLocation = ({ meta, coordinate, id, apiKey, setNearByLocations }: Ne
                 <div className="location-card">
                   <div className="icon-row">
                     <div className="icon addressIcon"></div>
-                    <Link className="location-name" href={`${url}`}>
+                    <a className="location-name" href={`${url}`}>
                       {location.name}
-                    </Link>
+                    </a>
                     <Address address={location.address} />
                   </div>
 
                   <div className="button-bx-detail">
-                    <Link className="button link" href={`${url}`}>
+                    <a className="button link" href={`${url}`}>
                       View Details
-                    </Link>
+                    </a>
                     <Link
                       data-ya-track="getdirections"
                       eventName={`getdirections`}

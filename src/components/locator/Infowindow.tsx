@@ -2,7 +2,7 @@ import * as React from "react";
 import { Address, Link } from "@yext/pages/components";
 import { LocationResult } from "../../types/Locator";
 import { SiteData, TemplateMeta } from "../../types";
-import { getLink } from "../../config/GlobalFunctions";
+import { getDirectionUrl, getLink } from "../../config/GlobalFunctions";
 import { RawData } from "../../types/Locator";
 
 export type InfowindowProps = {
@@ -17,15 +17,25 @@ const Infowindow = ({ location, meta }: InfowindowProps) => {
     <div className="infowindow-content">
       <div className="icon-row">
         <div className="icon addressIcon"></div>
-        <Link className="location-name" href={`/${url}`}>
+        <a className="location-name" href={`/${url}`}>
           {location.rawData.name}
-        </Link>
+        </a>
         <Address address={location.rawData.address} />
       </div>
       <div className="button-bx-detail">
-        <Link className="button link" href={`/${url}`}>
-          View Details
+        <Link
+          data-ya-track="getdirections"
+          eventName={`getdirections`}
+          target="_blank"
+          className="direction button before-icon"
+          href={getDirectionUrl(location.rawData.address, location.rawData.googlePlaceId)}
+          rel="noopener noreferrer"
+        >
+          Get Direction
         </Link>
+        <a className="button link" href={`/${url}`}>
+          View Details
+        </a>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import * as React from "react";
 import { SearchContext } from "../SearchProvider";
 import { LocationResult } from "../../../types/Locator";
 import { getMarkerPin, getPosition } from "../../../config/GlobalFunctions";
-import { Address, Link } from "@yext/pages/components";
+import { Address } from "@yext/pages/components";
 import { SiteData, TemplateMeta } from "../../../types";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { InfowindowProps } from "../../locator/Infowindow";
@@ -84,13 +84,13 @@ export function MapboxMap({ mapboxAccessToken, InfowindowComponent, _site, meta 
             <InfowindowComponent meta={meta} location={infoWindowContent} _site={_site} />
           ) : (
             <div className="infowindow-content">
-              <Link className="location-name" href={`/${infoWindowContent.rawData.slug}`}>
+              <a className="location-name" href={`/${infoWindowContent.rawData.slug}`}>
                 {infoWindowContent.rawData.name}
-              </Link>
+              </a>
               <Address className="location-address" address={infoWindowContent.rawData.address} />
-              <Link className="button link" href={`/${infoWindowContent.rawData.slug}`}>
+              <a className="button link" href={`/${infoWindowContent.rawData.slug}`}>
                 View Details
-              </Link>
+              </a>
             </div>
           )}
         </Popup>

@@ -94,7 +94,7 @@ type TransformData = TemplateRenderProps & {
 export const transformProps: TransformProps<TransformData> = async (data) => {
   const document = data.document as CountryDocument;
   const directoryParents = document.dm_directoryParents || [];
-  const breadcrumbs = getBreadcrumb<DirectoryParent, CountryDocument>(directoryParents, document, data.__meta);
+  const breadcrumbs = getBreadcrumb<DirectoryParent, CountryDocument>(directoryParents, document, data.__meta, true, 0, true);
   return { ...data, breadcrumbs };
 };
 
@@ -109,7 +109,7 @@ const country: Template<CountryTemplateProps> = ({ document, __meta, breadcrumbs
   return (
     <div id="main">
       <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
-        <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
+        <Breadcrumbs baseUrl="" breadcrumbs={breadcrumbs} />
         <h1>Country</h1>
 
         <div className="directory-children">
@@ -119,9 +119,9 @@ const country: Template<CountryTemplateProps> = ({ document, __meta, breadcrumbs
 
               return (
                 <div className="directory-children-card" key={region.slug}>
-                  <Link className="directory-children-name" href={`/${url}`}>
+                  <a className="directory-children-name" href={`/${url}`}>
                     {region.name}
-                  </Link>
+                  </a>
                 </div>
               );
             })}

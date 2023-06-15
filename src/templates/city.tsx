@@ -7,7 +7,7 @@ import "../index.css";
 import { Address, Link } from "@yext/pages/components";
 import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
 import { DirectoryParent } from "../types/DirectoryParent";
-import { getBreadcrumb, getLink } from "../config/GlobalFunctions";
+import { getBreadcrumb, getDirectionUrl, getLink } from "../config/GlobalFunctions";
 
 export const config: TemplateConfig = {
   stream: {
@@ -24,19 +24,20 @@ export const config: TemplateConfig = {
 
       "dm_directoryParents.name",
       "dm_directoryParents.slug",
-      "dm_directoryParents.meta.entityType",
       "dm_directoryParents.dm_directoryParents.name",
       "dm_directoryParents.dm_directoryParents.slug",
-      "dm_directoryParents.dm_directoryParents.meta.entityType",
 
       /* DM children */
       "dm_directoryChildren.name",
-      "dm_directoryChildren.meta.entityType",
       "dm_directoryChildren.slug",
       "dm_directoryChildren.hours",
       "dm_directoryChildren.address",
       "dm_directoryChildren.id",
       "dm_directoryChildren.yextDisplayCoordinate",
+      "dm_directoryChildren.dm_directoryParents.name",
+      "dm_directoryChildren.dm_directoryParents.slug",
+      "dm_directoryChildren.dm_directoryParents.dm_directoryParents.name",
+      "dm_directoryChildren.dm_directoryParents.dm_directoryParents.slug",
     ],
     localization: {
       locales: ["en_GB"],
@@ -94,7 +95,7 @@ type TransformData = TemplateRenderProps & {
 export const transformProps: TransformProps<TransformData> = async (data) => {
   const document = data.document as CityDocument;
   const directoryParents = document.dm_directoryParents || [];
-  const breadcrumbs = getBreadcrumb<DirectoryParent, CityDocument>(directoryParents, document, data.__meta);
+  const breadcrumbs = getBreadcrumb<DirectoryParent, CityDocument>(directoryParents, document, data.__meta, true, 0, true);
   return { ...data, breadcrumbs };
 };
 
@@ -108,7 +109,7 @@ const City: Template<CityTemplateProps> = ({ document, __meta, breadcrumbs }: Ci
   return (
     <div id="main">
       <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
-        <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
+        <Breadcrumbs baseUrl="" breadcrumbs={breadcrumbs} />
         <h1>City</h1>
         <h3>Locations</h3>
         <div className="city-locations">
@@ -122,15 +123,18 @@ const City: Template<CityTemplateProps> = ({ document, __meta, breadcrumbs }: Ci
                     <div className="location-card">
                       <div className="icon-row">
                         <div className="icon addressIcon"></div>
-                        <Link className="location-name" href={`/${url}`}>
+                        <a className="location-name" href={`/${url}`}>
                           {location.name}
-                        </Link>
+                        </a>
                         <Address address={location.address} />
                       </div>
                       <div className="button-bx-detail">
-                        <Link className="button link" href={`/${url}`}>
-                          View Details
+                        <Link className="button link" href={getDirectionUrl(location.address, location.googlePlaceId)}>
+                          Get Direction
                         </Link>
+                        <a className="button link" href={`/${url}`}>
+                          View Details
+                        </a>
                       </div>
                     </div>
                   </div>

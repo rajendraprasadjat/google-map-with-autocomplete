@@ -67,15 +67,15 @@ const LocationCard = ({ location, meta }: LocationCardProps) => {
     >
       <div className="icon-row">
         <div className="icon addressIcon"></div>
-        <Link className="location-name" href={`/${url}`}>
+        <a className="location-name" href={`/${url}`}>
           {location.rawData.name}
-        </Link>
+        </a>
         <Address address={location.rawData.address} />
       </div>
       <div className="button-bx-detail">
-        <Link className="button link" href={`/${url}`}>
+        <a className="button link" href={`/${url}`}>
           View Details
-        </Link>
+        </a>
         <Link className="button link" href={getDirectionUrl(location.rawData.address, location.rawData.googlePlaceId)}>
           Get Direction
         </Link>
@@ -95,4 +95,4 @@ export const LocationCardLoader = () => {
   );
 };
 
-export default LocationCard;
+export default React.memo(LocationCard);
