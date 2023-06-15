@@ -1,20 +1,15 @@
 import * as React from "react";
-import {
-  Template,
-  GetPath,
-  TemplateConfig,
-  TemplateProps,
-  TemplateRenderProps,
-  GetHeadConfig,
-  HeadConfig,
-} from "@yext/pages";
+import { Template, GetPath, TemplateConfig, TemplateProps, TemplateRenderProps, GetHeadConfig, HeadConfig, TransformProps } from "@yext/pages";
 import favicon from "../assets/images/favicon.ico";
-import { EntityMeta, TemplateMeta } from "../types";
+import { TemplateMeta } from "../types";
 import { CountryDocument } from "../types/index";
 import PageLayout from "../components/layout/PageLayout";
 import "../index.css";
 import { Link } from "@yext/pages/components";
 import { DirectoryChild } from "../types/DirectoryChild";
+import { getBreadcrumb, getLink } from "../config/GlobalFunctions";
+import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
+import { DirectoryParent } from "../types/DirectoryParent";
 
 /**
  * Required when Knowledge Graph data is used for a template.
@@ -54,32 +49,16 @@ export const getPath: GetPath<TemplateProps> = ({ document, __meta }) => {
   if (__meta.mode === "development") {
     return document.slug;
   } else {
-    if (
-      document.dm_directoryParents &&
-      document.dm_directoryParents != "undefined"
-    ) {
-      const parent: string[] = [];
-      document.dm_directoryParents?.map(
-        (i: { meta: EntityMeta; slug: string; name: string }) => {
-          parent.push(i.slug);
-        }
-      );
-      return `${parent.join("/")}/${document.slug.toString()}.html`;
-    } else {
-      return `${document.slug.toString()}.html`;
-    }
+    return getLink(document, __meta, true, 0, true);
   }
 };
 
-export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
-  document,
-}): HeadConfig => {
+export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({ document }): HeadConfig => {
   const metaTitle = `Dotsquares | ${document.name}`;
   return {
     title: metaTitle,
     charset: "UTF-8",
-    viewport:
-      "width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0",
+    viewport: "width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0",
     tags: [
       {
         type: "link",
@@ -107,26 +86,30 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
     ],
   };
 };
-interface CountryTemplateProps extends TemplateRenderProps {
+
+type TransformData = TemplateRenderProps & {
+  breadcrumbs: BreadcrumbItem[];
+};
+
+export const transformProps: TransformProps<TransformData> = async (data) => {
+  const document = data.document as CountryDocument;
+  const directoryParents = document.dm_directoryParents || [];
+  const breadcrumbs = getBreadcrumb<DirectoryParent, CountryDocument>(directoryParents, document, data.__meta, true, 0, true);
+  return { ...data, breadcrumbs };
+};
+
+interface CountryTemplateProps extends TransformData {
   __meta: TemplateMeta;
   document: CountryDocument;
 }
 
-const country: Template<CountryTemplateProps> = ({
-  document,
-  __meta,
-}: CountryTemplateProps) => {
+const country: Template<CountryTemplateProps> = ({ document, __meta, breadcrumbs }: CountryTemplateProps) => {
   const { _site, meta, slug, dm_directoryChildren } = document;
 
   return (
     <div id="main">
-      <PageLayout
-        _site={_site}
-        meta={__meta}
-        template="country"
-        locale={meta.locale}
-        devLink={slug}
-      >
+      <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
+        <Breadcrumbs baseUrl="" breadcrumbs={breadcrumbs} />
         <h1>Country</h1>
 
         <div className="directory-children">
@@ -136,9 +119,9 @@ const country: Template<CountryTemplateProps> = ({
 
               return (
                 <div className="directory-children-card" key={region.slug}>
-                  <Link className="directory-children-name" href={`/${url}`}>
+                  <a className="directory-children-name" href={`/${url}`}>
                     {region.name}
-                  </Link>
+                  </a>
                 </div>
               );
             })}

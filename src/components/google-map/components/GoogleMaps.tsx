@@ -1,28 +1,19 @@
 import * as React from "react";
 
-import {
-  GoogleMap as ReactGoogleMap,
-  Marker,
-  MarkerClusterer,
-  InfoWindow,
-} from "@react-google-maps/api";
+import { GoogleMap as ReactGoogleMap, Marker, MarkerClusterer, InfoWindow } from "@react-google-maps/api";
 import { SearchContext } from "../SearchProvider";
-import {
-  getClusterIcon,
-  getMarkerPin,
-  getPosition,
-  getUserIcon,
-} from "../../../config/GlobalFunctions";
-import { Address, Link } from "@yext/pages/components";
-import { SiteData } from "../../../types";
+import { getClusterIcon, getMarkerPin, getPosition, getUserIcon } from "../../../config/GlobalFunctions";
+import { Address } from "@yext/pages/components";
+import { SiteData, TemplateMeta } from "../../../types";
 import { LocationResult } from "../../../types/Locator";
 import { InfowindowProps } from "../../locator/Infowindow";
 interface GoogleMapProps {
   InfowindowComponent: React.FC<InfowindowProps>;
   _site: SiteData;
+  meta: TemplateMeta;
 }
 
-const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
+const GoogleMap = ({ InfowindowComponent, _site, meta }: GoogleMapProps) => {
   const {
     locations,
     zoomLavel,
@@ -122,11 +113,7 @@ const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
       }}
       mapContainerClassName="map-box-wrapper"
     >
-      <MarkerClusterer
-        styles={[{ url: getClusterIcon(), height: 35, width: 35 }]}
-        zoomOnClick
-        averageCenter
-      >
+      <MarkerClusterer styles={[{ url: getClusterIcon(), height: 35, width: 35 }]} zoomOnClick averageCenter>
         {(clusterer) => {
           return (
             <>
@@ -136,10 +123,7 @@ const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
 
                 if (hoveredLocation === location.id) {
                   icon = getMarkerPin(location, false, true).url;
-                } else if (
-                  infoWindowContent &&
-                  infoWindowContent.id === location.id
-                ) {
+                } else if (infoWindowContent && infoWindowContent.id === location.id) {
                   icon = getMarkerPin(location, true).url;
                 }
                 return (
@@ -186,28 +170,16 @@ const GoogleMap = ({ InfowindowComponent, _site }: GoogleMapProps) => {
                         }}
                       >
                         {InfowindowComponent ? (
-                          <InfowindowComponent
-                            location={infoWindowContent}
-                            _site={_site}
-                          />
+                          <InfowindowComponent meta={meta} location={infoWindowContent} _site={_site} />
                         ) : (
                           <div className="infowindow-content">
-                            <Link
-                              className="location-name"
-                              href={`/${infoWindowContent.rawData.slug}`}
-                            >
+                            <a className="location-name" href={`/${infoWindowContent.rawData.slug}`}>
                               {infoWindowContent.rawData.name}
-                            </Link>
-                            <Address
-                              className="location-address"
-                              address={infoWindowContent.rawData.address}
-                            />
-                            <Link
-                              className="button link"
-                              href={`/${infoWindowContent.rawData.slug}`}
-                            >
+                            </a>
+                            <Address className="location-address" address={infoWindowContent.rawData.address} />
+                            <a className="button link" href={`/${infoWindowContent.rawData.slug}`}>
                               View Details
-                            </Link>
+                            </a>
                           </div>
                         )}
                       </InfoWindow>

@@ -1,14 +1,6 @@
 import * as React from "react";
 import "../index.css";
-import {
-  Template,
-  GetPath,
-  GetHeadConfig,
-  HeadConfig,
-  TemplateConfig,
-  TemplateProps,
-  TemplateRenderProps,
-} from "@yext/pages";
+import { Template, GetPath, GetHeadConfig, HeadConfig, TemplateConfig, TemplateProps, TemplateRenderProps } from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
 import favicon from "../assets/images/favicon.ico";
 import { TemplateMeta } from "../types";
@@ -19,12 +11,10 @@ export const config: TemplateConfig = {
 };
 
 export const getPath: GetPath<TemplateProps> = () => {
-  return `404.html`;
+  return `/404.html`;
 };
 
-export const getHeadConfig: GetHeadConfig<
-  TemplateRenderProps
-> = (): HeadConfig => {
+export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = (): HeadConfig => {
   return {
     title: "404 Page",
     charset: "UTF-8",
@@ -47,10 +37,7 @@ interface FourOhFourProps extends TemplateRenderProps {
   document: FourOhFourDocument;
 }
 
-const FourOhFour: Template<FourOhFourProps> = ({
-  __meta,
-  document,
-}: FourOhFourProps) => {
+const FourOhFour: Template<FourOhFourProps> = ({ __meta, document, relativePrefixToRoot }: FourOhFourProps) => {
   return (
     <>
       <PageLayout _site={document._site} meta={__meta}>

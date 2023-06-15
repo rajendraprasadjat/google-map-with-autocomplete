@@ -1,24 +1,31 @@
 import * as React from "react";
-import { Address, Link } from "@yext/pages/components";
+import { Address, Link, getDirections } from "@yext/pages/components";
 import { LocationDocument, SiteData } from "../../types";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Hours } from "../common/Hours/Hours";
 import HolidayHour from "./HolidayHour";
 import OpenCloseStatus from "../common/OpenCloseStatus";
-import { getDirectionUrl } from "../../config/GlobalFunctions";
+import { getDirectionUrl, getMarkerPin } from "../../config/GlobalFunctions";
+import { LocationResult } from "../../types/Locator";
 
 type InformationProps = {
   document: LocationDocument;
   _site: SiteData;
+  nearByLocations: any;
 };
 
-const Information = ({ document, _site }: InformationProps) => {
+const Information = ({
+  document,
+  _site,
+  nearByLocations,
+}: InformationProps) => {
   const getPosition = (location: LocationDocument) => {
     const lat = location.yextDisplayCoordinate.latitude;
     const lng = location.yextDisplayCoordinate.longitude;
     return { lat, lng };
   };
   const coordinates = getPosition(document);
+  console.log("document", document);
   return (
     <div className="location-information">
       <div className="container">
@@ -34,7 +41,7 @@ const Information = ({ document, _site }: InformationProps) => {
               <OpenCloseStatus
                 hours={document.hours}
                 site={_site}
-                timezone={YEXT_PUBLIC_TIME_ZONE}
+                timezone={document.timezone}
               />
             </div>
           )}
@@ -65,6 +72,8 @@ const Information = ({ document, _site }: InformationProps) => {
                     showHeader={true}
                     startOfWeek="today"
                     message={document.additionalHoursText}
+                    locale={_site.meta.locale}
+                    timeZone={document.timezone}
                   />
                 </div>
               </div>
@@ -76,6 +85,16 @@ const Information = ({ document, _site }: InformationProps) => {
           <LoadScript googleMapsApiKey={YEXT_PUBLIC_GOOGLE_API_KEY}>
             <GoogleMap center={coordinates} zoom={12}>
               <Marker position={coordinates} clickable={false} />
+              {nearByLocations.map((location: any) => {
+                return (
+                  <Marker
+                    key={location.id}
+                    position={getPosition(location)}
+                    clickable={false}
+                    icon={getMarkerPin(location)}
+                  />
+                );
+              })}
             </GoogleMap>
           </LoadScript>
         </div>

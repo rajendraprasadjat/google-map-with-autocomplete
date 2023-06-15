@@ -11,6 +11,7 @@ export interface SiteData {
   id: string;
   slug: string;
   name: string;
+  meta: EntityMeta;
 }
 
 export interface TemplateMeta {
@@ -31,6 +32,8 @@ export interface CountryDocument {
   slug: string;
   meta: EntityMeta;
   _site: SiteData;
+  dm_directoryChildren: DirectoryChild[];
+  dm_directoryParents: DirectoryParent[];
 }
 
 export interface StateDocument {
@@ -39,6 +42,7 @@ export interface StateDocument {
   meta: EntityMeta;
   _site: SiteData;
   dm_directoryChildren: DirectoryChild[];
+  dm_directoryParents: DirectoryParent[];
 }
 
 export interface CityDocument {
@@ -47,6 +51,7 @@ export interface CityDocument {
   meta: EntityMeta;
   _site: SiteData;
   dm_directoryChildren: LocationDocument[];
+  dm_directoryParents: DirectoryParent[];
 }
 
 export interface LocationDocument {
@@ -57,6 +62,7 @@ export interface LocationDocument {
   slug: string;
   address: AddressType;
   hours: Hours;
+  timezone: string;
   additionalHoursText: string;
   yextDisplayCoordinate: Coordinate;
   googlePlaceId: string;

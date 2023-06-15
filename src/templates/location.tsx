@@ -1,28 +1,16 @@
 import * as React from "react";
-import {
-  Template,
-  GetPath,
-  TemplateConfig,
-  TemplateProps,
-  TemplateRenderProps,
-  GetHeadConfig,
-  HeadConfig,
-  TransformProps,
-} from "@yext/pages";
-import { fetch } from "@yext/pages/util";
+import { Template, GetPath, TemplateConfig, TemplateProps, TemplateRenderProps, GetHeadConfig, HeadConfig, TransformProps } from "@yext/pages";
 import favicon from "../assets/images/favicon.ico";
-import { EntityMeta, LocationDocument, TemplateMeta } from "../types";
+import { LocationDocument, TemplateMeta } from "../types";
 import PageLayout from "../components/layout/PageLayout";
 import Breadcrumbs, { BreadcrumbItem } from "../components/common/Breadcrumbs";
-import {
-  AnalyticsProvider,
-  AnalyticsScopeProvider,
-} from "@yext/pages/components";
+import { AnalyticsProvider, AnalyticsScopeProvider } from "@yext/pages/components";
 import Information from "../components/location/Information";
 import NearByLocation from "../components/location/NearByLocation";
 import "../index.css";
-import { getBreadcrumb } from "../config/GlobalFunctions";
+import { getBreadcrumb, getBreadcrumbSchema, getLink } from "../config/GlobalFunctions";
 import { NearByLocationResult } from "../types/Locator";
+import { DirectoryParent } from "../types/DirectoryParent";
 
 export const config: TemplateConfig = {
   stream: {
@@ -37,6 +25,7 @@ export const config: TemplateConfig = {
       "name",
       "slug",
       "address",
+      "timezone",
       "hours",
       "additionalHoursText",
       "googlePlaceId",
@@ -58,32 +47,20 @@ export const config: TemplateConfig = {
   },
 };
 
-export const getPath: GetPath<TemplateProps> = ({ document }) => {
-  if (
-    document.dm_directoryParents &&
-    document.dm_directoryParents != "undefined"
-  ) {
-    const parent: string[] = [];
-    document.dm_directoryParents?.map(
-      (i: { meta: EntityMeta; slug: string; name: string }) => {
-        parent.push(i.slug);
-      }
-    );
-    return `${parent.join("/")}/${document.slug.toString()}.html`;
+export const getPath: GetPath<TemplateProps> = ({ document, __meta }) => {
+  if (__meta.mode === "development") {
+    return document.slug;
   } else {
-    return `${document.slug.toString()}.html`;
+    return getLink(document, __meta, true, 0, true);
   }
 };
 
-export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
-  document,
-}): HeadConfig => {
+export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({ document }): HeadConfig => {
   const metaTitle = `Dotsquares | ${document.name}`;
   return {
     title: metaTitle,
     charset: "UTF-8",
-    viewport:
-      "width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0",
+    viewport: "width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0",
     tags: [
       {
         type: "link",
@@ -93,7 +70,13 @@ export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = ({
           href: favicon,
         },
       },
-
+      {
+        type: "meta",
+        attributes: {
+          name: "robots",
+          content: "noindex,nofollow",
+        },
+      },
       {
         type: "meta",
         attributes: {
@@ -119,7 +102,7 @@ type TransformData = TemplateRenderProps & {
 export const transformProps: TransformProps<TransformData> = async (data) => {
   const document = data.document as LocationDocument;
   const directoryParents = document.dm_directoryParents || [];
-  const breadcrumbs = getBreadcrumb(directoryParents, document, data.__meta);
+  const breadcrumbs = getBreadcrumb<DirectoryParent, LocationDocument>(directoryParents, document, data.__meta, true, 0, true);
   return { ...data, breadcrumbs };
 };
 
@@ -128,12 +111,10 @@ interface LocationTemplateProps extends TransformData {
   document: LocationDocument;
 }
 
-const Location: Template<LocationTemplateProps> = ({
-  document,
-  __meta,
-  breadcrumbs,
-}: LocationTemplateProps) => {
+const Location: Template<LocationTemplateProps> = ({ document, __meta, breadcrumbs }: LocationTemplateProps) => {
   const { meta, _site, slug } = document;
+  const [nearByLocations, setNearByLocations] = React.useState([]);
+  console.log("getBreadcrumbSchema", getBreadcrumbSchema(breadcrumbs));
   return (
     <div id="main">
       <AnalyticsProvider
@@ -142,21 +123,16 @@ const Location: Template<LocationTemplateProps> = ({
         enableTrackingCookie={YEXT_PUBLIC_ANALYTICS_ENABLE_TRACKING_COOKIE}
       >
         <AnalyticsScopeProvider name={document.name}>
-          <PageLayout
-            _site={_site}
-            meta={__meta}
-            template="country"
-            locale={meta.locale}
-            devLink={slug}
-          >
-            <Breadcrumbs baseUrl="/" breadcrumbs={breadcrumbs} />
-            <Information document={document} _site={_site} />
+          <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale} devLink={slug}>
+            <Breadcrumbs baseUrl="" breadcrumbs={breadcrumbs} />
+            <Information document={document} _site={_site} nearByLocations={nearByLocations} />
 
             <NearByLocation
               apiKey={YEXT_PUBLIC_ANSWER_SEARCH_API_KEY}
               coordinate={document.yextDisplayCoordinate}
               id={document.id}
               meta={__meta}
+              setNearByLocations={setNearByLocations}
             />
           </PageLayout>
         </AnalyticsScopeProvider>

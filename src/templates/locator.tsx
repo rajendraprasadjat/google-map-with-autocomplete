@@ -3,22 +3,10 @@
  */
 import * as React from "react";
 import "../index.css";
-import {
-  Template,
-  GetPath,
-  GetHeadConfig,
-  HeadConfig,
-  TransformProps,
-  TemplateConfig,
-  TemplateProps,
-  TemplateRenderProps,
-} from "@yext/pages";
+import { Template, GetPath, GetHeadConfig, HeadConfig, TransformProps, TemplateConfig, TemplateProps, TemplateRenderProps } from "@yext/pages";
 import PageLayout from "../components/layout/PageLayout";
 import favicon from "../assets/images/favicon.ico";
-import {
-  SearchHeadlessProvider,
-  provideHeadless,
-} from "@yext/search-headless-react";
+import { SearchHeadlessProvider, provideHeadless } from "@yext/search-headless-react";
 import SearchProvider from "../components/google-map/SearchProvider";
 import { TemplateMeta } from "../types";
 import { LocatorDocument } from "../types/Locator";
@@ -74,14 +62,19 @@ export const getPath: GetPath<TemplateProps> = ({ document, __meta }) => {
  * will be used to generate the inner contents of the HTML document's <head> tag.
  * This can include the title, meta tags, script tags, etc.
  */
-export const getHeadConfig: GetHeadConfig<
-  TemplateRenderProps
-> = (): HeadConfig => {
+export const getHeadConfig: GetHeadConfig<TemplateRenderProps> = (): HeadConfig => {
   return {
     title: "Locator Page Example",
     charset: "UTF-8",
     viewport: "width=device-width, initial-scale=1",
     tags: [
+      {
+        type: "meta",
+        attributes: {
+          name: "robots",
+          content: "noindex,nofollow",
+        },
+      },
       {
         type: "meta",
         attributes: {
@@ -109,10 +102,7 @@ interface LocatorTemplateProps extends TemplateRenderProps {
  * This is the main template. It can have any name as long as it's the default export.
  * The props passed in here are the direct result from `transformProps`.
  */
-const Locator: Template<LocatorTemplateProps> = ({
-  document,
-  __meta,
-}: LocatorTemplateProps) => {
+const Locator: Template<LocatorTemplateProps> = ({ document, __meta }: LocatorTemplateProps) => {
   const { _site, meta } = document;
 
   const searcher = provideHeadless({
@@ -140,36 +130,23 @@ const Locator: Template<LocatorTemplateProps> = ({
         limit={parseInt(YEXT_PUBLIC_PAGE_LIMIT)}
         autoLoadAllResult={true}
         isUseAlternateResult={{ limit: 1, show: true }}
-        mapType="google"
+        mapType="mapbox"
         autocompleteType="google"
         isFilterEnable={false}
         isUpdateListAccordingMarkers={true}
       >
-        <PageLayout
-          _site={_site}
-          meta={__meta}
-          template="country"
-          locale={meta.locale}
-        >
+        <PageLayout _site={_site} meta={__meta} template="country" locale={meta.locale}>
           <main className="main-content">
             <section className="listing-map" id="main">
               <div className="mobile-view-map lg:hidden">
-                <button
-                  type="button"
-                  className="map-link"
-                  onClick={() => setIsMapView(!isMapView)}
-                >
+                <button type="button" className="map-link" onClick={() => setIsMapView(!isMapView)}>
                   {isMapView ? "Hide Map" : "Show Map"}
                 </button>
               </div>
               <div className={`map-block ${isMapView ? "show" : ""}`}>
-                <MapWrapper _site={_site} />
+                <MapWrapper _site={_site} meta={__meta} />
               </div>
-              <ListLayout
-                showNoRecordMessage={true}
-                meta={__meta}
-                locale={YEXT_PUBLIC_DEFAULT_LOCALE}
-              />
+              <ListLayout showNoRecordMessage={true} meta={__meta} locale={YEXT_PUBLIC_DEFAULT_LOCALE} />
             </section>
           </main>
         </PageLayout>

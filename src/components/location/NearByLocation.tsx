@@ -6,17 +6,12 @@ import { NearByLocationResult } from "../../types/Locator";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
-import {
-  getDirectionUrl,
-  getRecursiveData,
-} from "../../config/GlobalFunctions";
+import { getDirectionUrl, getLink, getRecursiveData } from "../../config/GlobalFunctions";
 import { Coordinate } from "../google-map/SearchProvider";
 import { fetch } from "@yext/pages/util";
 
 type NearbyAPIConfig = {
-  endpoint:
-    | "https://liveapi-sandbox.yext.com/v2/accounts/me/entities/geosearch"
-    | "https://liveapi.yext.com/v2/accounts/me/entities/geosearch";
+  endpoint: "https://liveapi-sandbox.yext.com/v2/accounts/me/entities/geosearch" | "https://liveapi.yext.com/v2/accounts/me/entities/geosearch";
   params: {
     api_key: string;
     entityTypes?: string;
@@ -24,6 +19,7 @@ type NearbyAPIConfig = {
     radius?: string;
     savedFilterIds?: string;
     v: string;
+    fields: ["dm_directoryParents", "name", "slug", "address", "yextDisplayCoordinate"];
   };
 };
 
@@ -33,7 +29,8 @@ const getConfig = (api_key: string): NearbyAPIConfig => {
     params: {
       api_key,
       entityTypes: "location",
-      limit: "4",
+      limit: "3",
+      radius: "2500",
       v: "20220927",
     },
   };
@@ -44,9 +41,10 @@ type NearbyProps = {
   id: string;
   meta: TemplateMeta;
   apiKey: string;
+  setNearByLocations: (value: []) => void;
 };
 
-const NearByLocation = ({ meta, coordinate, id, apiKey }: NearbyProps) => {
+const NearByLocation = ({ meta, coordinate, id, apiKey, setNearByLocations }: NearbyProps) => {
   const [locations, setLocations] = React.useState<NearByLocationResult[]>([]);
   React.useEffect(() => {
     if (!coordinate || !apiKey) {
@@ -62,40 +60,58 @@ const NearByLocation = ({ meta, coordinate, id, apiKey }: NearbyProps) => {
 
     fetch(`${config.endpoint}?${searchParams.toString()}`)
       .then((resp) => resp.json())
-      .then((data) => setLocations(data.response.entities || []))
+      .then((data) => {
+        console.log("data.response", data.response);
+        setLocations(data.response.entities || []);
+        setNearByLocations(data.response.entities || []);
+      })
       .catch((error) => console.error(error));
   }, [coordinate, id, apiKey]);
   return (
     <div className="nearby-locations">
       <div className="container">
         <h3 className="nearby-locations-title">Nearby Locations</h3>
-        <Swiper spaceBetween={50} slidesPerView={3}>
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={3}
+          breakpoints={{
+            "@0.00": {
+              slidesPerView: 1,
+              spaceBetween: 10,
+            },
+            "@1.00": {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            "@1.50": {
+              slidesPerView: 3,
+              spaceBetween: 40,
+            },
+          }}
+        >
           {locations.map((location) => {
-            const url = getRecursiveData(location, meta);
+            const url = getLink<NearByLocationResult>(location, meta, true, 0, true);
             return (
               <SwiperSlide key={location.id}>
                 <div className="location-card">
                   <div className="icon-row">
                     <div className="icon addressIcon"></div>
-                    <Link className="location-name" href={`${url}`}>
+                    <a className="location-name" href={`${url}`}>
                       {location.name}
-                    </Link>
+                    </a>
                     <Address address={location.address} />
                   </div>
 
                   <div className="button-bx-detail">
-                    <Link className="button link" href={`${url}`}>
+                    <a className="button link" href={`${url}`}>
                       View Details
-                    </Link>
+                    </a>
                     <Link
                       data-ya-track="getdirections"
                       eventName={`getdirections`}
                       target="_blank"
                       className="direction button before-icon"
-                      href={getDirectionUrl(
-                        location.address,
-                        location.googlePlaceId
-                      )}
+                      href={getDirectionUrl(location.address, location.googlePlaceId)}
                       rel="noopener noreferrer"
                     >
                       Get Direction

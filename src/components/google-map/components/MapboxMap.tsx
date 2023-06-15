@@ -5,8 +5,8 @@ import * as React from "react";
 import { SearchContext } from "../SearchProvider";
 import { LocationResult } from "../../../types/Locator";
 import { getMarkerPin, getPosition } from "../../../config/GlobalFunctions";
-import { Address, Link } from "@yext/pages/components";
-import { SiteData } from "../../../types";
+import { Address } from "@yext/pages/components";
+import { SiteData, TemplateMeta } from "../../../types";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { InfowindowProps } from "../../locator/Infowindow";
 
@@ -14,24 +14,13 @@ interface MapboxMapProps {
   mapboxAccessToken: string;
   InfowindowComponent: React.FC<InfowindowProps>;
   _site: SiteData;
+  meta: TemplateMeta;
 }
 
-export function MapboxMap({
-  mapboxAccessToken,
-  InfowindowComponent,
-  _site,
-}: MapboxMapProps) {
+export function MapboxMap({ mapboxAccessToken, InfowindowComponent, _site, meta }: MapboxMapProps) {
   const map = useRef<MapRef | null>(null);
-  const {
-    locations,
-    infoWindowContent,
-    setZoomLavel,
-    setMapCenter,
-    setInfoWindowContent,
-    centerCoordinates,
-    zoomLavel,
-    mapCenter,
-  } = useContext(SearchContext);
+  const { locations, infoWindowContent, setZoomLavel, setMapCenter, setInfoWindowContent, centerCoordinates, zoomLavel, mapCenter } =
+    useContext(SearchContext);
 
   const fitBoundMap = () => {
     if (locations?.length > 0 && map.current) {
@@ -92,25 +81,16 @@ export function MapboxMap({
           }}
         >
           {InfowindowComponent ? (
-            <InfowindowComponent location={infoWindowContent} _site={_site} />
+            <InfowindowComponent meta={meta} location={infoWindowContent} _site={_site} />
           ) : (
             <div className="infowindow-content">
-              <Link
-                className="location-name"
-                href={`/${infoWindowContent.rawData.slug}`}
-              >
+              <a className="location-name" href={`/${infoWindowContent.rawData.slug}`}>
                 {infoWindowContent.rawData.name}
-              </Link>
-              <Address
-                className="location-address"
-                address={infoWindowContent.rawData.address}
-              />
-              <Link
-                className="button link"
-                href={`/${infoWindowContent.rawData.slug}`}
-              >
+              </a>
+              <Address className="location-address" address={infoWindowContent.rawData.address} />
+              <a className="button link" href={`/${infoWindowContent.rawData.slug}`}>
                 View Details
-              </Link>
+              </a>
             </div>
           )}
         </Popup>
@@ -118,17 +98,10 @@ export function MapboxMap({
       {locations.map((location: LocationResult, index: number) => {
         const markerLocation = getPosition(location);
         const { lat, lng } = markerLocation;
-        const isActive =
-          infoWindowContent && infoWindowContent.id === location.rawData.id;
+        const isActive = infoWindowContent && infoWindowContent.id === location.rawData.id;
         const markerStyle = isActive ? { zIndex: 999999 } : {};
         return (
-          <Marker
-            key={`${location.rawData.id}-${index}`}
-            longitude={lng}
-            latitude={lat}
-            anchor="bottom"
-            style={markerStyle}
-          >
+          <Marker key={`${location.rawData.id}-${index}`} longitude={lng} latitude={lat} anchor="bottom" style={markerStyle}>
             <button
               className={`${isActive ? "is-selected" : ""}`}
               id={`marker-${location.rawData.id}-${index}`}
@@ -161,11 +134,7 @@ export function MapboxMap({
                 id={"marker-img-" + index}
                 className=""
                 style={{ width: 20 }}
-                src={
-                  isActive
-                    ? getMarkerPin(location).url
-                    : getMarkerPin(location).url
-                }
+                src={isActive ? getMarkerPin(location).url : getMarkerPin(location).url}
               />
             </button>
           </Marker>
@@ -181,15 +150,7 @@ export const clusterLayer: LayerProps = {
   source: "earthquakes",
   filter: ["has", "point_count"],
   paint: {
-    "circle-color": [
-      "step",
-      ["get", "point_count"],
-      "#51bbd6",
-      100,
-      "#f1f075",
-      750,
-      "#f28cb1",
-    ],
+    "circle-color": ["step", ["get", "point_count"], "#51bbd6", 100, "#f1f075", 750, "#f28cb1"],
     "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
   },
 };

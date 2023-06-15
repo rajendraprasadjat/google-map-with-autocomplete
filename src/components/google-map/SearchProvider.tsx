@@ -1,14 +1,6 @@
 import * as React from "react";
 import { createContext } from "react";
-import {
-  DisplayableFacet,
-  Facet,
-  FacetOption,
-  Matcher,
-  SelectableStaticFilter,
-  SortBy,
-  useSearchActions,
-} from "@yext/search-headless-react";
+import { DisplayableFacet, Facet, FacetOption, Matcher, SelectableStaticFilter, SortBy, useSearchActions } from "@yext/search-headless-react";
 import { Libraries } from "./MapWrapper";
 import { string, array, node, object, number, bool } from "prop-types";
 import { getPosition } from "../../config/GlobalFunctions";
@@ -24,6 +16,7 @@ export type PaginationType = {
   currentPage: number;
   isLastPage: boolean;
   limit: number;
+  startFrom: number;
 };
 
 export type Coordinate = {
@@ -32,19 +25,10 @@ export type Coordinate = {
 };
 
 interface ContextType {
-  getCoordinates: (
-    address: string,
-    coordinate?: { lat: number; lng: number } | null,
-    isUserLocation?: boolean
-  ) => void;
+  getCoordinates: (address: string, coordinate?: { lat: number; lng: number } | null, isUserLocation?: boolean) => void;
   centerCoordinates: Coordinate;
   pagination: PaginationType;
-  getSearchData: (
-    location: Coordinate | null,
-    address: string | null,
-    apiOffset: number,
-    staticFilter: SelectableStaticFilter[]
-  ) => void;
+  getSearchData: (location: Coordinate | null, address: string | null, apiOffset: number, staticFilter: SelectableStaticFilter[]) => void;
   locations: LocationResult[];
   facets: Facet[] | undefined;
   isLoading: boolean;
@@ -64,11 +48,7 @@ interface ContextType {
   setInputValue: (value: string) => void;
   isUserLocationAllowed: boolean;
   setIsUserLocationAllowed: (value: boolean) => void;
-  setFacetOption: (
-    fieldId: string,
-    option: FacetOption,
-    searchOnChange: boolean
-  ) => void;
+  setFacetOption: (fieldId: string, option: FacetOption, searchOnChange: boolean) => void;
   resetFacets: () => void;
   setSortBy: (sortBy: SortBy[]) => void;
   mapType: MapTypes;
@@ -80,6 +60,7 @@ interface ContextType {
   setHoveredLocation: (value: string | null) => void;
   noRecordFound: boolean;
   isUseAlternateResult?: IsUseAlternateResult;
+  showResultCount: boolean;
 }
 
 export const SearchContext = createContext<ContextType>({
@@ -155,6 +136,7 @@ export const SearchContext = createContext<ContextType>({
   },
   noRecordFound: false,
   isUseAlternateResult: { show: false },
+  showResultCount: true,
 });
 
 interface IsUseAlternateResult {
@@ -176,7 +158,7 @@ interface NoResultFound {
 }
 
 interface GoogleAutocompleteConfig {
-  countries?: string[]
+  countries?: string[];
 }
 
 interface SearchProviderProps {
@@ -195,9 +177,10 @@ interface SearchProviderProps {
   isFilterEnable?: boolean;
   isUpdateListAccordingMarkers?: boolean;
   mapConfig?: MapConfig;
-  googleAutocompleteConfig?: GoogleAutocompleteConfig
+  googleAutocompleteConfig?: GoogleAutocompleteConfig;
   noResultFound?: NoResultFound;
   showResultOnIntialLoad?: boolean;
+  showResultCount?: boolean;
 }
 /**
  * This provider used for search action by yext search action
@@ -220,17 +203,16 @@ const SearchProvider = ({
   mapboxAccessToken = "",
   isFilterEnable = false,
   isUpdateListAccordingMarkers = false,
+  noResultFound,
+  showResultCount = true,
 }: SearchProviderProps) => {
   const searchAction = useSearchActions();
   const [inputValue, setInputValue] = React.useState("");
   const [zoomLavel, setZoomLavel] = React.useState(4);
-  const [mapCenter, setMapCenter] =
-    React.useState<google.maps.LatLngLiteral | null>(null);
-  const [centerCoordinates, setCenterCoordinates] =
-    React.useState(defaultCoordinates);
+  const [mapCenter, setMapCenter] = React.useState<google.maps.LatLngLiteral | null>(null);
+  const [centerCoordinates, setCenterCoordinates] = React.useState(defaultCoordinates);
   const [userLocation, setUserLocation] = React.useState(defaultCoordinates);
-  const [isUserLocationAllowed, setIsUserLocationAllowed] =
-    React.useState(false);
+  const [isUserLocationAllowed, setIsUserLocationAllowed] = React.useState(false);
   const [locations, setLocations] = React.useState<LocationResult[]>([]);
   const [facets, setFacets] = React.useState<DisplayableFacet[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -244,26 +226,17 @@ const SearchProvider = ({
     currentPage: 1,
     isLastPage: true,
     limit,
+    startFrom: 1,
   });
   const [showViewportCount, setShowViewportCount] = React.useState<number>(0);
-  const [showViewportLocations, setShowViewportLocations] =
-    React.useState<boolean>(false);
-  const [viewportLocations, setViewportLocations] = React.useState<
-    LocationResult[]
-  >([]);
+  const [showViewportLocations, setShowViewportLocations] = React.useState<boolean>(false);
+  const [viewportLocations, setViewportLocations] = React.useState<LocationResult[]>([]);
 
-  const [infoWindowContent, setInfoWindowContent] =
-    React.useState<LocationResult | null>(null);
+  const [infoWindowContent, setInfoWindowContent] = React.useState<LocationResult | null>(null);
 
-  const [hoveredLocation, setHoveredLocation] = React.useState<string | null>(
-    null
-  );
+  const [hoveredLocation, setHoveredLocation] = React.useState<string | null>(null);
 
-  const setPagingData = (
-    totalRecord: number,
-    resultsLength: number,
-    apiOffset = 0
-  ) => {
+  const setPagingData = (totalRecord: number, resultsLength: number, apiOffset = 0) => {
     if (totalRecord > 0) {
       const showingCount = resultsLength + apiOffset;
       const totalPage = Math.ceil(totalRecord / limit);
@@ -279,6 +252,7 @@ const SearchProvider = ({
         currentPage,
         isLastPage,
         limit,
+        startFrom: 1,
       };
       setPagination(returnData);
       return returnData;
@@ -291,15 +265,12 @@ const SearchProvider = ({
         currentPage: 1,
         isLastPage: true,
         limit,
+        startFrom: 1,
       };
     }
   };
 
-  const setFacetOption = (
-    fieldId: string,
-    option: FacetOption,
-    searchOnChange = false
-  ) => {
+  const setFacetOption = (fieldId: string, option: FacetOption, searchOnChange = false) => {
     searchAction.setFacetOption(fieldId, option, !option.selected);
     if (searchOnChange) {
       getSearchData(centerCoordinates, inputValue, 0, []);
@@ -366,6 +337,7 @@ const SearchProvider = ({
         currentPage: 1,
         isLastPage: true,
         limit,
+        startFrom: 1,
       });
     }
 
@@ -375,37 +347,20 @@ const SearchProvider = ({
       const oldLocations = lastLocations.length ? lastLocations : locations;
       let results: LocationResult[] = [];
       let resultCount = 0;
-      if (
-        response?.verticalResults.results &&
-        response?.verticalResults.results.length > 0
-      ) {
-        results = response?.verticalResults
-          .results as unknown as LocationResult[];
+      if (response?.verticalResults.results && response?.verticalResults.results.length > 0) {
+        results = response?.verticalResults.results as unknown as LocationResult[];
         resultCount = response?.verticalResults.resultsCount || 0;
-      } else if (
-        response?.allResultsForVertical?.verticalResults &&
-        isUseAlternateResult &&
-        isUseAlternateResult.show
-      ) {
+      } else if (response?.allResultsForVertical?.verticalResults && isUseAlternateResult && isUseAlternateResult.show) {
         setNoRecordFound(true);
-        results = response?.allResultsForVertical?.verticalResults
-          .results as unknown as LocationResult[];
-        if (
-          isUseAlternateResult.limit &&
-          isUseAlternateResult.limit > 0 &&
-          isUseAlternateResult.limit < limit
-        ) {
+        results = response?.allResultsForVertical?.verticalResults.results as unknown as LocationResult[];
+        if (isUseAlternateResult.limit && isUseAlternateResult.limit > 0 && isUseAlternateResult.limit < limit) {
           const alternateLimit = isUseAlternateResult.limit;
-          results = results.filter(
-            (_e, index: number) => index < alternateLimit
-          );
+          results = results.filter((_e, index: number) => index < alternateLimit);
           resultCount = alternateLimit;
         } else {
-          results = response?.allResultsForVertical?.verticalResults
-            .results as unknown as LocationResult[];
+          results = response?.allResultsForVertical?.verticalResults.results as unknown as LocationResult[];
 
-          resultCount =
-            response?.allResultsForVertical?.verticalResults.resultsCount || 0;
+          resultCount = response?.allResultsForVertical?.verticalResults.resultsCount || 0;
         }
       }
 
@@ -418,39 +373,22 @@ const SearchProvider = ({
       setLocations(uniqueArray);
 
       if (autoLoadAllResult && !currentPagination.isLastPage) {
-        getSearchData(
-          location,
-          address,
-          apiOffset + limit,
-          staticFilter,
-          uniqueArray
-        );
+        getSearchData(location, address, apiOffset + limit, staticFilter, uniqueArray);
       } else {
         setIsLoading(false);
       }
     });
   };
 
-  const getCoordinates = (
-    address: string,
-    coordinate: { lat: number; lng: number } | undefined | null,
-    isUserLocation = false
-  ) => {
+  const getCoordinates = (address: string, coordinate: { lat: number; lng: number } | undefined | null, isUserLocation = false) => {
     if (coordinate) {
       setCenterCoordinates({
         latitude: coordinate.lat,
         longitude: coordinate.lng,
       });
-      getSearchData(
-        { latitude: coordinate.lat, longitude: coordinate.lng },
-        address,
-        0,
-        []
-      );
+      getSearchData({ latitude: coordinate.lat, longitude: coordinate.lng }, address, 0, []);
     } else {
-      fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${googleApiKey}`
-      )
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${googleApiKey}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "OK") {
@@ -460,24 +398,14 @@ const SearchProvider = ({
               const longitude = response.geometry.location.lng;
               setCenterCoordinates({ latitude, longitude });
               if (isUserLocation) {
-                getSearchData(
-                  { latitude, longitude },
-                  response.formatted_address,
-                  0,
-                  []
-                );
+                getSearchData({ latitude, longitude }, response.formatted_address, 0, []);
                 setInputValue(response.formatted_address);
               } else {
                 getSearchData({ latitude, longitude }, address, 0, []);
               }
             } else {
               setCenterCoordinates(defaultCoordinates);
-              getSearchData(
-                defaultCoordinates,
-                isUserLocation ? "" : address,
-                0,
-                []
-              );
+              getSearchData(defaultCoordinates, isUserLocation ? "" : address, 0, []);
             }
           } else {
             setCenterCoordinates(defaultCoordinates);
@@ -548,16 +476,14 @@ const SearchProvider = ({
     setHoveredLocation,
     noRecordFound,
     isUseAlternateResult,
+    noResultFound,
+    showResultCount,
   };
 
   return (
     <SearchContext.Provider value={data}>
       {mapType === "google" || autocompleteType === "google" ? (
-        <Wrapper
-          apiKey={googleApiKey}
-          language={language}
-          libraries={libraries}
-        >
+        <Wrapper apiKey={googleApiKey} language={language} libraries={libraries}>
           {children}
         </Wrapper>
       ) : (
