@@ -30,9 +30,9 @@ export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecu
   const isDevelopment = meta.mode === "development" || false;
   let url = `${isDevelopment ? "" : "/"}${document.slug}`;
   if (!isDevelopment && isRecursive) {
-    url = getRecursiveData(document, meta, skip);
+    url = getRecursiveData(document, meta, skip, useHtml);
   }
-  return `${url}${useHtml && !isDevelopment ? ".html" : ""}`;
+  return `${url}`;
 };
 
 export const getRecursiveData = <DataType>(element: DataType, meta: TemplateMeta, skip = 0, useHtml = false) => {

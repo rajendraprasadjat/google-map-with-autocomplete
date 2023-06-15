@@ -67,15 +67,15 @@ const LocationCard = ({ location, meta }: LocationCardProps) => {
     >
       <div className="icon-row">
         <div className="icon addressIcon"></div>
-        <a className="location-name" href={`/${url}`}>
+        <Link className="location-name" href={url}>
           {location.rawData.name}
-        </a>
+        </Link>
         <Address address={location.rawData.address} />
       </div>
       <div className="button-bx-detail">
-        <a className="button link" href={`/${url}`}>
+        <Link className="button link" href={url}>
           View Details
-        </a>
+        </Link>
         <Link className="button link" href={getDirectionUrl(location.rawData.address, location.rawData.googlePlaceId)}>
           Get Direction
         </Link>
