@@ -26,11 +26,11 @@ export function slugify(slugString: string) {
   return slugString.toLowerCase();
 }
 
-export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecursive = true, skip = 0, useHtml = false) => {
+export const getLink = <Document>(document: Document, meta: TemplateMeta, isRecursive = true, skip = 0, useHtml = false, useBaseUrl = false) => {
   const isDevelopment = meta.mode === "development" || false;
   let url = `${isDevelopment ? "" : "/"}${document.slug}`;
   if (!isDevelopment && isRecursive) {
-    url = getRecursiveData(document, meta, skip, useHtml);
+    url = getRecursiveData(document, meta, skip, useHtml, useBaseUrl);
   }
   return `${url}`;
 };

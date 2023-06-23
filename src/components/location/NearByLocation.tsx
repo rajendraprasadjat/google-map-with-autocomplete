@@ -19,7 +19,6 @@ type NearbyAPIConfig = {
     radius?: string;
     savedFilterIds?: string;
     v: string;
-    fields: ["dm_directoryParents", "name", "slug", "address", "yextDisplayCoordinate"];
   };
 };
 
@@ -56,6 +55,7 @@ const NearByLocation = ({ meta, coordinate, id, apiKey, setNearByLocations }: Ne
       ...config.params,
       location: `${coordinate.latitude},${coordinate.longitude}`,
       filter: JSON.stringify({ "meta.id": { "!$eq": `${id}` } }),
+      fields: "dm_directoryParents,name,slug,address",
     });
 
     fetch(`${config.endpoint}?${searchParams.toString()}`)
